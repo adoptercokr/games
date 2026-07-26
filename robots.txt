@@ -1,0 +1,42 @@
+# ==========================================
+# robots.txt for Spark Games Portal
+# Optimized for Google, Naver, and AI Search / LLM Crawlers
+# ==========================================
+
+User-agent: *
+Allow: /
+# Prevent direct indexing of raw game files so users always land on the premium main portal!
+Disallow: /01-galaxy/
+Disallow: /02-cookie-run/
+Disallow: /03-space-survivor/
+Disallow: /04-capybara-evolution/
+Disallow: /05-3drace/
+Disallow: /06-kids-runner/
+Disallow: /07-gun-zombie/
+Disallow: /08-sneaky-snacker/
+Disallow: /09-fly-swat/
+Disallow: /10-poo/
+Disallow: /11-gian-game/
+Disallow: /12-tetris/
+Disallow: /13-cat-maze/
+Disallow: /14-fortress/
+Disallow: /15-pixel-tower/
+
+# Explicitly Allow AI Search Engines and LLMs to index and reference the portal
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Sitemap Location (Change to your actual domain if different)
+Sitemap: https://game.adopter.co.kr/sitemap.xml

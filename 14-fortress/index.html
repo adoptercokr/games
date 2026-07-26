@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Angry Fortress - Ultimate Update</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
+        body { width: 100vw; height: 100vh; overflow: hidden; background: #0a192f; font-family: 'Poppins', 'Noto Sans KR', sans-serif; display: flex; align-items: center; justify-content: center; }
+        
+        #gameCanvas { display: block; box-shadow: 0 0 50px rgba(0,0,0,0.5); width: 100%; height: 100%; }
+        
+        #ui-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .hud-top {
+            position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 16px;
+            background: rgba(10, 25, 47, 0.85);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 8px 24px;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            color: white; font-size: 13px; font-weight: 800;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            white-space: nowrap;
+            z-index: 12;
+            pointer-events: auto;
+        }
+        .stat span { color: #f1c40f; font-size: 16px; margin-left: 3px; }
+
+        .hud-controls {
+            position: absolute; bottom: 24px; left: 20px;
+            pointer-events: auto; z-index: 15;
+        }
+        
+        .btn {
+            background: #ff4757; color: white;
+            border: none; padding: 10px 20px;
+            font-size: 13px; font-weight: 800;
+            border-radius: 10px; cursor: pointer;
+            box-shadow: 0 6px 15px rgba(255, 71, 87, 0.4), inset 0 -3px 0 rgba(0,0,0,0.15);
+            transition: all 0.15s; text-transform: uppercase;
+        }
+        .btn:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(255, 71, 87, 0.4); }
+        .btn-blue { background: #1e90ff; box-shadow: 0 6px 15px rgba(30, 144, 255, 0.4), inset 0 -3px 0 rgba(0,0,0,0.15); }
+        .btn-blue:active { box-shadow: 0 2px 5px rgba(30, 144, 255, 0.4); }
+
+        .instructions {
+            position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%);
+            width: 90%; text-align: center; color: white;
+            font-size: 16px; font-weight: 800; letter-spacing: 1.2px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+            transition: opacity 0.5s; z-index: 15;
+            pointer-events: none;
+        }
+
+        .overlay {
+            position: absolute; top:0; left:0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; pointer-events: auto;
+            opacity: 1; transition: opacity 0.3s;
+        }
+        .overlay.hidden { opacity: 0; pointer-events: none; }
+        .modal {
+            background: linear-gradient(135deg, #ffffff, #f1f2f6);
+            padding: 30px 40px; border-radius: 25px;
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: scale(1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(255,255,255,0.8);
+            max-width: 90%;
+        }
+        .overlay.hidden .modal { transform: scale(0.8); }
+        .modal h1 { color: #2d3436; font-size: 32px; margin-bottom: 5px; text-transform: uppercase; }
+        .modal p { color: #636e72; font-size: 16px; margin-bottom: 20px; font-weight: 600; }
+        .stars { font-size: 45px; margin-bottom: 15px; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        
+        .loading {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 20px; font-weight: 800; color: white;
+            background: rgba(0,0,0,0.6); padding: 20px 40px; border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .char-btn {
+            width: 80px; height: 80px; border-radius: 15px; border: 4px solid transparent; cursor: pointer;
+            background-color: #f1f2f6; background-size: cover; background-position: center;
+            background-repeat: no-repeat;
+            transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .char-btn.active { border-color: #1e90ff; transform: scale(1.1); box-shadow: 0 8px 20px rgba(30,144,255,0.5); }
+
+        @media (max-width: 768px) {
+            .btn {
+                padding: 8px 16px;
+                font-size: 11px;
+                border-radius: 8px;
+            }
+            .hud-top {
+                top: 10px;
+                gap: 8px;
+                padding: 6px 16px;
+                font-size: 11px;
+                border-radius: 20px;
+            }
+            .stat span {
+                font-size: 13px;
+            }
+            .instructions {
+                font-size: 14px;
+                bottom: 100px;
+            }
+            .hud-controls {
+                bottom: 16px;
+                left: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="ui-layer">
+        <div class="hud-controls">
+            <button class="btn" onclick="buildLevel(currentLevel)">🔄 스테이지 재시작</button>
+        </div>
+        <div class="hud-top">
+            <div class="stat">STAGE <span id="val-level">1</span></div>
+            <div class="stat" id="destruction-container">파괴율 <span id="val-destruction">0</span>% <span style="font-size:11px; color:#dfe6e9;">(목표 80%)</span></div>
+            <div class="stat">포탄 <span id="val-bombs">3</span> <span style="font-size:11px; color:#dfe6e9; margin-left:3px;">(Lv.<span id="val-power" style="font-size:12px;">1</span>)</span></div>
+        </div>
+        <div id="instructions" class="instructions">캐릭터를 뒤로 당겨서 조준하세요!</div>
+    </div>
+    
+    <div id="overlay-start" class="overlay hidden">
+        <div class="modal" style="width: 550px;">
+            <h1 style="color: #0984e3; margin-bottom: 10px;">ANGRY FORTRESS</h1>
+            <p style="color: #d63031; font-weight: 800;">원하는 캐릭터를 선택하세요!</p>
+            <div id="char-select-container" style="display: flex; gap: 12px; justify-content: center; margin-bottom: 30px; padding: 10px; flex-wrap: wrap;">
+            </div>
+            <button class="btn btn-blue" onclick="startGame()" style="font-size: 20px; padding: 14px 45px;">게임 시작 🚀</button>
+        </div>
+    </div>
+
+    <div id="overlay-victory" class="overlay hidden">
+        <div class="modal">
+            <h1 style="color: #00b894;">STAGE CLEAR!</h1>
+            <div class="stars" id="victory-stars">⭐⭐⭐</div>
+            <p>완벽합니다! 다음 단계의 강력한 성에 도전하세요.</p>
+            <button class="btn btn-blue" onclick="nextLevel()" style="font-size: 16px; padding: 12px 30px;">다음 스테이지 ➡️</button>
+        </div>
+    </div>
+
+    <div id="overlay-gameover" class="overlay hidden">
+        <div class="modal">
+            <h1 style="color: #d63031;">STAGE FAILED</h1>
+            <div class="stars" style="filter: grayscale(100%);">⭐⭐⭐</div>
+            <p>포탄을 모두 소진했습니다...</p>
+            <button class="btn" onclick="buildLevel(currentLevel)" style="font-size: 16px; padding: 12px 30px;">다시 도전하기 🔄</button>
+        </div>
+    </div>
+
+    <div id="loading-msg" class="loading">에셋 로딩 중...</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script>
+        // ── AUDIO ENGINE (SoundManager) ──
+        class SoundManager {
+            constructor() {
+                this.soundOn = true;
+                this.pool = { pang: [], byung: [] };
+                this.urls = { pang: 'pang.mp3', byung: 'byung.mp3' };
+                this.ctx = null;
+                this.initialized = false;
+                
+                // Web Audio 디코딩 버퍼 보관함
+                this.buffers = {};
+                // file:// 및 CORS 제한 시 폴백용 Audio 객체 풀
+                this.fallbackPool = {};
+
+                // 비행음 합성용 노드
+                this.flightOsc = null;
+                this.flightGain = null;
+                this.flightFilter = null;
+                this.flightPlaying = false;
+
+                // BGM 관련 변수
+                this.bgmPlaying = false;
+                this.bgmTimer = null;
+            }
+            init() {
+                if (this.initialized) return;
+                try {
+                    // 1. Web Audio API 컨텍스트 초기화
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    this.initialized = true;
+                    
+                    // 2. 발사음 pang.mp3 버퍼 디코딩 시도
+                    this.loadAudioBuffer('pang', 'pang.mp3');
+                } catch(e) {
+                    console.warn("Web Audio API not supported", e);
+                }
+            }
+            async loadAudioBuffer(name, url) {
+                try {
+                    const response = await fetch(url);
+                    const arrayBuffer = await response.arrayBuffer();
+                    this.ctx.decodeAudioData(arrayBuffer, (decodedData) => {
+                        this.buffers[name] = decodedData;
+                    }, (err) => {
+                        this.fallbackLoad(name, url);
+                    });
+                } catch(e) {
+                    this.fallbackLoad(name, url);
+                }
+            }
+            fallbackLoad(name, url) {
+                console.warn("Fetch failed, fallback to Audio Object for " + name);
+                const audio = new Audio(url);
+                audio.load();
+                this.fallbackPool[name] = audio;
+            }
+            playBuffer(name, volume = 0.5, rate = 1.0) {
+                if (!this.soundOn) return;
+                if (!this.initialized) this.init();
+                
+                try {
+                    if (this.ctx && this.ctx.state === 'suspended') {
+                        this.ctx.resume();
+                    }
+                    
+                    const buffer = this.buffers[name];
+                    if (buffer) {
+                        // 0ms 레이턴시 버퍼 소스 노드 즉시 발사!
+                        const source = this.ctx.createBufferSource();
+                        const gainNode = this.ctx.createGain();
+                        
+                        source.buffer = buffer;
+                        source.playbackRate.value = rate;
+                        
+                        // 볼륨을 원래 볼륨 대비 대폭 증가시킴 (볼륨 증폭 요구 반영)
+                        gainNode.gain.setValueAtTime(volume * 2.2, this.ctx.currentTime);
+                        
+                        source.connect(gainNode);
+                        gainNode.connect(this.ctx.destination);
+                        source.start(0);
+                    } else if (this.fallbackPool[name]) {
+                        // 폴백 재생 (오디오 복제하여 지연 최소화 재생)
+                        const audio = this.fallbackPool[name].cloneNode(true);
+                        audio.volume = Math.min(1.0, volume * 1.6);
+                        audio.playbackRate = rate;
+                        // 파일 앞부분의 미세 무음 구간(0.04초)을 건너뛰어 발사 반응 속도를 칼박자로 튜닝!
+                        audio.currentTime = 0.04;
+                        audio.play().catch(e => {});
+                    }
+                } catch(e) {}
+            }
+            play(name, volume = 0.5, rate = 1.0) {
+                // 기존 play() 호환성 유지
+                this.playBuffer(name, volume, rate);
+            }
+            
+            // ── 사실적인 건물(돌/성벽) 파괴음 실시간 합성 (Web Audio API) ──
+            playStoneBreakSound(volume = 0.5, isBig = false) {
+                if (!this.soundOn || !this.initialized || !this.ctx) return;
+                try {
+                    if (this.ctx.state === 'suspended') {
+                        this.ctx.resume();
+                    }
+                    
+                    const now = this.ctx.currentTime;
+                    
+                    // 1. 화이트 노이즈로 바스락거리는 파편 돌가루 소리 합성
+                    const duration = isBig ? 0.7 : 0.22;
+                    const bufferSize = this.ctx.sampleRate * duration;
+                    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const output = noiseBuffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                    
+                    const noiseNode = this.ctx.createBufferSource();
+                    noiseNode.buffer = noiseBuffer;
+                    
+                    // 2. 돌 특유의 톤을 살리기 위한 밴드패스/로우패스 필터 필터링
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'bandpass';
+                    filter.frequency.setValueAtTime(isBig ? 170 : 680, now);
+                    filter.Q.setValueAtTime(isBig ? 1.8 : 2.5, now);
+                    
+                    const lp = this.ctx.createBiquadFilter();
+                    lp.type = 'lowpass';
+                    lp.frequency.setValueAtTime(isBig ? 350 : 1300, now);
+                    
+                    // 볼륨 감쇄 조절
+                    const gain = this.ctx.createGain();
+                    gain.gain.setValueAtTime(volume * 1.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + duration - 0.02);
+                    
+                    noiseNode.connect(filter);
+                    filter.connect(lp);
+                    lp.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    
+                    noiseNode.start(now);
+                    
+                    // 3. 대형 파괴 시에는 쿵쾅거리는 묵직한 저음(Rumble)과 파열 타격음(Crack) 추가 레이어링
+                    if (isBig) {
+                        // 저음 지진 울림음 (삼각파 슬라이드)
+                        const subOsc = this.ctx.createOscillator();
+                        const subGain = this.ctx.createGain();
+                        subOsc.type = 'triangle';
+                        subOsc.frequency.setValueAtTime(70, now);
+                        subOsc.frequency.exponentialRampToValueAtTime(30, now + 0.35);
+                        
+                        subGain.gain.setValueAtTime(volume * 0.9, now);
+                        subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+                        
+                        subOsc.connect(subGain);
+                        subGain.connect(this.ctx.destination);
+                        subOsc.start(now);
+                        subOsc.stop(now + 0.4);
+                        
+                        // 쩍 갈라지는 돌 파열음 (톱니파 피치 스윕)
+                        const crackOsc = this.ctx.createOscillator();
+                        const crackGain = this.ctx.createGain();
+                        crackOsc.type = 'sawtooth';
+                        crackOsc.frequency.setValueAtTime(420, now);
+                        crackOsc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+                        
+                        crackGain.gain.setValueAtTime(volume * 0.28, now);
+                        crackGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                        
+                        crackOsc.connect(crackGain);
+                        crackGain.connect(this.ctx.destination);
+                        crackOsc.start(now);
+                        crackOsc.stop(now + 0.12);
+                    }
+                } catch(e) {}
+            }
+
+            // ── 다이너마이트/적 돼지 폭발음 합성 (Web Audio API) ──
+            playExplosionSound(volume = 0.6) {
+                if (!this.soundOn || !this.initialized || !this.ctx) return;
+                try {
+                    if (this.ctx.state === 'suspended') {
+                        this.ctx.resume();
+                    }
+                    const now = this.ctx.currentTime;
+                    
+                    // 폭발 화염 노이즈
+                    const bufferSize = this.ctx.sampleRate * 0.65;
+                    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const output = noiseBuffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                    const noiseNode = this.ctx.createBufferSource();
+                    noiseNode.buffer = noiseBuffer;
+                    
+                    const lp = this.ctx.createBiquadFilter();
+                    lp.type = 'lowpass';
+                    lp.frequency.setValueAtTime(220, now);
+                    lp.frequency.exponentialRampToValueAtTime(70, now + 0.45);
+                    
+                    const gain = this.ctx.createGain();
+                    gain.gain.setValueAtTime(volume * 1.5, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+                    
+                    noiseNode.connect(lp);
+                    lp.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    noiseNode.start(now);
+                    
+                    // 화약 콰광 폭사음 (오실레이터)
+                    const osc = this.ctx.createOscillator();
+                    const oscGain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(120, now);
+                    osc.frequency.exponentialRampToValueAtTime(35, now + 0.3);
+                    
+                    oscGain.gain.setValueAtTime(volume * 1.1, now);
+                    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+                    
+                    osc.connect(oscGain);
+                    oscGain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } catch(e) {}
+            }
+            
+            // ── 포탄 비행음 (바람 가르는 휘이잉~) 합성 ──
+            startFlightSound() {
+                if (!this.soundOn || !this.initialized || !this.ctx) return;
+                if (this.flightPlaying) return;
+                try {
+                    if (this.ctx.state === 'suspended') {
+                        this.ctx.resume();
+                    }
+                    this.flightOsc = this.ctx.createOscillator();
+                    this.flightGain = this.ctx.createGain();
+                    this.flightFilter = this.ctx.createBiquadFilter();
+                    
+                    this.flightOsc.type = 'triangle'; // 부드러운 바람 마찰 파형
+                    this.flightOsc.frequency.value = 90;
+                    
+                    this.flightFilter.type = 'lowpass';
+                    this.flightFilter.frequency.value = 250;
+                    
+                    this.flightGain.gain.value = 0.001;
+                    
+                    this.flightOsc.connect(this.flightFilter);
+                    this.flightFilter.connect(this.flightGain);
+                    this.flightGain.connect(this.ctx.destination);
+                    
+                    this.flightOsc.start(0);
+                    this.flightPlaying = true;
+                } catch(e) {}
+            }
+            updateFlightSound(speed) {
+                if (!this.flightPlaying || !this.flightGain || !this.flightOsc) return;
+                try {
+                    // 포탄 비행 속도에 따라 사실적인 피치/볼륨 실시간 제어
+                    const targetFreq = 85 + Math.min(speed * 9, 320);
+                    const targetFilter = 220 + Math.min(speed * 18, 650);
+                    const targetVolume = Math.min(speed * 0.005, 0.06); 
+                    
+                    this.flightOsc.frequency.setTargetAtTime(targetFreq, this.ctx.currentTime, 0.06);
+                    this.flightFilter.frequency.setTargetAtTime(targetFilter, this.ctx.currentTime, 0.06);
+                    this.flightGain.gain.setTargetAtTime(targetVolume, this.ctx.currentTime, 0.06);
+                } catch(e) {}
+            }
+            stopFlightSound() {
+                if (!this.flightPlaying) return;
+                try {
+                    if (this.flightOsc) {
+                        this.flightOsc.stop(0);
+                        this.flightOsc.disconnect();
+                    }
+                    if (this.flightGain) this.flightGain.disconnect();
+                    if (this.flightFilter) this.flightFilter.disconnect();
+                } catch(e) {}
+                this.flightOsc = null;
+                this.flightGain = null;
+                this.flightFilter = null;
+                this.flightPlaying = false;
+            }
+            
+            // ── 잔잔한 8비트 배경음악 합성 ──
+            playBGM() {
+                if (!this.soundOn || !this.initialized || !this.ctx) return;
+                if (this.bgmPlaying) return;
+                this.bgmPlaying = true;
+                
+                const notes = [
+                    220, 220, 262, 294, 330, 330, 294, 262,
+                    220, 220, 262, 294, 330, 330, 294, 262,
+                    196, 196, 247, 294, 330, 330, 294, 247,
+                    220, 220, 262, 294, 220, 220, 0, 0
+                ];
+                let idx = 0;
+                const nextNote = () => {
+                    if (!this.soundOn || !this.bgmPlaying || !this.ctx) return;
+                    try {
+                        const freq = notes[idx % notes.length];
+                        if (freq > 0 && this.ctx.state !== 'suspended') {
+                            const osc = this.ctx.createOscillator();
+                            const gain = this.ctx.createGain();
+                            
+                            osc.type = 'sine'; // 부드러운 사인파
+                            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                            
+                            // 극도로 조용하게 배경에 안착 (유저 요청 반영: BGM 작게 나오면 좋겠어)
+                            gain.gain.setValueAtTime(0.012, this.ctx.currentTime); 
+                            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.45);
+                            
+                            osc.connect(gain);
+                            gain.connect(this.ctx.destination);
+                            
+                            osc.start(0);
+                            osc.stop(this.ctx.currentTime + 0.5);
+                        }
+                        idx++;
+                        this.bgmTimer = setTimeout(nextNote, 420);
+                    } catch(e) {}
+                };
+                nextNote();
+            }
+            stopBGM() {
+                this.bgmPlaying = false;
+                clearTimeout(this.bgmTimer);
+            }
+        }
+        const sounds = new SoundManager();
+
+        const initAudioOnGesture = () => {
+            sounds.init();
+            sounds.playBGM(); // 최초 터치 시 BGM 플레이 시작!
+            document.removeEventListener('pointerdown', initAudioOnGesture);
+            document.removeEventListener('touchstart', initAudioOnGesture);
+        };
+        document.addEventListener('pointerdown', initAudioOnGesture);
+        document.addEventListener('touchstart', initAudioOnGesture);
+
+        const Engine = Matter.Engine,
+              Runner = Matter.Runner,
+              Bodies = Matter.Bodies,
+              Composite = Matter.Composite,
+              Events = Matter.Events,
+              Body = Matter.Body;
+
+        const engine = Engine.create({ positionIterations: 16, velocityIterations: 12, enableSleeping: true });
+        const world = engine.world;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const LOGICAL_W = 1280;
+        const LOGICAL_H = 720;
+
+        // ── DYNAMIC CAMERA SYSTEM ──
+        const camera = {
+            x: 520,
+            y: 360,
+            scale: 1.0,
+            targetX: 520,
+            targetY: 360,
+            targetScale: 1.0,
+            baseScale: 1.0,
+            mode: 'intro', // 'intro', 'ready', 'flying', 'manual'
+            introTimer: 0,
+            isDragging: false,
+            dragStartPos: { x: 0, y: 0 },
+            cameraStartPos: { x: 0, y: 0 },
+            maxScrollX: 3200
+        };
+
+        let anchor = { x: 220, y: LOGICAL_H - 180 }; 
+        
+        let currentLevel = 0;
+        let bombsLeft = 0;
+        let gameState = 'init'; 
+        let bomb = null;
+        let bombDragPos = { x: 0, y: 0 };
+        let bombIdleFrames = 0;
+        
+        let castleBodies = [];
+        let enemies = [];
+        let particles = [];
+        let groundBody = null;
+        let currentCharIndex = 1;
+        let initialBlocks = 0;
+        let destroyedBlocks = 0;
+
+        const totalLevels = 10; const totalCharacters = 4; const totalBgs = 4; const totalBobs = 4;
+        const images = {};
+
+        let imagesLoaded = 0; 
+        const targetLoaded = 1 + totalBgs + totalCharacters + totalBobs + totalLevels;
+        
+        let loadFallback = setTimeout(() => {
+            if(imagesLoaded < targetLoaded) {
+                imagesLoaded = targetLoaded;
+                checkLoadComplete();
+            }
+        }, 3000);
+
+        function checkLoadComplete() {
+            imagesLoaded++;
+            if(imagesLoaded >= targetLoaded) {
+                clearTimeout(loadFallback);
+                document.getElementById('loading-msg').style.display = 'none';
+                initCharSelect();
+            }
+        }
+
+        function loadImg(key, path) {
+            images[key] = new Image();
+            images[key].onload = checkLoadComplete;
+            images[key].onerror = checkLoadComplete; 
+            images[key].src = path;
+        }
+
+        loadImg('enemy', './assets/enemy-01.png');
+        for(let i=1; i<=totalBgs; i++) loadImg('bg'+i, `./assets/bg-0${i}.jpg`);
+        for(let i=1; i<=totalCharacters; i++) loadImg('character'+i, `./assets/character${i}.png`);
+        for(let i=1; i<=totalBobs; i++) loadImg('bob'+i, `./assets/bob-0${i}.png`);
+        for(let i=1; i<=totalLevels; i++) loadImg('castle'+i, `./assets/castle-${i < 10 ? '0'+i : i}.png`);
+
+        function initCharSelect() {
+            let container = document.getElementById('char-select-container');
+            container.innerHTML = '';
+            for(let i=1; i<=totalCharacters; i++) {
+                let btn = document.createElement('div');
+                btn.className = 'char-btn' + (i === currentCharIndex ? ' active' : '');
+                if(images['character'+i].complete && images['character'+i].width > 0) {
+                    btn.style.backgroundImage = `url('./assets/character${i}.png')`;
+                } else {
+                    btn.innerText = `Char ${i}`; 
+                    btn.style.display = 'flex'; 
+                    btn.style.alignItems = 'center'; 
+                    btn.style.justifyContent = 'center'; 
+                    btn.style.color = '#fff'; 
+                    btn.style.fontWeight = 'bold';
+                }
+                btn.onclick = () => {
+                    currentCharIndex = i;
+                    Array.from(container.children).forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+                container.appendChild(btn);
+            }
+            document.getElementById('overlay-start').classList.remove('hidden');
+        }
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const W = canvas.width;
+            const H = canvas.height;
+            if (H > W) {
+                // 세로형 화면: 지형과 캐릭터, 성벽이 큼직하게 포커싱되도록 줌 확대
+                camera.baseScale = Math.max(0.65, W / 820);
+            } else {
+                // 가로형 화면
+                camera.baseScale = Math.max(0.5, W / 1200);
+            }
+            camera.baseScale = Math.min(2.0, camera.baseScale);
+            updateCameraTarget();
+        }
+        window.addEventListener('resize', resize);
+
+        function updateCameraTarget() {
+            const W = canvas.width;
+            const H = canvas.height;
+            const isPortrait = H > W;
+
+            if (camera.mode === 'intro') {
+                // 인트로 모드: 성벽이 있는 우측 전경을 비춤
+                let focusX = 850;
+                if (castleBodies.length > 0) {
+                    focusX = castleBodies[0].position.x;
+                }
+                camera.targetScale = camera.baseScale * 0.85; 
+                camera.targetX = focusX;
+                camera.targetY = LOGICAL_H - 120 - (H / 2) / camera.targetScale;
+                camera.targetY = Math.max(250, Math.min(500, camera.targetY));
+            } 
+            else if (camera.mode === 'ready') {
+                // 대기 모드: 새총(220)과 첫번째 성벽의 중간 영역을 비춤
+                let focusX = 520;
+                if (castleBodies.length > 0) {
+                    focusX = (220 + castleBodies[0].position.x) / 2;
+                }
+                camera.targetScale = camera.baseScale;
+                camera.targetX = focusX;
+                camera.targetY = LOGICAL_H - 120 - (H / 2) / camera.targetScale;
+                camera.targetY = Math.max(250, Math.min(500, camera.targetY));
+            } 
+            else if (camera.mode === 'flying' && bomb) {
+                // 비행 추적 모드: 포탄의 위치를 쫓아감
+                camera.targetX = bomb.position.x;
+                
+                const speed = Math.hypot(bomb.velocity.x, bomb.velocity.y);
+                const heightFromBase = Math.max(0, 540 - bomb.position.y);
+                
+                let dynamicScale = camera.baseScale;
+                if (speed > 14 || heightFromBase > 160) {
+                    dynamicScale *= 0.72;
+                }
+                camera.targetScale = Math.max(0.35, dynamicScale);
+                camera.targetY = bomb.position.y;
+                camera.targetY = Math.max(250, Math.min(500, camera.targetY));
+            }
+        }
+
+        function startGame() {
+            document.getElementById('overlay-start').classList.add('hidden');
+            resize();
+            
+            groundBody = Bodies.rectangle(3000, LOGICAL_H + 50, 8000, 100, { isStatic: true, friction: 1 });
+            Composite.add(world, groundBody);
+            
+            buildLevel(0);
+            Runner.run(Runner.create(), engine);
+            requestAnimationFrame(render);
+        }
+
+        function buildLevel(lvlIndex) {
+            currentLevel = lvlIndex;
+            
+            let maxTier = Math.min(10, 1 + Math.floor(currentLevel / 4)); 
+            let numCastles = 1 + (currentLevel % 4); 
+            
+            let tiers = [];
+            for(let i=0; i<numCastles; i++) {
+                let t = maxTier - i;
+                if (t < 1) t = 1 + Math.floor(Math.random() * maxTier);
+                tiers.push(Math.min(10, t));
+            }
+
+            bombsLeft = 3 + numCastles * 1 + Math.floor(currentLevel / 3);
+            
+            gameState = 'ready'; 
+            bombIdleFrames = 0;
+            initialBlocks = 0; 
+            destroyedBlocks = 0;
+            if (bomb) { Composite.remove(world, bomb); bomb = null; }
+            if (castleBodies.length > 0) { Composite.remove(world, castleBodies); castleBodies = []; }
+            if (enemies.length > 0) { Composite.remove(world, enemies); enemies = []; }
+            particles = [];
+            
+            // 카메라 설정 리셋 & 인트로 시작
+            camera.mode = 'intro';
+            camera.introTimer = 0;
+            camera.x = 220; 
+            camera.y = 400;
+            camera.scale = camera.baseScale;
+            
+            let currentXOffset = LOGICAL_W * 0.45; 
+            let baseDensity = 0.04 + (currentLevel * 0.006);
+
+            for (let i = 0; i < numCastles; i++) {
+                let castleTier = tiers[i];
+                let currentCastleImg = images['castle' + castleTier];
+                if (!currentCastleImg || !currentCastleImg.complete || currentCastleImg.width === 0) currentCastleImg = images.castle1;
+
+                let targetW = currentCastleImg.width || 300;
+                let targetH = currentCastleImg.height || 400;
+
+                let maxW = LOGICAL_W * 0.35; 
+                let maxH = LOGICAL_H * 0.7;
+                
+                if (targetW > maxW || targetH > maxH) {
+                    let scaleToFit = Math.min(maxW / targetW, maxH / targetH);
+                    targetW *= scaleToFit; targetH *= scaleToFit;
+                }
+                if (targetH < 200) {
+                    let scaleUp = 200 / targetH;
+                    targetW *= scaleUp; targetH *= scaleUp;
+                }
+
+                const startX = currentXOffset;
+                const startY = LOGICAL_H - targetH - 10;
+                currentXOffset += targetW + 40; 
+                
+                const cols = Math.max(3, Math.floor(targetW / 60)); 
+                const rows = Math.max(3, Math.floor(targetH / 60));
+                const blockW = targetW / cols; 
+                const blockH = targetH / rows;
+                let imgBlockW = currentCastleImg.width ? currentCastleImg.width / cols : blockW;
+                let imgBlockH = currentCastleImg.height ? currentCastleImg.height / rows : blockH;
+
+                for(let r = 0; r < rows; r++) {
+                    for(let c = 0; c < cols; c++) {
+                        let bx = startX + c * blockW + blockW/2; let by = startY + r * blockH + blockH/2;
+                        let block = Bodies.rectangle(bx, by, blockW, blockH, {
+                            label: 'castleBlock', density: baseDensity, friction: 0.8, frictionStatic: 10.0, restitution: 0.05, sleepThreshold: 15
+                        });
+                        Matter.Sleeping.set(block, true); 
+                        block.width = blockW; block.height = blockH;
+                        block.imgSx = c * imgBlockW; block.imgSy = r * imgBlockH;
+                        block.imgBlockW = imgBlockW; block.imgBlockH = imgBlockH; block.castleImg = currentCastleImg;
+                        block.health = 50 + currentLevel * 20;
+                        castleBodies.push(block);
+                    }
+                }
+                
+                const er = Math.max(25, LOGICAL_W * 0.025);
+                let numEnemiesPerCastle = 1 + Math.floor(Math.random() * 3); 
+                for(let j=0; j<numEnemiesPerCastle; j++) {
+                    let ex, ey;
+                    if (j < cols) {
+                        let colIndex = Math.floor(cols * ((j + 0.5) / Math.min(numEnemiesPerCastle, cols)));
+                        ex = startX + colIndex * blockW + blockW/2;
+                        ey = startY - er - 2; 
+                    } else {
+                        ex = startX + (Math.random() > 0.5 ? targetW + 30 : -30);
+                        ey = LOGICAL_H - 10 - er;
+                    }
+                    let enemy = Bodies.circle(ex, ey, er, { label: 'enemy', density: 0.001, friction: 0.5, restitution: 0.3 });
+                    Matter.Sleeping.set(enemy, true);
+                    enemy.radius = er; enemy.health = 100; enemies.push(enemy);
+                }
+            }
+            
+            Composite.add(world, castleBodies); Composite.add(world, enemies);
+            initialBlocks = castleBodies.length;
+            bombDragPos = { x: anchor.x, y: anchor.y };
+            updateHUD();
+            document.getElementById('overlay-victory').classList.add('hidden');
+            document.getElementById('overlay-gameover').classList.add('hidden');
+            document.getElementById('instructions').style.opacity = '1';
+        }
+
+        function nextLevel() { buildLevel(currentLevel + 1); }
+
+        function checkWinCondition() {
+            if (gameState === 'over') return;
+            let ratio = initialBlocks > 0 ? Math.floor((destroyedBlocks / initialBlocks) * 100) : 100;
+            let targetRatio = Math.min(95, 80 + Math.floor(currentLevel / 2));
+            if (ratio >= targetRatio) {
+                gameState = 'over';
+                let stars = bombsLeft >= 2 ? '⭐⭐⭐' : (bombsLeft === 1 ? '⭐⭐' : '⭐');
+                document.getElementById('victory-stars').innerText = stars;
+                setTimeout(() => document.getElementById('overlay-victory').classList.remove('hidden'), 1500);
+            }
+        }
+
+        function updateHUD() {
+            document.getElementById('val-level').innerText = currentLevel + 1;
+            document.getElementById('val-bombs').innerText = bombsLeft;
+            let ratio = initialBlocks > 0 ? Math.floor((destroyedBlocks / initialBlocks) * 100) : 0;
+            let targetRatio = Math.min(95, 80 + Math.floor(currentLevel / 2));
+            
+            let destructionEl = document.getElementById('destruction-container');
+            if (destructionEl) {
+                destructionEl.innerHTML = `파괴율 <span id="val-destruction">${Math.min(ratio, 100)}</span>% <span style="font-size:11px; color:#dfe6e9;">(목표 ${targetRatio}%)</span>`;
+            }
+            document.getElementById('val-power').innerText = (currentLevel % totalBobs) + 1;
+        }
+
+        Events.on(engine, 'collisionStart', event => {
+            let bombHit = false;
+            event.pairs.forEach(pair => {
+                if (pair.bodyA.label === 'bomb' || pair.bodyB.label === 'bomb') bombHit = true;
+            });
+            if (bombHit) {
+                Composite.allBodies(world).forEach(b => Matter.Sleeping.set(b, false));
+            }
+
+            event.pairs.forEach(pair => {
+                let a = pair.bodyA; let b = pair.bodyB;
+
+                if (a.label === 'bomb' || b.label === 'bomb') {
+                    let target = a.label === 'bomb' ? b : a;
+                    let bombBody = a.label === 'bomb' ? a : b;
+                    
+                    let fallMultiplier = 1;
+                    if (bombBody.velocity.y > 8) {
+                        fallMultiplier = 1 + (bombBody.velocity.y - 8) * 0.8; 
+                    }
+
+                    if (target.label === 'enemy') damageEnemy(target, 1000); 
+                    
+                    if (target.label === 'castleBlock') {
+                        damageBlock(target, 100 * fallMultiplier); 
+                        
+                        if (fallMultiplier > 4) {
+                            createParticles(bombBody.position.x, bombBody.position.y, '#e15f41', 40);
+                            let bodies = Composite.allBodies(world);
+                            bodies.forEach(bd => {
+                                if (bd === bombBody || bd.isStatic || bd.label !== 'castleBlock') return;
+                                let dx = bd.position.x - bombBody.position.x;
+                                let dy = bd.position.y - bombBody.position.y;
+                                let dist = Math.hypot(dx, dy);
+                                if (dist < 180) { 
+                                    damageBlock(bd, 60 * fallMultiplier * ((180-dist)/180));
+                                }
+                            });
+                        }
+                    } 
+                }
+
+                let speedA = Math.hypot(a.velocity.x, a.velocity.y); let speedB = Math.hypot(b.velocity.x, b.velocity.y);
+                let impact = speedA + speedB;
+                
+                if (impact > 5) {
+                    let damage = impact * 8;
+                    if (a.label === 'castleBlock' && b.label === 'castleBlock') {
+                        damage *= 0.1;
+                    }
+
+                    if (a.label === 'enemy') damageEnemy(a, damage); 
+                    if (b.label === 'enemy') damageEnemy(b, damage);
+                    if (a.label === 'castleBlock') damageBlock(a, damage); 
+                    if (b.label === 'castleBlock') damageBlock(b, damage);
+                }
+            });
+        });
+
+        Events.on(engine, 'collisionActive', event => {
+            event.pairs.forEach(pair => {
+                let a = pair.bodyA; let b = pair.bodyB;
+                if ((a.label === 'castleBlock' && b.label === 'enemy') || (a.label === 'enemy' && b.label === 'castleBlock')) {
+                    let enemy = a.label === 'enemy' ? a : b;
+                    let block = a.label === 'castleBlock' ? a : b;
+                    if (block.position.y < enemy.position.y - 10) {
+                        damageEnemy(enemy, 2); 
+                    }
+                }
+            });
+        });
+
+        Events.on(engine, 'beforeUpdate', () => {
+            enemies.forEach(en => { if (en.position.y > LOGICAL_H + 100 || en.position.x > 8000 || en.position.x < -1000) damageEnemy(en, 1000); });
+            castleBodies.forEach(cb => { if (cb.position.y > LOGICAL_H + 50 || cb.position.x > 8000 || cb.position.x < -1000) damageBlock(cb, 1000); });
+        });
+
+        function damageBlock(block, damage) {
+            if (block.isDestroyed) return;
+            block.health -= damage;
+            
+            if (damage > 30) {
+                const volume = Math.min(0.1 + (damage / 400), 0.5);
+                sounds.playStoneBreakSound(volume, false); // 소형 돌 깨지는 소리
+            }
+            
+            if (block.health <= 0) {
+                block.isDestroyed = true;
+                destroyedBlocks++;
+                createParticles(block.position.x, block.position.y, '#f1c40f', 15);
+                Composite.remove(world, block);
+                castleBodies = castleBodies.filter(b => b !== block);
+                updateHUD();
+                checkWinCondition();
+                
+                sounds.playStoneBreakSound(0.7, true); // 대형 건물 무너지는 소리
+            }
+        }
+
+        function damageEnemy(en, damage) {
+            if (en.isDead) return;
+            en.health -= damage;
+            
+            if (damage > 20) {
+                const volume = Math.min(0.2 + (damage / 300), 0.6);
+                sounds.playExplosionSound(volume);
+            }
+            
+            if (en.health <= 0) {
+                en.isDead = true;
+                createParticles(en.position.x, en.position.y, '#ff4757', 60);
+                
+                let bodies = Composite.allBodies(world);
+                bodies.forEach(b => {
+                    if (b === en || b.isStatic) return;
+                    let dx = b.position.x - en.position.x;
+                    let dy = b.position.y - en.position.y;
+                    let dist = Math.hypot(dx, dy);
+                    if (dist < 200) {
+                        let force = (200 - dist) / 200 * 0.1 * b.mass; 
+                        Body.applyForce(b, b.position, { x: (dx/dist)*force, y: (dy/dist)*force - force*0.3 });
+                        Matter.Sleeping.set(b, false);
+                        if (b.label === 'castleBlock') damageBlock(b, force * 500);
+                    }
+                });
+
+                Composite.remove(world, en);
+                enemies = enemies.filter(e => e !== en);
+                
+                sounds.playExplosionSound(0.8); // 적 소멸 대형 폭발
+            }
+        }
+
+        function createParticles(x, y, color, count) {
+            for(let i=0; i<count; i++) { particles.push({ x: x, y: y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15 - 5, life: 1.0, color: color }); }
+        }
+
+        function nextBomb() {
+            if (gameState === 'over') return;
+            sounds.stopFlightSound(); // 비행음 정지
+            Composite.remove(world, bomb); bomb = null; bombsLeft--; updateHUD();
+            
+            let ratio = initialBlocks > 0 ? Math.floor((destroyedBlocks / initialBlocks) * 100) : 100;
+            let targetRatio = Math.min(95, 80 + Math.floor(currentLevel / 2));
+            if (ratio < targetRatio) {
+                if (bombsLeft <= 0) {
+                    gameState = 'over'; setTimeout(() => document.getElementById('overlay-gameover').classList.remove('hidden'), 1000);
+                } else { 
+                    gameState = 'ready'; 
+                    bombDragPos = { x: anchor.x, y: anchor.y }; 
+                    camera.mode = 'ready'; // 원래 위치로 자동 복귀
+                }
+            }
+        }
+
+        function getPointerPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            let cx = e.clientX; let cy = e.clientY;
+            if (e.touches && e.touches.length > 0) { 
+                cx = e.touches[0].clientX; 
+                cy = e.touches[0].clientY; 
+            }
+            const rx = cx - rect.left;
+            const ry = cy - rect.top;
+            
+            // 카메라 스케일 및 오프셋 역산하여 월드 좌표로 정확히 매핑
+            const worldX = (rx - canvas.width / 2) / camera.scale + camera.x;
+            const worldY = (ry - canvas.height / 2) / camera.scale + camera.y;
+            return { x: worldX, y: worldY };
+        }
+
+        canvas.addEventListener('pointerdown', e => {
+            if (gameState !== 'ready') return;
+            const pos = getPointerPos(e);
+            
+            const isMobile = window.innerWidth < 768;
+            const clickThreshold = isMobile ? 150 : 90;
+            if (Math.hypot(pos.x - anchor.x, pos.y - anchor.y) < clickThreshold) {
+                gameState = 'dragging';
+                document.getElementById('instructions').style.opacity = '0';
+            } else {
+                camera.isDragging = true;
+                camera.dragStartPos = { x: e.clientX, y: e.clientY };
+                camera.cameraStartPos = { x: camera.x, y: camera.y };
+                camera.mode = 'manual';
+            }
+        });
+
+        window.addEventListener('pointermove', e => {
+            if (gameState === 'dragging') {
+                const pos = getPointerPos(e);
+                let dx = pos.x - anchor.x; let dy = pos.y - anchor.y; let dist = Math.hypot(dx, dy);
+                const maxDrag = LOGICAL_W * 0.15;
+                if (dist > maxDrag) { dx = (dx / dist) * maxDrag; dy = (dy / dist) * maxDrag; }
+                bombDragPos = { x: anchor.x + dx, y: anchor.y + dy };
+            }
+            else if (camera.isDragging && (!e.touches || e.touches.length === 1)) {
+                const dx = e.clientX - camera.dragStartPos.x;
+                const dy = e.clientY - camera.dragStartPos.y;
+                camera.targetX = camera.cameraStartPos.x - dx / camera.scale;
+                camera.targetY = camera.cameraStartPos.y - dy / camera.scale;
+                
+                camera.targetX = Math.max(100, Math.min(camera.maxScrollX, camera.targetX));
+                camera.targetY = Math.max(200, Math.min(600, camera.targetY));
+                camera.x = camera.targetX;
+                camera.y = camera.targetY;
+            }
+        });
+
+        window.addEventListener('pointerup', e => {
+            if (gameState === 'dragging') {
+                gameState = 'flying'; 
+                bombIdleFrames = 0;
+                camera.mode = 'flying';
+                
+                // 당긴 파워에 따른 동적 발사음 피치/볼륨 제어
+                let dx = anchor.x - bombDragPos.x; 
+                let dy = anchor.y - bombDragPos.y;
+                let dragDist = Math.hypot(dx, dy);
+                const maxDrag = LOGICAL_W * 0.15;
+                const powerRatio = Math.min(1.0, dragDist / maxDrag);
+                
+                const volume = 0.35 + powerRatio * 0.45;
+                const rate = 1.3 - powerRatio * 0.5; // 강할수록 중후하게, 약할수록 쾌활하게
+                
+                sounds.play('pang', volume, rate);
+                sounds.startFlightSound(); // 비행 소음 활성화
+                
+                const br = LOGICAL_W * 0.012; 
+                let bombDensity = 0.5 + (currentLevel * 0.1);
+
+                bomb = Bodies.circle(bombDragPos.x, bombDragPos.y, br, { label: 'bomb', density: bombDensity, friction: 0.5, restitution: 0.2 });
+                bomb.radius = br; Composite.add(world, bomb);
+                
+                Body.setVelocity(bomb, { x: dx * 0.25, y: dy * 0.25 });
+                Body.setAngularVelocity(bomb, (Math.random()-0.5) * 0.5);
+            }
+            camera.isDragging = false;
+        });
+
+        canvas.addEventListener('touchstart', e => {
+            if (e.touches && e.touches.length === 2) {
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                touchStartDist = Math.hypot(dx, dy);
+                touchStartScale = camera.scale;
+                camera.mode = 'manual';
+            }
+        });
+
+        canvas.addEventListener('touchmove', e => {
+            if (e.touches && e.touches.length === 2 && touchStartDist > 0) {
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const dist = Math.hypot(dx, dy);
+                const factor = dist / touchStartDist;
+                camera.targetScale = touchStartScale * factor;
+                camera.targetScale = Math.max(0.35, Math.min(2.5, camera.targetScale));
+                camera.scale = camera.targetScale;
+            }
+        });
+
+        canvas.addEventListener('touchend', e => {
+            if (!e.touches || e.touches.length < 2) touchStartDist = 0;
+        });
+
+        function drawEnemy(ctx, radius) {
+            ctx.beginPath(); ctx.arc(0, 0, radius, 0, Math.PI*2);
+            ctx.fillStyle = '#2ecc71'; ctx.fill();
+            ctx.lineWidth = 3; ctx.strokeStyle = '#27ae60'; ctx.stroke();
+            ctx.beginPath(); ctx.ellipse(0, radius*0.2, radius*0.4, radius*0.25, 0, 0, Math.PI*2);
+            ctx.fillStyle = '#a8e6cf'; ctx.fill();
+            ctx.fillStyle = '#1e8449';
+            ctx.beginPath(); ctx.arc(-radius*0.15, radius*0.2, radius*0.08, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(radius*0.15, radius*0.2, radius*0.08, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.beginPath(); ctx.arc(-radius*0.35, -radius*0.25, radius*0.2, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(radius*0.35, -radius*0.25, radius*0.2, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'black';
+            ctx.beginPath(); ctx.arc(-radius*0.35, -radius*0.25, radius*0.08, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(radius*0.35, -radius*0.25, radius*0.08, 0, Math.PI*2); ctx.fill();
+        }
+
+        function render() {
+            if (gameState === 'init') return; 
+
+            if (gameState === 'flying' && bomb) {
+                let speed = Math.hypot(bomb.velocity.x, bomb.velocity.y);
+                let angularSpeed = Math.abs(bomb.angularVelocity);
+                
+                // 비행음 실시간 속도 반응 업데이트
+                sounds.updateFlightSound(speed);
+                
+                if (bomb.isSleeping || (speed < 1.5 && angularSpeed < 0.2)) bombIdleFrames++; 
+                else bombIdleFrames = 0;
+                
+                if (bomb.position.x > 7000 || bomb.position.y > LOGICAL_H + 200 || bombIdleFrames > 90) { 
+                    nextBomb(); 
+                } 
+            }
+            
+            if (camera.mode === 'intro') {
+                camera.introTimer++;
+                if (camera.introTimer > 160) {
+                    camera.mode = 'ready';
+                }
+            }
+            
+            updateCameraTarget();
+
+            // 카메라 Lerp 보간 동작
+            camera.x += (camera.targetX - camera.x) * 0.06;
+            camera.y += (camera.targetY - camera.y) * 0.06;
+            camera.scale += (camera.targetScale - camera.scale) * 0.06;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            
+            // 화면 중심 기준 드로잉 매트릭스 변환
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.scale(camera.scale, camera.scale);
+            ctx.translate(-camera.x, -camera.y);
+            
+            let bgIndex = (currentLevel % totalBgs) + 1;
+            let currentBg = images['bg' + bgIndex];
+            if (currentBg && currentBg.complete && currentBg.width > 0) {
+                let bgW = 1280 * 2.0;
+                let parallaxOffset = (camera.x * 0.3) % bgW;
+                ctx.drawImage(currentBg, camera.x - parallaxOffset - bgW/2, 0, bgW, LOGICAL_H);
+                ctx.drawImage(currentBg, camera.x - parallaxOffset + bgW/2, 0, bgW, LOGICAL_H);
+                ctx.drawImage(currentBg, camera.x - parallaxOffset + bgW*1.5, 0, bgW, LOGICAL_H);
+            } else { 
+                ctx.fillStyle = '#74b9ff'; 
+                ctx.fillRect(camera.x - canvas.width/camera.scale, 0, canvas.width*2/camera.scale, LOGICAL_H); 
+            }
+            
+            ctx.fillStyle = '#2d3436'; 
+            ctx.fillRect(-1000, LOGICAL_H - 10, 8000, 200);
+            
+            // 캐릭터 가로/세로 크기를 1:1인 92px x 92px로 설정하여 찌그러짐 수정
+            const charW = 92; const charH = 92;
+            
+            // 받침대(망루) 영역 계산
+            const pedX = anchor.x - charW - 30;
+            const pedY = anchor.y + charH/2;
+            const pedW = charW + 80;
+            const pedH = LOGICAL_H - pedY;
+
+            // 1. 성벽 돌 망루 몸체 그리기 (그라데이션과 벽돌 문양)
+            let stoneGrad = ctx.createLinearGradient(pedX, pedY, pedX + pedW, pedY);
+            stoneGrad.addColorStop(0, '#534d47');  // 고풍스러운 짙은 회갈색
+            stoneGrad.addColorStop(0.3, '#3e3832');
+            stoneGrad.addColorStop(1, '#27231e');
+            ctx.fillStyle = stoneGrad;
+            ctx.fillRect(pedX, pedY, pedW, pedH);
+
+            // 벽돌 이음새 격자 그리기
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)';
+            ctx.lineWidth = 2.5;
+            const rowHeight = 25;
+            for (let y = pedY + rowHeight; y < LOGICAL_H; y += rowHeight) {
+                ctx.beginPath();
+                ctx.moveTo(pedX, y);
+                ctx.lineTo(pedX + pedW, y);
+                ctx.stroke();
+            }
+            let rowIndex = 0;
+            for (let y = pedY; y < LOGICAL_H; y += rowHeight) {
+                const shift = (rowIndex % 2) * 20;
+                for (let x = pedX + 15 + shift; x < pedX + pedW; x += 40) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x, y + rowHeight);
+                    ctx.stroke();
+                }
+                rowIndex++;
+            }
+
+            // 돌탑 테두리 획
+            ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(pedX, pedY, pedW, pedH);
+
+            // 2. 상단 돌 마감판 (Stone Cap / Ledge) - 잔디를 걷어내고 깔끔한 석판으로 변경
+            ctx.fillStyle = '#7a6f64'; // 조금 더 밝고 깔끔한 마감 석재 톤
+            ctx.fillRect(pedX - 4, pedY, pedW + 8, 14); // 돌출된 단단한 돌판
+            
+            // 입체감을 살리는 윗면 하이라이트 얇은 선 그리기
+            ctx.strokeStyle = '#9c8e81';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(pedX - 4, pedY + 1);
+            ctx.lineTo(pedX + pedW + 4, pedY + 1);
+            ctx.stroke();
+
+            // 돌판 테두리 선
+            ctx.strokeStyle = '#27231e';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(pedX - 4, pedY, pedW + 8, 14);
+
+            if (gameState === 'dragging') {
+                let vx = (anchor.x - bombDragPos.x) * 0.25; let vy = (anchor.y - bombDragPos.y) * 0.25;
+                let px = anchor.x; let py = anchor.y;
+                ctx.beginPath(); ctx.moveTo(px, py);
+                for(let i=0; i<10; i++) { 
+                    px += vx; py += vy; vy += engine.gravity.y * engine.gravity.scale;
+                    if (i % 2 === 0) { ctx.arc(px, py, 4, 0, Math.PI*2); ctx.moveTo(px, py); }
+                }
+                ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fill();
+            }
+
+            let charImg = images['character' + currentCharIndex];
+            if (charImg && charImg.complete && charImg.width > 0) {
+                // 이미지 내부의 하단 투명 마진을 고려해 Y좌표를 10px 아래로 내려서 돌판 표면에 완벽하게 안착시킴
+                ctx.drawImage(charImg, anchor.x - charW - 10, anchor.y - charH/2 + 10, charW, charH);
+            } else {
+                ctx.fillStyle = '#0984e3'; ctx.fillRect(anchor.x - charW - 10, anchor.y - charH/2 + 10, charW, charH);
+            }
+            
+            const readyBr = LOGICAL_W * 0.012;
+            if (gameState === 'dragging' || gameState === 'ready') {
+                let bobIndex = (currentLevel % totalBobs) + 1;
+                let currentBobImg = images['bob' + bobIndex];
+                if (currentBobImg && currentBobImg.complete && currentBobImg.width > 0) {
+                    ctx.drawImage(currentBobImg, bombDragPos.x - readyBr*1.5, bombDragPos.y - readyBr*1.5, readyBr*3, readyBr*3);
+                } else {
+                    ctx.beginPath(); ctx.arc(bombDragPos.x, bombDragPos.y, readyBr, 0, Math.PI*2); ctx.fillStyle = '#d63031'; ctx.fill();
+                }
+            }
+            
+            const bodies = Composite.allBodies(world);
+            for (let b of bodies) {
+                if (b.isStatic) continue;
+                ctx.save(); ctx.translate(b.position.x, b.position.y); ctx.rotate(b.angle);
+                
+                if (b.label === 'castleBlock') {
+                    if (b.castleImg && b.castleImg.complete && b.castleImg.width > 0) {
+                        ctx.drawImage(b.castleImg, b.imgSx, b.imgSy, b.imgBlockW, b.imgBlockH, -b.width/2 - 0.5, -b.height/2 - 0.5, b.width + 1.5, b.height + 1.5);
+                    } else {
+                        ctx.fillStyle = '#f1c40f'; ctx.fillRect(-b.width/2, -b.height/2, b.width, b.height); ctx.strokeStyle = '#e67e22'; ctx.strokeRect(-b.width/2, -b.height/2, b.width, b.height);
+                    }
+                } else if (b.label === 'bomb') {
+                    let bobIndex = (currentLevel % totalBobs) + 1;
+                    let currentBobImg = images['bob' + bobIndex];
+                    if (currentBobImg && currentBobImg.complete && currentBobImg.width > 0) {
+                        ctx.drawImage(currentBobImg, -b.radius*1.5, -b.radius*1.5, b.radius*3, b.radius*3);
+                    } else {
+                        ctx.beginPath(); ctx.arc(0, 0, b.radius, 0, Math.PI*2); ctx.fillStyle = '#d63031'; ctx.fill();
+                    }
+                } else if (b.label === 'enemy') {
+                    if (images.enemy && images.enemy.complete && images.enemy.width > 0) {
+                        ctx.drawImage(images.enemy, -b.radius*1.5, -b.radius*1.5, b.radius*3, b.radius*3);
+                    } else {
+                        drawEnemy(ctx, b.radius);
+                    }
+                }
+                ctx.restore();
+            }
+
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy; p.life -= 0.03;
+                ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.color;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI*2); ctx.fill();
+                if (p.life <= 0) particles.splice(i, 1);
+            });
+            ctx.globalAlpha = 1.0;
+            
+            ctx.restore();
+            requestAnimationFrame(render);
+        }
+    </script>
+</body>
+</html>

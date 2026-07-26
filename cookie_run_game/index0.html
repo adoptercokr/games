@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>🍪 쿠키 대탈주 (무설치판)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
+        body { background: #0a001e; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: sans-serif; }
+        #gameCanvas { background: linear-gradient(#0a001e, #250050); border: 4px solid #3d0000; display: block; }
+        .ui { position: absolute; color: white; text-align: center; pointer-events: none; width: 100%; }
+        #menu { pointer-events: all; background: rgba(0,0,0,0.8); padding: 20px; border-radius: 20px; }
+        button { padding: 15px 40px; font-size: 20px; cursor: pointer; background: #FFD700; border: none; border-radius: 50px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="menu" class="ui">
+        <h1 style="color: #FFD700; font-size: 40px;">🍪 쿠키 대탈주</h1>
+        <p>장애물을 피해 최대한 멀리 가세요!</p>
+        <button onclick="startGame()">게임 시작</button>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const menu = document.getElementById('menu');
+
+        // 게임 설정 (이미지 대신 이모지 사용)
+        const W = 400, H = 600;
+        canvas.width = W; canvas.height = H;
+
+        let gameActive = false;
+        let score = 0;
+        let player = { x: 50, y: 500, w: 50, h: 50, vy: 0, jumped: false };
+        let obstacles = [];
+        const gravity = 0.8;
+
+        function startGame() {
+            gameActive = true;
+            score = 0;
+            obstacles = [];
+            player.y = 500;
+            player.vy = 0;
+            menu.style.display = 'none';
+            loop();
+        }
+
+        // 입력 처리 (클릭/터치 시 점프)
+        window.addEventListener('mousedown', () => { if(gameActive && !player.jumped) { player.vy = -15; player.jumped = true; } });
+        window.addEventListener('touchstart', (e) => { e.preventDefault(); if(gameActive && !player.jumped) { player.vy = -15; player.jumped = true; } });
+
+        function loop() {
+            if(!gameActive) return;
+
+            // 배경 그리기
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = "#8a2e08"; // 땅
+            ctx.fillRect(0, 550, W, 50);
+
+            // 중력 적용
+            player.vy += gravity;
+            player.y += player.vy;
+            if(player.y > 500) { player.y = 500; player.vy = 0; player.jumped = false; }
+
+            // 캐릭터 그리기 (이미지 대신 🍪 이모지)
+            ctx.font = "50px serif";
+            ctx.fillText("🍪", player.x, player.y + 40);
+
+            // 장애물 생성 및 이동
+            if(Math.random() < 0.02) {
+                obstacles.push({ x: W, y: 510, w: 40, h: 40 });
+            }
+
+            for(let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= 5;
+                // 장애물 그리기 (이미지 대신 🔥 이모지)
+                ctx.fillText("🔥", obstacles[i].x, obstacles[i].y + 35);
+
+                // 충돌 체크
+                if(obstacles[i].x < player.x + 30 && obstacles[i].x + 30 > player.x && player.y > 470) {
+                    gameActive = false;
+                    alert("게임 오버! 점수: " + score);
+                    menu.style.display = 'block';
+                }
+
+                if(obstacles[i].x < -50) obstacles.splice(i, 1);
+            }
+
+            score++;
+            ctx.fillStyle = "white";
+            ctx.font = "20px Arial";
+            ctx.fillText("Score: " + score, 20, 40);
+
+            requestAnimationFrame(loop);
+        }
+    </script>
+</body>
+</html>

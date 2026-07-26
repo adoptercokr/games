@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>왔다갔다 폭탄 돌리기 - Gian Bomb Passing</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --color-primary: #ff4757;
+      --color-success: #2ed573;
+      --color-warning: #ffa502;
+      --color-info: #1e90ff;
+      --color-gold: #ffd700;
+      --font-game: 'Jua', 'Comic Neue', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #0d1b2a;
+      font-family: var(--font-game);
+      color: #2c3e50;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Full-Screen Mobile Console Container */
+    .game-container {
+      width: 100%;
+      max-width: 480px;
+      height: 100vh;
+      max-height: 850px;
+      /* Background covers the screen completely */
+      background: #fff url('gian-game-bg.jpg') no-repeat center center;
+      background-size: 100% 100%;
+      border: 4px solid #4a3728;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (max-width: 480px) {
+      .game-container {
+        border-radius: 0;
+        border: none;
+        max-height: 100vh;
+      }
+    }
+
+    /* Floating Scoreboard Score bar (lies directly in the sky area, below the main title) */
+    .floating-hud {
+      position: absolute;
+      top: 140px; /* Positioned below the written header title */
+      left: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      border: 3px solid #4a3728;
+      border-radius: 16px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(74, 55, 40, 0.12);
+    }
+
+    .hud-main-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hud-team-score {
+      font-size: 16px;
+      color: #4a3728;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hud-score-display {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .hud-sub-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      background: rgba(74, 55, 40, 0.06);
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    .lives-hearts {
+      color: #e74c3c;
+      letter-spacing: 1px;
+    }
+
+    .stage-indicator {
+      background: #4a3728;
+      color: var(--color-gold);
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+    }
+
+    .combo-pill {
+      background: var(--color-primary);
+      color: white;
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-size: 11px;
+      display: none;
+      animation: pulse 0.5s infinite alternate;
+    }
+
+    /* Transparent Interactive Play Field Canvas */
+    .canvas-wrapper {
+      flex: 1;
+      position: relative;
+      background: transparent;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Touch Guidance Overlay Indicator */
+    .hud-hint {
+      position: absolute;
+      bottom: 200px; /* Placed above the bottom legend */
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(74, 55, 40, 0.95);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      pointer-events: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      animation: bounce 2s infinite;
+      z-index: 5;
+    }
+
+    /* Full screen overlays matching crayon look */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      z-index: 100;
+      transition: opacity 0.3s;
+    }
+
+    .overlay.hidden {
+      display: none !important;
+    }
+
+    .overlay-title {
+      font-size: 34px;
+      color: #4a3728;
+      margin-bottom: 12px;
+      text-shadow: 2px 2px 0 white;
+    }
+
+    .overlay-desc {
+      font-size: 15px;
+      color: #6d523d;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      max-width: 300px;
+    }
+
+    .btn-action {
+      background: #ff4757;
+      border: 3px solid #4a3728;
+      color: white;
+      font-family: var(--font-game);
+      font-size: 20px;
+      padding: 12px 36px;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #b33939, 0 8px 15px rgba(0,0,0,0.15);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .btn-action:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #b33939, 0 4px 6px rgba(0,0,0,0.15);
+    }
+
+    /* Sound Control Btn */
+    .mute-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.8);
+      border: 2.5px solid #4a3728;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 2px 0 rgba(74,55,40,0.2);
+      z-index: 101;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.1); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translate(-50%, 0); }
+      50% { transform: translate(-50%, -6px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container">
+    
+    <!-- Sound Toggle Btn -->
+    <div class="mute-btn" id="muteBtn" onclick="toggleMute(event)">🔊</div>
+
+    <!-- FLOATING SKIES SCOREBOARD -->
+    <div class="floating-hud">
+      <div class="hud-main-row">
+        <!-- Team Match Tally -->
+        <div class="hud-team-score">
+          <span style="font-size: 13px; color: #7f8c8d;">매치셋</span>
+          <span id="playerSets" style="color: #1e90ff;">0승</span>
+          <span style="color: #7f8c8d;">:</span>
+          <span id="enemySets" style="color: #ff4757;">0승</span>
+        </div>
+
+        <div class="hud-score-display">
+          점수: <span id="scoreVal" style="font-weight: 800; color: #ff4757;">0</span>
+        </div>
+      </div>
+
+      <div class="hud-sub-row">
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <span class="stage-indicator" id="stageBadge">STAGE 1</span>
+          <span class="combo-pill" id="comboBadge">1 COMBO!</span>
+        </div>
+        <div class="lives-hearts" id="livesBox">❤️❤️❤️</div>
+      </div>
+    </div>
+
+    <!-- MAIN GAME CANVAS (Fits 100% inside container, on top of bg) -->
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="gameCanvas"></canvas>
+      <div class="hud-hint">라인을 탭하여 폭탄을 튕겨내세요!</div>
+    </div>
+
+    <!-- START SCREEN OVERLAY -->
+    <div class="overlay" id="startOverlay">
+      <h2 class="overlay-title" style="margin-top: 40px;">왔다갔다 폭탄 돌리기</h2>
+      <p class="overlay-desc">
+        라인을 타고 날아오는 폭탄을 튕겨내세요!<br>
+        폭탄이 <b>좌측 과녁(한마음팀 존)</b>에 도달했을 때 타이밍에 맞춰 라인을 직접 탭하세요!<br>
+        단계가 올라갈수록 <b>새로운 라인이 추가</b>되고 <b>더 기괴하게 움직이는 폭탄</b>이 등장합니다!
+      </p>
+      <button class="btn-action" onclick="startGame()">매치 시작하기! ▶</button>
+      <div style="height: 120px;"></div> <!-- visual spacer for bottom legend -->
+    </div>
+
+    <!-- GAME OVER SCREEN OVERLAY -->
+    <div class="overlay hidden" id="gameOverOverlay">
+      <div style="font-size: 40px; margin-bottom: 12px;">💥🌋💣</div>
+      <h2 class="overlay-title" id="gameOverTitle">경기 종료!</h2>
+      <p class="overlay-desc" id="gameOverDesc">
+        폭탄 저지에 실패했습니다!<br>
+        최종 기록을 확인해 보세요.
+      </p>
+
+      <div style="background: rgba(255, 255, 255, 0.9); padding: 16px; border-radius: 16px; margin-bottom: 30px; width: 100%; max-width: 280px; border: 3px solid #4a3728;">
+        <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+          <span>최종 스코어</span>
+          <span style="font-weight: bold; color: #ff4757;" id="finalScore">0점</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span>달성 스테이지</span>
+          <span style="font-weight: bold; color: #4a3728;" id="finalStage">STAGE 1</span>
+        </div>
+      </div>
+
+      <button class="btn-action" onclick="startGame()">다시 매치하기 🔁</button>
+      <div style="height: 120px;"></div> <!-- visual spacer for bottom legend -->
+    </div>
+
+  </div>
+
+  <script>
+    // ─── 1. AUDIO SYNTHESIS ENGINE (WEB AUDIO API) ───
+    let audioCtx = null;
+    let isMuted = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSound(type) {
+      if (isMuted) return;
+      initAudio();
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+
+      switch(type) {
+        case 'tick':
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(800, now);
+          gain.gain.setValueAtTime(0.04, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.04);
+          osc.start(now);
+          osc.stop(now + 0.04);
+          break;
+          
+        case 'deflect':
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+          break;
+
+        case 'perfect':
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(587.33, now);
+          osc.frequency.exponentialRampToValueAtTime(1200, now + 0.18);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.18);
+          osc.start(now);
+          osc.stop(now + 0.18);
+          break;
+
+        case 'explode':
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.linearRampToValueAtTime(30, now + 0.65);
+          
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(350, now);
+          
+          osc.disconnect(gain);
+          osc.connect(filter);
+          filter.connect(gain);
+          
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.005, now + 0.65);
+          osc.start(now);
+          osc.stop(now + 0.65);
+          break;
+
+        case 'stage_clear':
+          osc.type = 'sine';
+          const arpeggio = [523.25, 659.25, 783.99, 1046.50];
+          arpeggio.forEach((f, index) => {
+            const node = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            node.type = 'triangle';
+            node.connect(g);
+            g.connect(audioCtx.destination);
+            node.frequency.setValueAtTime(f, now + index * 0.08);
+            g.gain.setValueAtTime(0.08, now + index * 0.08);
+            g.gain.linearRampToValueAtTime(0.001, now + index * 0.08 + 0.15);
+            node.start(now + index * 0.08);
+            node.stop(now + index * 0.08 + 0.15);
+          });
+          break;
+
+        case 'score':
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(987.77, now);
+          osc.frequency.setValueAtTime(1318.51, now + 0.06);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.linearRampToValueAtTime(0.005, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+          break;
+      }
+    }
+
+    function toggleMute(e) {
+      if (e) e.stopPropagation();
+      isMuted = !isMuted;
+      document.getElementById('muteBtn').textContent = isMuted ? '🔇' : '🔊';
+    }
+
+
+    // ─── 2. ASSETS LOADING SYSTEM ───
+    const images = {};
+    const assetList = {
+      line1: 'line-1.png',
+      line2: 'line-2.png',
+      line3: 'line-3.png',
+      bomb1: 'bomb-1.png',
+      bomb2: 'bomb-2.png',
+      bomb3: 'bomb-3.png',
+      bomb4: 'bomb-4.png',
+      bomb5: 'bomb-5.png',
+      teamPlayer: '한마음팀.png',
+      teamEnemy: '배려소통팀.png'
+    };
+
+    let loadedCount = 0;
+    const totalAssets = Object.keys(assetList).length;
+
+    Object.entries(assetList).forEach(([key, src]) => {
+      images[key] = new Image();
+      images[key].onload = () => { loadedCount++; };
+      images[key].onerror = () => { loadedCount++; };
+      images[key].src = src;
+    });
+
+
+    // ─── 3. CORE GAMEPLAY CONSTANTS ───
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const wrapper = document.getElementById('canvasWrapper');
+
+    let gameActive = false;
+    let score = 0;
+    let combo = 0;
+    let lives = 3;
+    let currentStage = 1;
+
+    let playerRoundScore = 0;
+    let enemyRoundScore = 0;
+    let playerSetsWon = 0;
+    let enemySetsWon = 0;
+
+    // Virtual high-res rendering coordinate grid (9:16 aspect ratio vertical container)
+    const virtualWidth = 800;
+    const virtualHeight = 1100; // slightly taller to match the 450x850 aspect precisely
+
+    // Left Target Deflection Plate center is at X=140px, Right Enemy Deflection Plate center is at X=660px.
+    const startX = 140;
+    const endX = 660;
+
+    let lines = [];
+    let bombs = [];
+    let particles = [];
+    let ratingTexts = [];
+
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = wrapper.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(canvas.width / virtualWidth, canvas.height / virtualHeight);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    setTimeout(resizeCanvas, 150);
+
+    // Click/Touch input handler mapping to virtual tracks
+    wrapper.addEventListener('touchstart', handleGameInput, {passive: false});
+    wrapper.addEventListener('mousedown', handleGameInput);
+
+    function handleGameInput(e) {
+      if (!gameActive) return;
+      e.preventDefault();
+
+      let clientX, clientY;
+      if (e.touches && e.touches[0]) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+
+      const rect = canvas.getBoundingClientRect();
+      const x = ((clientX - rect.left) / rect.width) * virtualWidth;
+      const y = ((clientY - rect.top) / rect.height) * virtualHeight;
+
+      // Find closest vertical track line center to input Y
+      let clickedLineIndex = -1;
+      let minDistance = 140;
+
+      lines.forEach((line, index) => {
+        const dist = Math.abs(y - line.y);
+        if (dist < minDistance) {
+          minDistance = dist;
+          clickedLineIndex = index;
+        }
+      });
+
+      if (clickedLineIndex !== -1) {
+        attemptDeflect(clickedLineIndex, x);
+      }
+    }
+
+    function attemptDeflect(lineIndex, tapX) {
+      const bomb = bombs.find(b => b.lineIndex === lineIndex && b.dir === -1);
+      if (!bomb) return;
+
+      const bombX = startX + bomb.progress * (endX - startX);
+      const distFromPerfect = Math.abs(bombX - startX);
+
+      // Deflection window hitcheck
+      if (distFromPerfect <= 120) {
+        bomb.dir = 1; // reverse
+        bomb.progress = (bombX - startX) / (endX - startX);
+        bomb.speedMultiplier = 1.0;
+        bomb.pauseTimer = 0;
+        bomb.teleportTriggered = true;
+
+        let rating = 'GOOD';
+        let scoreAdd = 50;
+        let color = '#1e90ff';
+
+        if (distFromPerfect <= 35) {
+          rating = 'PERFECT';
+          scoreAdd = 150;
+          color = '#ffd700';
+          bomb.speedMultiplier = 2.0; // returns at double-speed!
+          playSound('perfect');
+          createSparks(bombX, lines[lineIndex].y, '#ffd700', 35);
+        } else if (distFromPerfect <= 75) {
+          rating = 'GREAT';
+          scoreAdd = 100;
+          color = '#2ed573';
+          bomb.speedMultiplier = 1.45;
+          playSound('deflect');
+          createSparks(bombX, lines[lineIndex].y, '#2ed573', 18);
+        } else {
+          playSound('deflect');
+          createSparks(bombX, lines[lineIndex].y, '#1e90ff', 10);
+        }
+
+        combo++;
+        score += scoreAdd * combo;
+        updateStatsUI();
+
+        ratingTexts.push({
+          text: `${rating} ${combo > 1 ? combo + 'x!' : ''}`,
+          x: bombX,
+          y: lines[lineIndex].y - 45,
+          color: color,
+          vy: -6,
+          life: 45
+        });
+
+      } else {
+        // Punish early deflection tap
+        ratingTexts.push({
+          text: 'TOO EARLY!',
+          x: bombX > 140 ? bombX : 140,
+          y: lines[lineIndex].y - 45,
+          color: '#e74c3c',
+          vy: -3,
+          life: 30
+        });
+        combo = 0;
+        updateStatsUI();
+      }
+    }
+
+
+    // ─── 4. STAGE INITIALIZATION ───
+    function startGame() {
+      initAudio();
+      
+      document.getElementById('startOverlay').classList.add('hidden');
+      document.getElementById('gameOverOverlay').classList.add('hidden');
+
+      score = 0;
+      combo = 0;
+      lives = 3;
+      currentStage = 1;
+
+      playerRoundScore = 0;
+      enemyRoundScore = 0;
+      playerSetsWon = 0;
+      enemySetsWon = 0;
+
+      bombs = [];
+      particles = [];
+      ratingTexts = [];
+
+      initStage();
+      updateStatsUI();
+
+      gameActive = true;
+      requestAnimationFrame(gameLoop);
+    }
+
+    function initStage() {
+      lines = [];
+      
+      // Vertical positions designed to fit perfectly below the sun and above the seedling floor labels
+      // Sun is centered on Y=320, seedlings labels start at Y=840.
+      // So tracks map beautifully at Y=480, 580, 680!
+      const lineHeights = {
+        1: [580],               // Stage 1: 1 line (centered Y=580)
+        2: [530, 650],          // Stage 2: 2 lines
+        3: [480, 580, 680]      // Stage 3: 3 lines
+      };
+
+      const count = Math.min(3, currentStage);
+      const heights = lineHeights[count];
+
+      for (let i = 0; i < count; i++) {
+        lines.push({
+          index: i,
+          y: heights[i],
+          imageKey: `line${(i % 3) + 1}`
+        });
+      }
+
+      document.getElementById('stageBadge').textContent = `STAGE ${currentStage}`;
+
+      playerRoundScore = 0;
+      enemyRoundScore = 0;
+      updateMatchScoreboard();
+
+      // Spawn initial staggered bombs
+      bombs = [];
+      lines.forEach((line, index) => {
+        setTimeout(() => {
+          if (gameActive) spawnBomb(index);
+        }, index * 1000);
+      });
+    }
+
+    function spawnBomb(lineIndex) {
+      if (!gameActive) return;
+
+      let type = 1;
+      if (currentStage === 2) {
+        type = Math.floor(Math.random() * 3) + 1; // bomb 1, 2, 3
+      } else if (currentStage >= 3) {
+        type = Math.floor(Math.random() * 5) + 1; // bomb 1, 2, 3, 4, 5
+      }
+
+      // Random starting direction
+      const startingDir = Math.random() > 0.5 ? 1 : -1;
+
+      bombs.push({
+        lineIndex: lineIndex,
+        type: type,
+        progress: 0.5, // starts at track center
+        dir: startingDir,
+        speed: 0.0042 + (currentStage * 0.0007), // scaling speed
+        speedMultiplier: 1.0,
+        pauseTimer: 0,
+        teleportTriggered: false,
+        angle: 0,
+        yOffset: 0,
+        imageKey: `bomb${type}`
+      });
+    }
+
+
+    // ─── 5. PHYSICAL ENGINE UPDATES ───
+    function gameLoop() {
+      if (!gameActive) return;
+      updatePhysics();
+      drawGame();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function updatePhysics() {
+      // 1. Update bombs
+      bombs.forEach((bomb, index) => {
+        bomb.angle += 0.08 * bomb.dir;
+
+        if (bomb.pauseTimer > 0) {
+          bomb.pauseTimer--;
+          return;
+        }
+
+        let currentSpeed = bomb.speed * bomb.speedMultiplier;
+
+        // BOMB 3 (보통): Center deceptive decelerator curves
+        if (bomb.type === 3) {
+          if (bomb.progress > 0.22 && bomb.progress < 0.78) {
+            currentSpeed *= 0.3; // crawls slowly
+          } else {
+            currentSpeed *= 1.4; // launches fast on edges
+          }
+        }
+
+        // BOMB 4 (좀 셈): Double boundary sudden freezes and dash charges
+        if (bomb.type === 4 && !bomb.teleportTriggered) {
+          if ((bomb.dir === -1 && bomb.progress < 0.35 && bomb.progress > 0.28) ||
+              (bomb.dir === 1 && bomb.progress > 0.65 && bomb.progress < 0.72)) {
+            bomb.pauseTimer = 22;
+            bomb.teleportTriggered = true;
+            return;
+          }
+        }
+
+        if (bomb.type === 4 && bomb.teleportTriggered && bomb.pauseTimer === 0) {
+          currentSpeed *= 2.0; // rocket speed!
+        }
+
+        // BOMB 5 (셈): Sine vibration oscillations + mid-point blink warp jumps
+        if (bomb.type === 5) {
+          bomb.yOffset = Math.sin(bomb.progress * Math.PI * 4) * 18;
+          
+          if (!bomb.teleportTriggered && Math.abs(bomb.progress - 0.5) < 0.03) {
+            bomb.progress += bomb.dir * 0.16; // sudden blink forward
+            bomb.teleportTriggered = true;
+            playSound('tick');
+            createSparks(startX + bomb.progress * (endX - startX), lines[bomb.lineIndex].y + bomb.yOffset, '#ff4757', 12);
+          }
+        }
+
+        // Apply progress step
+        bomb.progress += bomb.dir * currentSpeed;
+
+        // Fuse ticks
+        if (bomb.dir === -1 && bomb.progress < 0.25 && Math.random() < 0.06) {
+          playSound('tick');
+        }
+
+        // Miss check
+        if (bomb.progress <= 0.0) {
+          triggerPlayerMiss(index, lines[bomb.lineIndex].y);
+        }
+        // AI deflect check
+        else if (bomb.progress >= 1.0) {
+          triggerEnemyDeflectCheck(bomb, index);
+        }
+      });
+
+      // 2. Update particles
+      particles.forEach((p, idx) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.alpha -= p.decay;
+        if (p.alpha <= 0) particles.splice(idx, 1);
+      });
+
+      // 3. Update ratings texts
+      ratingTexts.forEach((t, idx) => {
+        t.y += t.vy;
+        t.vy += 0.2;
+        t.life--;
+        if (t.life <= 0) ratingTexts.splice(idx, 1);
+      });
+    }
+
+    function triggerPlayerMiss(bombIdx, yCoord) {
+      bombs.splice(bombIdx, 1);
+      lives--;
+      combo = 0;
+      playSound('explode');
+      createSparks(startX, yCoord, '#ff4757', 40);
+
+      enemyRoundScore++;
+      updateStatsUI();
+      updateMatchScoreboard();
+
+      if (lives <= 0) {
+        endGame();
+        return;
+      }
+
+      if (enemyRoundScore >= 3) {
+        enemySetsWon++;
+        endRound(false);
+      } else {
+        setTimeout(() => {
+          if (gameActive) spawnBomb(Math.floor(Math.random() * lines.length));
+        }, 1200);
+      }
+    }
+
+    function triggerEnemyDeflectCheck(bomb, bombIdx) {
+      const lineY = lines[bomb.lineIndex].y;
+      
+      let AIResponseProbability = 0.85 - (bomb.speedMultiplier > 1.5 ? 0.38 : 0.0);
+      AIResponseProbability += (currentStage * 0.02);
+      AIResponseProbability = Math.max(0.35, Math.min(0.95, AIResponseProbability));
+
+      if (Math.random() < AIResponseProbability) {
+        // AI deflect success
+        bomb.dir = -1;
+        bomb.progress = 1.0;
+        bomb.speedMultiplier = 1.0;
+        bomb.teleportTriggered = false;
+        
+        playSound('deflect');
+        createSparks(endX, lineY, '#ff4757', 12);
+
+        ratingTexts.push({
+          text: 'AI RETURN!',
+          x: endX,
+          y: lineY - 45,
+          color: '#ff4757',
+          vy: -4,
+          life: 30
+        });
+      } else {
+        // AI deflect failed!
+        bombs.splice(bombIdx, 1);
+        playSound('explode');
+        createSparks(endX, lineY, '#ffd700', 40);
+
+        playerRoundScore++;
+        score += 200;
+        playSound('score');
+        updateStatsUI();
+        updateMatchScoreboard();
+
+        ratingTexts.push({
+          text: 'AI BLASTED! 💥',
+          x: endX,
+          y: lineY - 45,
+          color: '#2ed573',
+          vy: -6,
+          life: 45
+        });
+
+        if (playerRoundScore >= 3) {
+          playerSetsWon++;
+          endRound(true);
+        } else {
+          setTimeout(() => {
+            if (gameActive) spawnBomb(Math.floor(Math.random() * lines.length));
+          }, 1200);
+        }
+      }
+    }
+
+    function endRound(playerWonRound) {
+      bombs = [];
+
+      if (playerWonRound) {
+        playSound('stage_clear');
+        currentStage++;
+        
+        ratingTexts.push({
+          text: 'ROUND WON! STAGE CLEAR! 🏆',
+          x: 400,
+          y: 350,
+          color: '#ffd700',
+          vy: -8,
+          life: 110
+        });
+
+        setTimeout(() => {
+          if (gameActive) {
+            initStage();
+            updateStatsUI();
+          }
+        }, 2200);
+      } else {
+        ratingTexts.push({
+          text: 'ROUND LOST! RETRY SET!',
+          x: 400,
+          y: 350,
+          color: '#e74c3c',
+          vy: -8,
+          life: 100
+        });
+
+        setTimeout(() => {
+          if (gameActive) {
+            initStage();
+            updateStatsUI();
+          }
+        }, 2000);
+      }
+    }
+
+    function endGame() {
+      gameActive = false;
+      document.getElementById('gameOverOverlay').classList.remove('hidden');
+      document.getElementById('finalScore').textContent = `${score}점`;
+      document.getElementById('finalStage').textContent = `STAGE ${currentStage}`;
+
+      if (playerSetsWon > enemySetsWon) {
+        document.getElementById('gameOverTitle').textContent = "경기 최종 승리! 🏆";
+        document.getElementById('gameOverDesc').textContent = "한마음팀이 배려소통팀을 완벽히 격파하며 폭탄 리그 정상에 올랐습니다!";
+      } else {
+        document.getElementById('gameOverTitle').textContent = "경기 패배... 💥";
+        document.getElementById('gameOverDesc').textContent = "배려소통팀의 강력한 폭탄 무브먼트에 무릎을 꿇었습니다. 다시 기합을 넣어 도전해 볼까요?";
+      }
+    }
+
+
+    // ─── 6. SPARK ENGINE PARTICLE BUILDER ───
+    function createSparks(x, y, color, count) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 7 + 3;
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - Math.random() * 2,
+          gravity: 0.16,
+          color: color,
+          alpha: 1.0,
+          decay: Math.random() * 0.03 + 0.015,
+          radius: Math.random() * 3.5 + 1.5
+        });
+      }
+    }
+
+
+    // ─── 7. DRAW ENGINE (CANVAS COORD SPACE) ───
+    function drawGame() {
+      ctx.clearRect(0, 0, virtualWidth, virtualHeight);
+
+      // 1. Draw Team labels next to the track lanes
+      drawTeamBorders();
+
+      // 2. Draw tracks
+      lines.forEach(line => {
+        const lineImg = images[line.imageKey];
+        if (lineImg && lineImg.complete) {
+          // Draw line stretch between startX and endX
+          ctx.drawImage(lineImg, 105, line.y - 12, 590, 24);
+        } else {
+          ctx.beginPath();
+          ctx.moveTo(startX, line.y);
+          ctx.lineTo(endX, line.y);
+          ctx.strokeStyle = '#4a3728';
+          ctx.lineWidth = 6;
+          ctx.stroke();
+        }
+
+        // Left Hit Target Zone (한마음팀 과녁)
+        drawHitTargetZone(startX, line.y);
+
+        // Right Target Zone (배려소통팀 과녁)
+        drawHitTargetZone(endX, line.y, true);
+      });
+
+      // 3. Draw active bombs
+      bombs.forEach(bomb => {
+        const lineY = lines[bomb.lineIndex].y;
+        const bombX = startX + bomb.progress * (endX - startX);
+        const finalY = lineY + bomb.yOffset;
+
+        // Draw super fast vapor trails
+        if (bomb.speedMultiplier > 1.2) {
+          ctx.fillStyle = bomb.speedMultiplier > 1.6 ? 'rgba(255, 215, 0, 0.35)' : 'rgba(30, 144, 255, 0.22)';
+          ctx.beginPath();
+          ctx.arc(bombX - bomb.dir * 45, finalY, 16, 0, Math.PI * 2);
+          ctx.arc(bombX - bomb.dir * 25, finalY, 20, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Draw bomb image spinning
+        ctx.save();
+        ctx.translate(bombX, finalY);
+        ctx.rotate(bomb.angle);
+        
+        const bombImg = images[bomb.imageKey];
+        if (bombImg && bombImg.complete && bombImg.naturalWidth > 0) {
+          ctx.drawImage(bombImg, -32, -32, 64, 64);
+        } else {
+          ctx.font = '34px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('💣', 0, 0);
+        }
+        ctx.restore();
+
+        // Warning alerts for pauses
+        if (bomb.pauseTimer > 0) {
+          ctx.fillStyle = '#ff4757';
+          ctx.font = 'bold 16px var(--font-game)';
+          ctx.textAlign = 'center';
+          ctx.fillText('⚡ 엇박자 정지!', bombX, finalY - 45);
+        }
+      });
+
+      // 4. Draw sparks particles
+      particles.forEach(p => {
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // 5. Draw bounce texts
+      ratingTexts.forEach(t => {
+        ctx.save();
+        ctx.fillStyle = t.color;
+        ctx.font = 'bold 24px var(--font-game)';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(0,0,0,0.15)';
+        ctx.shadowBlur = 4;
+        ctx.fillText(t.text, t.x, t.y);
+        ctx.restore();
+      });
+    }
+
+    function drawTeamBorders() {
+      // Draw team boundary markers on the left and right ends of the active track lanes
+      ctx.save();
+      ctx.globalAlpha = 0.95;
+
+      const playerLogo = images.teamPlayer;
+      const enemyLogo = images.teamEnemy;
+
+      lines.forEach(line => {
+        // Draw 한마음팀 logo at the left gate (X=60)
+        if (playerLogo && playerLogo.complete) {
+          ctx.drawImage(playerLogo, 45, line.y - 25, 50, 50);
+        } else {
+          ctx.font = '24px sans-serif';
+          ctx.fillText('🤝', 55, line.y + 8);
+        }
+
+        // Draw 배려소통팀 logo at the right gate (X=740)
+        if (enemyLogo && enemyLogo.complete) {
+          ctx.drawImage(enemyLogo, 705, line.y - 25, 50, 50);
+        } else {
+          ctx.font = '24px sans-serif';
+          ctx.fillText('📢', 715, line.y + 8);
+        }
+      });
+
+      // Text Labels drawing near the logo centers
+      ctx.fillStyle = '#4a3728';
+      ctx.font = 'bold 14px var(--font-game)';
+      ctx.textAlign = 'center';
+      
+      // We only draw labels on top of the first line to keep layout clean
+      if (lines.length > 0) {
+        const topY = lines[0].y - 38;
+        ctx.fillText('한마음팀', 70, topY);
+        ctx.fillText('배려소통팀', 730, topY);
+      }
+      ctx.restore();
+    }
+
+    function drawHitTargetZone(x, y, isEnemy = false) {
+      ctx.save();
+      const pulseScale = 1.0 + Math.sin(Date.now() * 0.008) * 0.08;
+      
+      const glow = ctx.createRadialGradient(x, y, 4, x, y, 25 * pulseScale);
+      if (!isEnemy) {
+        glow.addColorStop(0, 'rgba(30, 144, 255, 0.55)');
+        glow.addColorStop(0.5, 'rgba(30, 144, 255, 0.22)');
+        glow.addColorStop(1, 'rgba(30, 144, 255, 0)');
+      } else {
+        glow.addColorStop(0, 'rgba(231, 76, 60, 0.35)');
+        glow.addColorStop(0.5, 'rgba(231, 76, 60, 0.12)');
+        glow.addColorStop(1, 'rgba(231, 76, 60, 0)');
+      }
+
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(x, y, 32 * pulseScale, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Hand-drawn red target node
+      ctx.beginPath();
+      ctx.arc(x, y, 9, 0, Math.PI * 2);
+      ctx.fillStyle = !isEnemy ? '#1e90ff' : '#e74c3c';
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+
+    // ─── 8. HUD UPDATES ───
+    function updateStatsUI() {
+      document.getElementById('scoreVal').textContent = score;
+
+      const comboBadge = document.getElementById('comboBadge');
+      if (combo >= 2) {
+        comboBadge.style.display = 'inline-block';
+        comboBadge.textContent = `${combo} COMBO!`;
+      } else {
+        comboBadge.style.display = 'none';
+      }
+
+      let hearts = '';
+      for (let i = 0; i < 3; i++) {
+        hearts += i < lives ? '❤️' : '🖤';
+      }
+      document.getElementById('livesBox').textContent = hearts;
+    }
+
+    function updateMatchScoreboard() {
+      document.getElementById('playerSets').textContent = `${playerSetsWon}승 (${playerRoundScore}/3)`;
+      document.getElementById('enemySets').textContent = `${enemySetsWon}승 (${enemyRoundScore}/3)`;
+    }
+  </script>
+
+</body>
+</html>

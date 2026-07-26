@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Emoji Survivor: Code Rush (PRO)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0; padding: 0; overflow: hidden;
+            background-color: #050505;
+            font-family: 'Outfit', 'Segoe UI', sans-serif;
+            user-select: none;
+            color: #00ff00;
+        }
+        canvas { display: block; }
+        #ui-layer {
+            position: absolute; top: 20px; left: 20px; right: 20px;
+            pointer-events: none;
+            display: flex; justify-content: space-between;
+            z-index: 10;
+        }
+        .stats { 
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem; 
+            text-shadow: 0 0 10px #00ff00; 
+        }
+        #xp-bar-container {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 8px;
+            background: #111; z-index: 20;
+        }
+        #xp-bar {
+            width: 0%; height: 100%;
+            background: linear-gradient(90deg, #00ff00, #00ffff);
+            box-shadow: 0 0 15px #00ff00;
+            transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #overlay, #start-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 10, 0.9);
+            backdrop-filter: blur(8px);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 100; text-align: center;
+        }
+        #overlay { display: none; }
+        h1 { 
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 4rem; 
+            letter-spacing: 2px;
+            margin: 0; 
+            color: #ff3333; 
+            text-shadow: 0 0 25px rgba(255, 51, 51, 0.7); 
+        }
+        .score-info { 
+            font-family: 'Outfit', sans-serif;
+            font-weight: 400;
+            font-size: 1.5rem; 
+            margin: 10px 0; 
+            color: #ccc; 
+        }
+        button {
+            padding: 15px 45px; 
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #00ff00, #00ff88); 
+            color: #000; 
+            border: none;
+            border-radius: 4px;
+            cursor: pointer; 
+            margin-top: 30px;
+            font-family: 'Orbitron', sans-serif; 
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+        button:hover { 
+            transform: translateY(-2px) scale(1.05); 
+            box-shadow: 0 8px 25px rgba(0, 255, 0, 0.6); 
+        }
+        #flash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; opacity: 0; pointer-events: none; z-index: 50;
+        }
+    </style>
+</head>
+<body>
+    <div id="flash"></div>
+    <div id="ui-layer">
+        <div>
+            <div class="stats" id="score">SCORE: 0</div>
+            <div class="stats" id="best">BEST: 0</div>
+            <div class="stats" id="level">LV. 1</div>
+        </div>
+        <div class="stats" id="time">TIME: 0s</div>
+    </div>
+    <div id="xp-bar-container">
+        <div id="xp-bar"></div>
+    </div>
+    <div id="start-screen">
+        <h1 style="color: #00ff00; text-shadow: 0 0 20px #00ff00;">SPACE SURVIVOR</h1>
+        <div class="score-info">Survive as long as you can!</div>
+        <button onclick="startGame()">START GAME</button>
+    </div>
+    <div id="overlay">
+        <h1 id="status-text">CRITICAL ERROR</h1>
+        <div class="score-info" id="final-score">SCORE: 0</div>
+        <div class="score-info" id="final-best" style="color: #00ffff;">BEST: 0</div>
+        <button onclick="restart()">REBOOT SYSTEM</button>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const bestElement = document.getElementById('best');
+        const levelElement = document.getElementById('level');
+        const timeElement = document.getElementById('time');
+        const xpBar = document.getElementById('xp-bar');
+        const overlay = document.getElementById('overlay');
+        const startScreen = document.getElementById('start-screen');
+        const finalScore = document.getElementById('final-score');
+        const finalBest = document.getElementById('final-best');
+        const flashDiv = document.getElementById('flash');
+
+        // Audio Setup
+        const bgMusic = new Audio('space-bg.mp3');
+        bgMusic.loop = false; // Custom loop logic
+        bgMusic.volume = 0.01; // 배경음악 볼륨을 0.01로 줄여 귀를 편안하게 만듭니다.
+
+        // Seamless loop handling
+        bgMusic.addEventListener('timeupdate', function() {
+            // Reset to beginning slightly before the very end to prevent a gap
+            if (this.currentTime >= this.duration - 0.25) {
+                this.currentTime = 0;
+                this.play().catch(e => {});
+            }
+        });
+
+        let isBgmPlaying = false;
+        let bgmWasPlayingBeforeHidden = false; // 화면 이탈 시 이전 재생 상태 저장용
+
+        function playBgm() {
+            sounds.init(); // Initialize Web Audio Context on user interaction
+            if (!isBgmPlaying) {
+                const p = bgMusic.play();
+                if (p !== undefined) {
+                    p.then(() => { isBgmPlaying = true; })
+                     .catch(err => { isBgmPlaying = false; });
+                } else {
+                    isBgmPlaying = true;
+                }
+            }
+        }
+
+        // 모바일 대기 모드, 브라우저 탭 전환, 또는 화면 이탈 시 배경음악 일시정지 및 복구 처리
+        function handleVisibilityChange() {
+            if (document.hidden) {
+                if (isBgmPlaying) {
+                    bgmWasPlayingBeforeHidden = true;
+                    bgMusic.pause();
+                    isBgmPlaying = false;
+                }
+            } else {
+                if (gameActive && bgmWasPlayingBeforeHidden) {
+                    bgmWasPlayingBeforeHidden = false;
+                    bgMusic.play()
+                        .then(() => { isBgmPlaying = true; })
+                        .catch(err => {});
+                }
+            }
+        }
+
+        function handleBlur() {
+            if (isBgmPlaying) {
+                bgmWasPlayingBeforeHidden = true;
+                bgMusic.pause();
+                isBgmPlaying = false;
+            }
+        }
+
+        function handleFocus() {
+            if (gameActive && bgmWasPlayingBeforeHidden) {
+                bgmWasPlayingBeforeHidden = false;
+                bgMusic.play()
+                    .then(() => { isBgmPlaying = true; })
+                    .catch(err => {});
+            }
+        }
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('blur', handleBlur);
+        window.addEventListener('focus', handleFocus);
+
+        class SoundManager {
+            constructor() {
+                this.urls = {
+                    shoot: 'pang.mp3',
+                    item: 'byung.mp3'
+                };
+                this.pool = {};
+                // Pre-create pools of standard Audio elements (completely bypasses local file:// fetch CORS blocks!)
+                for (const [name, url] of Object.entries(this.urls)) {
+                    this.pool[name] = [];
+                    for (let i = 0; i < 10; i++) { // Pool of 10 overlapping sound effects
+                        let audio = new Audio(url);
+                        audio.volume = 0.25;
+                        this.pool[name].push(audio);
+                    }
+                }
+            }
+            init() {
+                // Preload and warm up all audio objects on user gesture
+                for (const arr of Object.values(this.pool)) {
+                    arr.forEach(audio => {
+                        try {
+                            audio.load();
+                        } catch(e) {}
+                    });
+                }
+            }
+            play(name, volume = 0.4) {
+                const arr = this.pool[name];
+                if (!arr) return;
+                // Grab an audio element that is currently paused, or recycle the oldest one!
+                let audio = arr.find(a => a.paused) || arr[Math.floor(Math.random() * arr.length)];
+                if (audio) {
+                    try {
+                        audio.volume = volume;
+                        audio.currentTime = 0;
+                        audio.play().catch(e => {});
+                    } catch (e) {
+                        console.error("Error playing standard Audio element:", e);
+                    }
+                }
+            }
+        }
+
+        const sounds = new SoundManager();
+
+        let width, height;
+        let score = 0;
+        let bestScore = localStorage.getItem('emojiBest') || 0;
+        let level = 1;
+        let xp = 0;
+        let xpToNextLevel = 100;
+        let gameActive = false;
+        let startTime = Date.now();
+        bestElement.innerText = `BEST: ${bestScore}`;
+
+        function startGame() {
+            startScreen.style.display = 'none';
+            gameActive = true;
+            startTime = Date.now();
+            playBgm();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Game Objects
+        const player = {
+            x: 0, y: 0, radius: 20, emoji: '🚀',
+            targetX: 0, targetY: 0, speed: 0.15,
+            attackSpeed: 1000, lastAttackTime: 0,
+            angle: 0
+        };
+
+        const enemies = [];
+        const projectiles = [];
+        const gems = [];
+        const items = [];
+        const particles = [];
+        const starCount = window.innerWidth < 768 ? 60 : 200;
+        const stars = Array.from({ length: starCount }, () => {
+            const zVal = Math.random();
+            return {
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                z: zVal,
+                size: zVal * 2.0 + 0.5 // Closer stars (higher z) are larger
+            };
+        });
+        let enemySpawnInterval = 1000;
+        let lastEnemySpawnTime = 0;
+        let shieldActive = false;
+        let shieldEndTime = 0;
+        let rapidActive = false;
+        let rapidEndTime = 0;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            if (gameActive) {
+                player.x = player.targetX = width / 2;
+                player.y = player.targetY = height / 2;
+            }
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        window.addEventListener('mousemove', (e) => { 
+            if (gameActive) { player.targetX = e.clientX; player.targetY = e.clientY; } 
+        });
+        window.addEventListener('touchmove', (e) => {
+            if (!gameActive) return;
+            e.preventDefault();
+            player.targetX = e.touches[0].clientX;
+            player.targetY = e.touches[0].clientY;
+        }, { passive: false });
+        window.addEventListener('mousedown', playBgm);
+        window.addEventListener('touchstart', playBgm, { passive: true });
+        window.addEventListener('keydown', playBgm);
+        document.body.addEventListener('click', playBgm);
+
+        class Enemy {
+            constructor(isBoss = false) {
+                const side = Math.floor(Math.random() * 4);
+                if (side === 0) { this.x = Math.random() * width; this.y = -100; }
+                else if (side === 1) { this.x = width + 100; this.y = Math.random() * height; }
+                else if (side === 2) { this.x = Math.random() * width; this.y = height + 100; }
+                else { this.x = -100; this.y = Math.random() * height; }
+                
+                this.isBoss = isBoss;
+                this.radius = isBoss ? 60 : 15;
+                this.speed = (isBoss ? 0.5 : 1.2) + Math.random() * 1.5 + (level * 0.1);
+                this.emoji = isBoss ? '💀' : ['👾', '🕷️', '🐍', '🦂'][Math.floor(Math.random() * 4)];
+                this.hp = isBoss ? 20 + (level * 5) : Math.ceil(level / 3);
+            }
+            update() {
+                const dx = player.x - this.x;
+                const dy = player.y - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                this.x += (dx / dist) * this.speed;
+                this.y += (dy / dist) * this.speed;
+            }
+            draw() {
+                ctx.font = `${this.radius * 2}px serif`;
+                ctx.fillText(this.emoji, this.x, this.y);
+                if (this.isBoss) {
+                     ctx.fillStyle = "#ff0000";
+                     ctx.fillRect(this.x - 50, this.y - 70, 100, 5);
+                     ctx.fillStyle = "#00ff00";
+                     ctx.fillRect(this.x - 50, this.y - 70, (this.hp / (20 + (level * 5))) * 100, 5);
+                }
+            }
+        }
+
+        class Projectile {
+            constructor(tx, ty) {
+                this.x = player.x; this.y = player.y;
+                this.speed = 10;
+                const dx = tx - this.x; const dy = ty - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                this.vx = (dx / dist) * this.speed; this.vy = (dy / dist) * this.speed;
+                this.radius = 12;
+                this.angle = Math.atan2(dy, dx);
+            }
+            update() { this.x += this.vx; this.y += this.vy; }
+            draw() { 
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle + Math.PI / 4);
+                ctx.font = "24px serif"; 
+                ctx.fillText("🚀", 0, 0); 
+                ctx.restore();
+            }
+        }
+
+        class Gem {
+            constructor(x, y, isBig = false) {
+                this.x = x; this.y = y; this.radius = isBig ? 20 : 10;
+                this.isBig = isBig;
+            }
+            draw() {
+                ctx.font = `${this.isBig ? 30 : 15}px serif`;
+                ctx.fillText(this.isBig ? "🌈" : "💎", this.x, this.y);
+            }
+        }
+
+        class Item {
+            constructor(x, y, type) {
+                this.x = x; this.y = y; this.radius = 15;
+                this.type = type;
+            }
+            draw() {
+                ctx.font = "20px serif";
+                ctx.fillText(this.type === 'shield' ? "🛡️" : "⚡", this.x, this.y);
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y;
+                this.vx = (Math.random() - 0.5) * 12;
+                this.vy = (Math.random() - 0.5) * 12;
+                this.alpha = 1; this.color = color;
+            }
+            update() { this.x += this.vx; this.y += this.vy; this.alpha -= 0.03; }
+            draw() { ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color; ctx.fillRect(this.x, this.y, 3, 3); ctx.globalAlpha = 1; }
+        }
+
+        function flash() {
+            // 화면 깜빡임 효과 제거
+        }
+
+        function createExplosion(x, y, color, count = 10) {
+            const limitCount = window.innerWidth < 768 ? Math.ceil(count * 0.4) : count;
+            for (let i = 0; i < limitCount; i++) particles.push(new Particle(x, y, color));
+            flash();
+        }
+
+        function spawnEnemy(timestamp) {
+            if (timestamp - lastEnemySpawnTime > enemySpawnInterval) {
+                const maxEnemies = window.innerWidth < 768 ? 15 : 45;
+                if (enemies.length >= maxEnemies) return;
+
+                const isBoss = score > 0 && score % 1000 === 0 && !enemies.some(e => e.isBoss);
+                enemies.push(new Enemy(isBoss));
+                lastEnemySpawnTime = timestamp;
+                const minInterval = window.innerWidth < 768 ? 500 : 300;
+                enemySpawnInterval = Math.max(minInterval, 1000 - (level * 50));
+            }
+        }
+
+        function autoAttack(timestamp) {
+            const currentCooldown = rapidActive ? 100 : player.attackSpeed;
+            if (timestamp - player.lastAttackTime > currentCooldown && enemies.length > 0) {
+                let closest = null; let minDist = Infinity;
+                enemies.forEach(e => {
+                    const d = Math.sqrt((player.x - e.x)**2 + (player.y - e.y)**2);
+                    if (d < minDist) { minDist = d; closest = e; }
+                });
+                if (closest) { 
+                    projectiles.push(new Projectile(closest.x, closest.y)); 
+                    player.lastAttackTime = timestamp; 
+                    sounds.play('shoot', 0.35);
+                }
+            }
+        }
+
+        function updateXp(amount) {
+            xp += amount;
+            if (xp >= xpToNextLevel) {
+                xp = 0; level++;
+                xpToNextLevel = Math.floor(xpToNextLevel * 1.3);
+                player.attackSpeed = Math.max(100, player.attackSpeed - 80);
+                levelElement.innerText = `LV. ${level}`;
+                createExplosion(player.x, player.y, "#00ffff", 50);
+            }
+            xpBar.style.width = `${(xp / xpToNextLevel) * 100}%`;
+        }
+
+        function restart() {
+            score = 0; level = 1; xp = 0; xpToNextLevel = 100;
+            enemies.length = 0; projectiles.length = 0; gems.length = 0; particles.length = 0; items.length = 0;
+            shieldActive = false; rapidActive = false;
+            gameActive = true; overlay.style.display = 'none';
+            player.attackSpeed = 1000;
+            startTime = Date.now();
+            scoreElement.innerText = `SCORE: 0`;
+            levelElement.innerText = `LV. 1`;
+            resize();
+            playBgm();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update(timestamp) {
+            if (!gameActive) return;
+
+            const dx = player.targetX - player.x;
+            const dy = player.targetY - player.y;
+            if (Math.sqrt(dx*dx + dy*dy) > 2) {
+                player.angle = Math.atan2(dy, dx);
+            }
+            player.x += dx * player.speed;
+            player.y += dy * player.speed;
+
+            // Update stars for parallax and constant space flight
+            stars.forEach(s => {
+                s.x -= dx * player.speed * s.z * 0.5;
+                s.y -= dy * player.speed * s.z * 0.5 - (s.z * 1.5);
+                if (s.x < 0) s.x = width;
+                if (s.x > width) s.x = 0;
+                if (s.y < 0) s.y = height;
+                if (s.y > height) s.y = 0;
+            });
+
+            spawnEnemy(timestamp);
+            autoAttack(timestamp);
+
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            timeElement.innerText = `TIME: ${elapsed}s`;
+
+            // Backward loop for projectiles (perfect index handling, no skipped frames or double splices)
+            for (let pi = projectiles.length - 1; pi >= 0; pi--) {
+                const p = projectiles[pi];
+                p.update();
+                
+                // Out of bounds check
+                if (p.x < 0 || p.x > width || p.y < 0 || p.y > height) {
+                    projectiles.splice(pi, 1);
+                    continue;
+                }
+                
+                let projectileRemoved = false;
+                // Backward loop for enemies to handle collisions safely
+                for (let ei = enemies.length - 1; ei >= 0; ei--) {
+                    const e = enemies[ei];
+                    const dist = Math.sqrt((p.x - e.x)**2 + (p.y - e.y)**2);
+                    if (dist < p.radius + e.radius) {
+                        e.hp--;
+                        projectileRemoved = true;
+                        createExplosion(e.x, e.y, e.isBoss ? "#ff0000" : "#00ff00");
+                        
+                        if (e.hp <= 0) {
+                            gems.push(new Gem(e.x, e.y, e.isBoss));
+                            if (Math.random() < 0.1 || e.isBoss) {
+                                items.push(new Item(e.x, e.y, Math.random() < 0.5 ? 'shield' : 'rapid'));
+                            }
+                            enemies.splice(ei, 1);
+                            score += e.isBoss ? 500 : 10;
+                            scoreElement.innerText = `SCORE: ${score}`;
+                            if (score > bestScore) {
+                                bestScore = score;
+                                bestElement.innerText = `BEST: ${bestScore}`;
+                                localStorage.setItem('emojiBest', bestScore);
+                            }
+                        }
+                        break; // Stop checking other enemies for this projectile
+                    }
+                }
+                
+                if (projectileRemoved) {
+                    projectiles.splice(pi, 1);
+                }
+            }
+
+            // Backward loop for enemies movement & player collision
+            for (let ei = enemies.length - 1; ei >= 0; ei--) {
+                const e = enemies[ei];
+                e.update();
+                
+                const dist = Math.sqrt((player.x - e.x)**2 + (player.y - e.y)**2);
+                if (dist < player.radius + e.radius - 5) {
+                    if (shieldActive) {
+                        e.hp = 0;
+                        createExplosion(e.x, e.y, "#00ffff");
+                        enemies.splice(ei, 1);
+                        sounds.play('shoot', 0.3);
+                    } else {
+                        gameActive = false;
+                        finalScore.innerText = `TOTAL SCORE: ${score}`;
+                        finalBest.innerText = `BEST RECORD: ${bestScore}`;
+                        overlay.style.display = 'flex';
+                        bgMusic.pause();
+                        isBgmPlaying = false;
+                        break; // Stop processing frame if player died
+                    }
+                }
+            }
+
+            // Backward loop for gems attraction & collection
+            for (let gi = gems.length - 1; gi >= 0; gi--) {
+                const g = gems[gi];
+                const dist = Math.sqrt((player.x - g.x)**2 + (player.y - g.y)**2);
+                if (dist < 200) { 
+                    g.x += (player.x - g.x) * 0.15; 
+                    g.y += (player.y - g.y) * 0.15; 
+                }
+                if (dist < player.radius + g.radius) {
+                    gems.splice(gi, 1);
+                    updateXp(g.isBig ? 100 : 25);
+                    sounds.play('item', 0.4);
+                }
+            }
+
+            // Backward loop for items attraction & collection
+            for (let ii = items.length - 1; ii >= 0; ii--) {
+                const item = items[ii];
+                const dist = Math.sqrt((player.x - item.x)**2 + (player.y - item.y)**2);
+                if (dist < 200) { 
+                    item.x += (player.x - item.x) * 0.15; 
+                    item.y += (player.y - item.y) * 0.15; 
+                }
+                if (dist < player.radius + item.radius) {
+                    items.splice(ii, 1);
+                    if (item.type === 'shield') {
+                        shieldActive = true;
+                        shieldEndTime = timestamp + 5000;
+                    } else {
+                        rapidActive = true;
+                        rapidEndTime = timestamp + 5000;
+                    }
+                    sounds.play('item', 0.4);
+                }
+            }
+            
+            if (shieldActive && timestamp > shieldEndTime) shieldActive = false;
+            if (rapidActive && timestamp > rapidEndTime) rapidActive = false;
+
+            // Backward loop for particles update & removal
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.4)';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Draw space stars with perspective (highly optimized square stars)
+            ctx.fillStyle = '#ffffff';
+            stars.forEach(s => {
+                ctx.globalAlpha = (s.z * 0.4) + 0.1;
+                ctx.fillRect(s.x, s.y, s.size, s.size);
+            });
+            ctx.globalAlpha = 1;
+
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            gems.forEach(g => g.draw());
+            items.forEach(i => i.draw());
+            projectiles.forEach(p => p.draw());
+            enemies.forEach(e => e.draw());
+            particles.forEach(p => p.draw());
+
+            // Player Glow
+            ctx.save();
+            ctx.translate(player.x, player.y);
+            ctx.rotate(player.angle + Math.PI / 4);
+            
+            if (shieldActive) {
+                ctx.beginPath();
+                ctx.arc(0, 0, player.radius * 2, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(0, 255, 255, 0.3)";
+                ctx.fill();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = "rgba(0, 255, 255, 0.8)";
+                ctx.stroke();
+            }
+
+            ctx.shadowBlur = 15; ctx.shadowColor = rapidActive ? '#ff0000' : '#00ff00';
+            ctx.font = `${player.radius * 2.5}px serif`;
+            ctx.fillText(player.emoji, 0, 0);
+            ctx.shadowBlur = 0;
+            ctx.restore();
+        }
+
+        function gameLoop(timestamp) {
+            update(timestamp);
+            draw();
+            if (gameActive) requestAnimationFrame(gameLoop);
+        }
+        resize();
+        draw();
+    </script>
+</body>
+</html>

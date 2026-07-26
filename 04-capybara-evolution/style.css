@@ -1,0 +1,495 @@
+:root {
+    --primary: #ffb347;
+    --primary-glow: rgba(255, 179, 71, 0.4);
+    --secondary: #ffcc33;
+    --bg-dark: #121212;
+    --glass: rgba(255, 255, 255, 0.08);
+    --glass-heavy: rgba(255, 255, 255, 0.15);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --text-main: #f5f5f7;
+    --text-dim: #a1a1a6;
+    --accent: #ff4757;
+    --gradient: linear-gradient(135deg, #ffb347 0%, #ffcc33 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; /* Prevents iOS double-tap zoom globally */
+}
+
+body {
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(255, 179, 71, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(255, 71, 87, 0.1) 0%, transparent 40%);
+    color: var(--text-main);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-container {
+    width: 100%;
+    max-width: 480px;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 15px 10px;
+    position: relative;
+}
+
+.glass-panel {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 28px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Stats Header */
+.main-stats {
+    display: flex;
+    padding: 15px 10px;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 10px;
+    animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stat-item {
+    text-align: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.stat-item .label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.stat-item .value {
+    font-size: clamp(18px, 6vw, 32px);
+    font-weight: 700;
+    color: var(--primary);
+    text-shadow: 0 0 20px var(--primary-glow);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--glass-border);
+    margin: 0 10px;
+}
+
+/* Main Click Area */
+.main-click-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    min-height: 0;
+    padding: 10px 0;
+}
+
+#capybara-wrapper {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible; /* Allow floating +N text to show outside image bounds */
+}
+
+
+#capybara-main {
+    max-width: 90%;
+    max-height: 35vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.4));
+    -webkit-user-drag: none;
+    user-drag: none;
+    /* Bounce handled by Web Animations API in JS */
+}
+
+/* Canvas overlay for floating +N text — positioned over capybara */
+#float-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+
+/* Controls Area */
+.controls-area {
+    flex: 1.2;
+    max-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tabs {
+    display: flex;
+    padding: 5px;
+    gap: 5px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 20px;
+    margin-bottom: 15px;
+}
+
+.tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    padding: 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: var(--glass-heavy);
+    color: var(--text-main);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.tab-content {
+    flex: 1;
+    overflow: hidden;
+    padding: 5px;
+}
+
+.scrollable {
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.scrollable::-webkit-scrollbar {
+    width: 4px;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 4px;
+}
+
+/* Upgrade Items */
+.upgrade-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: var(--glass);
+    border-radius: 20px;
+    margin-bottom: 12px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.upgrade-item:hover {
+    background: var(--glass-heavy);
+    border-color: var(--glass-border);
+}
+
+.upgrade-item.locked {
+    opacity: 0.5;
+    filter: grayscale(1);
+    pointer-events: none;
+}
+
+.upgrade-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--glass-heavy);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    margin-right: 15px;
+}
+
+.upgrade-info {
+    flex: 1;
+}
+
+.upgrade-name {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.upgrade-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+.upgrade-cost {
+    text-align: right;
+}
+
+.cost-value {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.upgrade-level {
+    font-size: 10px;
+    color: var(--text-dim);
+}
+
+/* Floating text is now canvas-rendered — no DOM elements needed */
+@keyframes floatUp {
+    0%   { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Skin Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.skin-item {
+    background: var(--glass);
+    border-radius: 20px;
+    padding: 15px;
+    text-align: center;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.skin-item.skin-active {
+    border-color: var(--primary);
+    background: var(--glass-heavy);
+}
+
+.skin-locked {
+    opacity: 0.4;
+    filter: grayscale(1);
+}
+
+.skin-preview {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.skin-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Evolution Toast */
+.evolution-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--gradient);
+    color: #000;
+    padding: 20px 40px;
+    border-radius: 50px;
+    font-size: 24px;
+    font-weight: 800;
+    z-index: 1000;
+    box-shadow: 0 0 50px var(--primary-glow);
+    animation: toastScale 3s ease-in-out forwards;
+}
+
+@keyframes toastScale {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    10% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    20% { transform: translate(-50%, -50%) scale(1); }
+    80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+}
+
+/* Settings */
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+}
+
+.evolution-guide-container {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--glass-border);
+}
+
+.evolution-guide-container h3 {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lang-switch {
+    background: rgba(0,0,0,0.3);
+    padding: 4px;
+    border-radius: 12px;
+    display: flex;
+    gap: 4px;
+}
+
+.lang-switch button {
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.lang-switch button.active {
+    background: var(--primary);
+    color: #000;
+}
+
+.danger-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Footer Hint */
+#footer-hint {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Mobile responsive layout optimizations */
+@media (max-width: 480px), (max-height: 850px) {
+    #game-container {
+        padding: 10px 8px;
+    }
+    
+    .main-stats {
+        padding: 10px 8px;
+        margin-bottom: 5px;
+        border-radius: 20px;
+    }
+    
+    .stat-divider {
+        height: 30px;
+    }
+    
+    .stat-item .label {
+        font-size: 10px;
+    }
+    
+    .main-click-area {
+        flex: 1.6; /* Give much more vertical space to the Capybara area */
+        padding: 15px 0;
+    }
+    
+    #capybara-main {
+        max-height: 42vh; /* Larger capybara on mobile for better visibility */
+    }
+    
+    .controls-area {
+        flex: 0.9; /* Slightly scale down shop area height */
+        max-height: 40vh; /* Compacts the shop menu */
+        padding: 8px;
+        border-radius: 24px;
+    }
+    
+    .tabs {
+        margin-bottom: 8px;
+    }
+    
+    .tab-btn {
+        padding: 8px;
+        font-size: 13px;
+    }
+    
+    .upgrade-item {
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        border-radius: 16px;
+    }
+    
+    .upgrade-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        margin-right: 10px;
+    }
+    
+    .upgrade-name {
+        font-size: 14px;
+    }
+    
+    .upgrade-desc {
+        font-size: 10px;
+    }
+    
+    .upgrade-cost {
+        font-size: 12px;
+    }
+    
+    #footer-hint {
+        font-size: 10px;
+        margin-top: 6px;
+    }
+}

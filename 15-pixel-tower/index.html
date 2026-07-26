@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>픽셀 타워 쌓기 - Pixel Tower</title>
+  <!-- Matter.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  
+  <style>
+    :root {
+      --bg-dark-primary: #090a16;
+      --bg-dark-secondary: #12142a;
+      --bg-dark-tertiary: #1b1e3d;
+      --neon-cyan: #00f0ff;
+      --neon-coral: #ff4a76;
+      --neon-gold: #ffd700;
+      --neon-purple: #b55fe6;
+      --text-white: #ffffff;
+      --text-muted: #8d97c5;
+      --glass-bg: rgba(255, 255, 255, 0.04);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --transition-standard: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    body {
+      background: var(--bg-dark-primary);
+      color: var(--text-white);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    /* UI Layer container */
+    .ui-layer {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 10;
+      background: rgba(18, 20, 42, 0.85);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 16px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      pointer-events: auto;
+      max-width: 320px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff, var(--neon-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .score-board {
+      margin-bottom: 12px;
+    }
+    .score-board p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 2px 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .score-text {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--neon-cyan);
+    }
+    .text-yellow {
+      color: var(--neon-gold);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      flex: 1;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-white);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-standard);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .action-btn:hover {
+      background: var(--glass-hover);
+      border-color: var(--neon-cyan);
+    }
+    .action-btn.bg-green {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+    .action-btn.bg-green:hover {
+      background: rgba(0, 240, 255, 0.25);
+    }
+
+    .help-text-pc {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    /* Customizer Panel on the right side */
+    .customizer-panel {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 10;
+      background: rgba(18, 20, 42, 0.85);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 16px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      width: 250px;
+      max-height: calc(100vh - 160px);
+      overflow-y: auto;
+      pointer-events: auto;
+    }
+
+    /* Settings Toggle Button for Mobile */
+    .settings-toggle-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 20;
+      background: rgba(18, 20, 42, 0.95);
+      border: 1px solid var(--glass-border);
+      color: var(--text-white);
+      width: auto;
+      height: 38px;
+      border-radius: 12px;
+      padding: 0 12px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: none; /* Default hidden for PC */
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      transition: var(--transition-standard);
+    }
+    .settings-toggle-btn:active {
+      transform: scale(0.92);
+    }
+    .settings-toggle-btn:hover {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.35);
+    }
+
+    @media (max-width: 1024px) {
+      .settings-toggle-btn {
+        display: flex; /* Show on mobile & tablet */
+      }
+      .customizer-panel {
+        top: 66px; /* Position below toggle button */
+        right: 16px;
+        z-index: 15;
+        transform: translateX(300px);
+        opacity: 0;
+        pointer-events: none;
+        transition: var(--transition-standard);
+      }
+      .customizer-panel.open {
+        transform: translateX(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .ui-layer {
+        top: 10px;
+        left: 10px;
+        padding: 10px;
+        max-width: 170px;
+        border-radius: 12px;
+      }
+      h1 {
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+      .score-board {
+        margin-bottom: 6px;
+      }
+      .score-board p {
+        font-size: 10px;
+        gap: 6px;
+        margin: 2px 0;
+      }
+      .score-text {
+        font-size: 11px;
+      }
+      .btn-group {
+        flex-direction: column;
+        gap: 4px;
+      }
+      .action-btn {
+        padding: 4px 8px;
+        font-size: 9px;
+        border-radius: 6px;
+        height: 26px;
+      }
+      .help-text-pc {
+        display: none !important;
+      }
+      .claw-controls {
+        bottom: 12px;
+        gap: 8px;
+      }
+      .claw-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+      }
+      .claw-btn.drop-btn {
+        width: 90px;
+        font-size: 12px;
+      }
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-white);
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 6px;
+    }
+
+    .setting-group {
+      margin-bottom: 14px;
+    }
+    .setting-group label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .shape-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .shape-btn {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: var(--transition-standard);
+    }
+    .shape-btn:hover {
+      background: rgba(255,255,255,0.06);
+      color: var(--text-white);
+    }
+    .shape-btn.active {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+    .shape-icon-container {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .shape-label {
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .color-picker {
+      width: 100%;
+      height: 36px;
+      border: 1px solid var(--glass-border);
+      background: transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+    .file-input-btn {
+      border: 1px dashed var(--glass-border);
+      color: var(--text-muted);
+      background: transparent;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+      width: 100%;
+      transition: var(--transition-standard);
+    }
+    .file-input-btn:hover {
+      border-color: var(--neon-cyan);
+      color: var(--text-white);
+    }
+    .file-input-wrapper input[type=file] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .clear-img-btn {
+      width: 100%;
+      background: rgba(255, 74, 118, 0.15);
+      border: 1px solid var(--neon-coral);
+      color: var(--neon-coral);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: var(--transition-standard);
+    }
+    .clear-img-btn:hover {
+      background: rgba(255, 74, 118, 0.25);
+    }
+
+    /* Claw Controls on bottom */
+    .claw-controls {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: 12px;
+      pointer-events: auto;
+    }
+    .claw-btn {
+      background: rgba(18, 20, 42, 0.9);
+      border: 1px solid var(--glass-border);
+      color: var(--text-white);
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      transition: var(--transition-standard);
+    }
+    .claw-btn:active {
+      transform: scale(0.92);
+    }
+    .claw-btn:hover {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    }
+    .claw-btn.drop-btn {
+      width: 120px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      border: none;
+    }
+    .claw-btn.drop-btn:hover {
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+    }
+
+    /* Animated Claw visual overlay */
+    .claw-wrapper {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.08s ease-out;
+    }
+    .claw-line {
+      width: 2px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+    }
+    .claw-grip {
+      height: 10px;
+      background: #4e5372;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: width 0.1s;
+    }
+    .preview-shape {
+      margin-top: 2px;
+      transition: width 0.1s, height 0.1s, background-color 0.1s;
+    }
+
+    /* Matter Canvas Container */
+    .canvas-container {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      cursor: grab;
+    }
+    .canvas-container:active {
+      cursor: grabbing;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--neon-cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- UI HEADER & SCORES -->
+  <div class="ui-layer">
+    <h1>Pixel Tower</h1>
+    <div class="score-board">
+      <p>현재 높이: <span id="valHeight" class="score-text">0.0m</span></p>
+      <p>신기록: <span id="valRecord" class="score-text text-yellow">0.0m</span></p>
+    </div>
+    <div class="btn-group">
+      <button class="action-btn" onclick="resetGame()">🔄 새로 시작</button>
+      <button class="action-btn bg-green" onclick="copyLink()">🔗 추천/공유</button>
+    </div>
+    <div class="help-text-pc">
+      <p>🖱️ 마우스 드래그: 뷰 이동</p>
+      <p>🐭 마우스 휠: 확대/축소</p>
+    </div>
+  </div>
+
+  <!-- SETTINGS TOGGLE BUTTON FOR MOBILE -->
+  <button class="settings-toggle-btn" id="settingsToggleBtn" onclick="toggleCustomizer()" aria-label="Toggle Block Settings">⚙️ 블록선택 / 사진업로드</button>
+
+  <!-- BLOCK CUSTOMIZER PANEL -->
+  <div class="customizer-panel">
+    <h3>블록 설정</h3>
+    
+    <div class="setting-group">
+      <label>블록선택</label>
+      <div class="shape-grid" id="shapeGridContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <label>단색 채우기</label>
+      <input type="color" class="color-picker" id="colorPicker" value="#3b82f6" />
+    </div>
+
+    <div class="setting-group">
+      <label>사진업로드</label>
+      <div class="file-input-wrapper">
+        <div class="file-input-btn" id="fileBtnLabel">이미지 파일 선택</div>
+        <input type="file" id="imageUploader" accept="image/*" />
+      </div>
+      <button class="clear-img-btn" id="clearImgBtn" style="display: none;">업로드 사진 제거</button>
+    </div>
+  </div>
+
+  <!-- CLAW CONTROLLER -->
+  <div class="claw-controls">
+    <button onclick="moveClaw(-1)" class="claw-btn">⬅️</button>
+    <button onclick="dropBlock()" class="claw-btn drop-btn" id="dropBtn">⬇️ DROP</button>
+    <button onclick="moveClaw(1)" class="claw-btn">➡️</button>
+  </div>
+
+  <!-- CLAW GRAPHICAL PREVIEW -->
+  <div class="claw-wrapper" id="clawWrapper">
+    <div class="claw-line"></div>
+    <div class="claw-grip" id="clawGrip"></div>
+    <div class="preview-shape" id="previewShape"></div>
+  </div>
+
+  <!-- Matter.js Container -->
+  <div class="canvas-container" id="canvasContainer"></div>
+
+  <script>
+    // ─── SHAPES & DEFINITIONS ───
+    const shapesList = [
+      { id: 'square', name: '사각', svg: '<rect x="8" y="8" width="16" height="16" />' },
+      { id: 'h-bar', name: '가로 막대', svg: '<rect x="2" y="8" width="28" height="16" />' },
+      { id: 'v-bar', name: '세로 막대', svg: '<rect x="8" y="2" width="16" height="28" />' },
+      { id: 'long', name: '긴 가로', svg: '<rect x="1" y="10" width="30" height="12" />' },
+      { id: 'tall', name: '긴 세로', svg: '<rect x="10" y="1" width="12" height="30" />' },
+      { id: 'l-shape', name: 'L 모양', svg: '<path d="M8,4 h8 v16 h8 v8 h-16 Z" />' },
+      { id: 'j-shape', name: 'J 모양', svg: '<path d="M16,4 h8 v24 h-16 v-8 h8 Z" />' },
+      { id: 't-shape', name: 'T 모양', svg: '<path d="M4,8 h24 v8 h-8 v12 h-8 v-12 h-8 Z" />' },
+      { id: 'z-shape', name: 'Z 모양', svg: '<path d="M4,8 h16 v8 h8 v8 h-16 v-8 h-8 Z" />' },
+      { id: 'u-shape', name: 'ㄷ 모양', svg: '<path d="M4,6 h24 v20 h-8 v-10 h-8 v10 h-8 Z" />' },
+      { id: 'cross-shape', name: '십자 모양', svg: '<path d="M10,4 h12 v8 h8 v12 h-8 v8 h-12 v-8 h-8 v-12 h8 Z" />' },
+      { id: 'long-cross', name: '긴 십자', svg: '<path d="M10,1 h12 v10 h10 v12 h-10 v10 h-12 v-10 h-10 v-12 h10 Z" />' },
+    ];
+
+    // ─── GAME STATE ───
+    let currentShape = 'square';
+    let currentColor = '#3b82f6';
+    let currentImage = null;
+    let dropX = 0; // relative to center in pixels
+    let canDrop = true;
+    let maxRecord = parseFloat(localStorage.getItem('pixelTowerRecord')) || 0.0;
+    
+    // Multi-touch Pinch Zoom state
+    let initialTouchDistance = 0;
+    let initialScale = 1.0;
+
+    // Matter Engine references
+    let engine, render, floor;
+    
+    // Camera transform state
+    const camera = {
+      scale: window.innerWidth < 768 ? 0.55 : 1.0,
+      x: 0,
+      y: 0,
+      isDragging: false,
+      lastMouseX: 0,
+      lastMouseY: 0
+    };
+
+    // ─── DOM INITS ───
+    document.addEventListener('DOMContentLoaded', () => {
+      renderShapeSelector();
+      document.getElementById('valRecord').innerText = `${maxRecord.toFixed(1)}m`;
+      
+      initMatterEngine();
+      updateClawVisuals();
+      
+      // Hook controls
+      document.getElementById('colorPicker').addEventListener('input', (e) => {
+        currentColor = e.target.value;
+        currentImage = null;
+        document.getElementById('clearImgBtn').style.display = 'none';
+        document.getElementById('fileBtnLabel').innerText = '이미지 파일 선택';
+        updateClawVisuals();
+      });
+
+      document.getElementById('imageUploader').addEventListener('change', handleImageUpload);
+      document.getElementById('clearImgBtn').addEventListener('click', () => {
+        currentImage = null;
+        document.getElementById('clearImgBtn').style.display = 'none';
+        document.getElementById('fileBtnLabel').innerText = '이미지 파일 선택';
+        document.getElementById('imageUploader').value = '';
+        updateClawVisuals();
+      });
+
+      // Pointer event listeners for camera dragging on canvas container
+      const container = document.getElementById('canvasContainer');
+      container.addEventListener('pointerdown', handlePointerDown);
+      container.addEventListener('pointermove', handlePointerMove);
+      container.addEventListener('pointerup', handlePointerUp);
+      container.addEventListener('pointerleave', handlePointerUp);
+      container.addEventListener('wheel', handleWheel, { passive: false });
+
+      // Multi-touch Pinch Zoom listeners for Mobile
+      container.addEventListener('touchstart', (e) => {
+        if (e.target.closest('button') || e.target.closest('.customizer-panel') || e.target.closest('.ui-layer') || e.target.closest('.claw-controls')) return;
+        if (e.touches.length === 2) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          initialTouchDistance = Math.hypot(dx, dy);
+          initialScale = camera.scale;
+        }
+      }, { passive: true });
+
+      container.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2 && initialTouchDistance > 0) {
+          e.preventDefault(); // Prevent default viewport scrolling
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.hypot(dx, dy);
+          
+          const factor = dist / initialTouchDistance;
+          let newScale = initialScale * factor;
+          newScale = Math.max(0.15, Math.min(newScale, 2.5));
+
+          const oldWidth = window.innerWidth / camera.scale;
+          const oldHeight = window.innerHeight / camera.scale;
+          const newWidth = window.innerWidth / newScale;
+          const newHeight = window.innerHeight / newScale;
+
+          camera.x += (oldWidth - newWidth) / 2;
+          camera.y += (oldHeight - newHeight) / 2;
+          camera.scale = newScale;
+
+          updateCamera();
+        }
+      }, { passive: false });
+
+      container.addEventListener('touchend', (e) => {
+        if (e.touches.length < 2) {
+          initialTouchDistance = 0;
+        }
+      }, { passive: true });
+
+      container.addEventListener('touchcancel', (e) => {
+        if (e.touches.length < 2) {
+          initialTouchDistance = 0;
+        }
+      }, { passive: true });
+
+      // Resize observer
+      window.addEventListener('resize', handleResize);
+    });
+
+    // ─── RENDER SHAPE LIST ───
+    function renderShapeSelector() {
+      const container = document.getElementById('shapeGridContainer');
+      container.innerHTML = shapesList.map(s => `
+        <button class="shape-btn ${currentShape === s.id ? 'active' : ''}" onclick="selectShape('${s.id}')" id="btn-shape-${s.id}">
+          <div class="shape-icon-container">
+            <svg width="100%" height="100%" viewBox="0 0 32 32" style="fill: currentColor;">
+              ${s.svg}
+            </svg>
+          </div>
+          <span class="shape-label">${s.name}</span>
+        </button>
+      `).join('');
+    }
+
+    function selectShape(shapeId) {
+      document.getElementById(`btn-shape-${currentShape}`).classList.remove('active');
+      currentShape = shapeId;
+      document.getElementById(`btn-shape-${currentShape}`).classList.add('active');
+      updateClawVisuals();
+    }
+
+    // ─── MATTER.JS LAUNCHER ───
+    function initMatterEngine() {
+      const container = document.getElementById('canvasContainer');
+      
+      engine = Matter.Engine.create({
+        positionIterations: 30,
+        velocityIterations: 20,
+        enableSleeping: true
+      });
+
+      render = Matter.Render.create({
+        element: container,
+        engine: engine,
+        options: {
+          width: window.innerWidth,
+          height: window.innerHeight,
+          wireframes: false,
+          background: 'transparent',
+          hasBounds: true
+        }
+      });
+
+      const scaleWidth = window.innerWidth / camera.scale;
+      const scaleHeight = window.innerHeight / camera.scale;
+      const floorY = scaleHeight - (60 / camera.scale);
+      
+      // Ground
+      floor = Matter.Bodies.rectangle(scaleWidth / 2, floorY, 8000, 100, {
+        isStatic: true,
+        friction: 1,
+        render: { fillStyle: '#2f3454' }
+      });
+
+      Matter.Composite.add(engine.world, [floor]);
+
+      // Matter rendering loop
+      Matter.Runner.run(Matter.Runner.create(), engine);
+      Matter.Render.run(render);
+
+      // Look at floor first
+      updateCamera();
+
+      // Custom Render Event for Block Textures (Images)
+      Matter.Events.on(render, 'afterRender', () => {
+        const ctx = render.context;
+        const bounds = render.bounds;
+        
+        ctx.save();
+        const scaleX = render.options.width / (bounds.max.x - bounds.min.x);
+        const scaleY = render.options.height / (bounds.max.y - bounds.min.y);
+        ctx.scale(scaleX, scaleY);
+        ctx.translate(-bounds.min.x, -bounds.min.y);
+
+        const bodies = Matter.Composite.allBodies(engine.world);
+        
+        bodies.forEach(body => {
+          if (body.customRender) {
+            const { color, image, w, h } = body.customRender;
+            
+            ctx.beginPath();
+            const partsToRender = body.parts.length > 1 ? body.parts.slice(1) : body.parts;
+            
+            partsToRender.forEach(part => {
+              ctx.moveTo(part.vertices[0].x, part.vertices[0].y);
+              for (let j = 1; j < part.vertices.length; j++) {
+                ctx.lineTo(part.vertices[j].x, part.vertices[j].y);
+              }
+              ctx.lineTo(part.vertices[0].x, part.vertices[0].y);
+            });
+            ctx.closePath();
+
+            if (image && image.domElement) {
+              ctx.save();
+              ctx.clip(); 
+              
+              ctx.translate(body.position.x, body.position.y);
+              ctx.rotate(body.angle);
+
+              const imgAspect = image.width / image.height;
+              const boxAspect = w / h;
+              
+              let drawW = w;
+              let drawH = h;
+              let offsetX = -w / 2;
+              let offsetY = -h / 2;
+
+              if (imgAspect > boxAspect) {
+                drawH = h;
+                drawW = h * imgAspect;
+                offsetX = -drawW / 2;
+              } else {
+                drawW = w;
+                drawH = w / imgAspect;
+                offsetY = -drawH / 2;
+              }
+
+              ctx.drawImage(image.domElement, offsetX, offsetY, drawW, drawH);
+              ctx.restore();
+            } else {
+              ctx.fillStyle = color;
+              ctx.fill();
+            }
+          }
+        });
+        ctx.restore();
+      });
+
+      // Update height scores after each physics calculation tick
+      Matter.Events.on(engine, 'afterUpdate', () => {
+        const bodies = Matter.Composite.allBodies(engine.world);
+        let highestY = floor.bounds.min.y;
+        
+        bodies.forEach(body => {
+          if (!body.isStatic) {
+            if (body.bounds.min.y < highestY) {
+              highestY = body.bounds.min.y;
+            }
+          }
+        });
+
+        const pixelsHigh = floor.bounds.min.y - highestY;
+        const meters = Math.max(0, pixelsHigh / 80).toFixed(1);
+        
+        document.getElementById('valHeight').innerText = `${meters}m`;
+
+        if (parseFloat(meters) > maxRecord) {
+          maxRecord = parseFloat(meters);
+          localStorage.setItem('pixelTowerRecord', maxRecord);
+          document.getElementById('valRecord').innerText = `${maxRecord.toFixed(1)}m`;
+        }
+      });
+    }
+
+    // ─── CAMERA CONTROLLER ───
+    function updateCamera() {
+      if (!render) return;
+      const cw = window.innerWidth;
+      const ch = window.innerHeight;
+      
+      Matter.Render.lookAt(render, {
+        min: { x: camera.x, y: camera.y },
+        max: { x: camera.x + cw / camera.scale, y: camera.y + ch / camera.scale }
+      });
+
+      // Sync Claw scale dynamically with camera scale
+      const clawWrapper = document.getElementById('clawWrapper');
+      clawWrapper.style.transform = `translateX(calc(-50% + ${dropX}px)) scale(${camera.scale})`;
+    }
+
+    function handleResize() {
+      if (!render) return;
+      render.options.width = window.innerWidth;
+      render.options.height = window.innerHeight;
+      render.canvas.width = window.innerWidth;
+      render.canvas.height = window.innerHeight;
+      camera.scale = window.innerWidth < 768 ? 0.55 : 1.0;
+      updateCamera();
+    }
+
+    function handlePointerDown(e) {
+      if (e.target.closest('button') || e.target.closest('.customizer-panel') || e.target.closest('.ui-layer') || e.target.closest('.claw-controls')) return;
+      camera.isDragging = true;
+      camera.lastMouseX = e.clientX;
+      camera.lastMouseY = e.clientY;
+    }
+
+    function handlePointerMove(e) {
+      if (!camera.isDragging || initialTouchDistance > 0) return;
+      const dx = e.clientX - camera.lastMouseX;
+      const dy = e.clientY - camera.lastMouseY;
+      
+      camera.x -= dx / camera.scale;
+      camera.y -= dy / camera.scale;
+      
+      camera.lastMouseX = e.clientX;
+      camera.lastMouseY = e.clientY;
+      
+      updateCamera();
+    }
+
+    function handlePointerUp() {
+      camera.isDragging = false;
+    }
+
+    function handleWheel(e) {
+      e.preventDefault();
+      const zoomSensitivity = 0.0015;
+      let newScale = camera.scale - e.deltaY * zoomSensitivity;
+      newScale = Math.max(0.15, Math.min(newScale, 2.5));
+      
+      const oldWidth = window.innerWidth / camera.scale;
+      const oldHeight = window.innerHeight / camera.scale;
+      const newWidth = window.innerWidth / newScale;
+      const newHeight = window.innerHeight / newScale;
+      
+      camera.x += (oldWidth - newWidth) / 2;
+      camera.y += (oldHeight - newHeight) / 2;
+      camera.scale = newScale;
+      
+      updateCamera();
+    }
+
+    // ─── CLAW PREVIEW CONTROL ───
+    function getPreviewBoxSize(shape) {
+      let previewW = 80, previewH = 80;
+      let clipPath = 'none';
+
+      switch(shape) {
+        case 'square': previewW = 80; previewH = 80; break;
+        case 'h-bar': previewW = 160; previewH = 80; break;
+        case 'v-bar': previewW = 80; previewH = 160; break;
+        case 'long': previewW = 240; previewH = 80; break;
+        case 'tall': previewW = 80; previewH = 240; break;
+        case 'l-shape': 
+          previewW = 80; previewH = 120; 
+          clipPath = 'polygon(0 0, 50% 0, 50% 66.6%, 100% 66.6%, 100% 100%, 0 100%)'; 
+          break;
+        case 'j-shape': 
+          previewW = 80; previewH = 120; 
+          clipPath = 'polygon(50% 0, 100% 0, 100% 100%, 0 100%, 0 66.6%, 50% 66.6%)'; 
+          break;
+        case 't-shape': 
+          previewW = 120; previewH = 80; 
+          clipPath = 'polygon(0 0, 100% 0, 100% 50%, 66.6% 50%, 66.6% 100%, 33.3% 100%, 33.3% 50%, 0 50%)'; 
+          break;
+        case 'z-shape': 
+          previewW = 120; previewH = 80; 
+          clipPath = 'polygon(0 0, 66.6% 0, 66.6% 50%, 100% 50%, 100% 100%, 33.3% 100%, 33.3% 50%, 0 50%)'; 
+          break;
+        case 'u-shape': 
+          previewW = 120; previewH = 80; 
+          clipPath = 'polygon(0 0, 100% 0, 100% 100%, 66.6% 100%, 66.6% 50%, 33.3% 50%, 33.3% 100%, 0 100%)'; 
+          break;
+        case 'cross-shape': 
+          previewW = 120; previewH = 120; 
+          clipPath = 'polygon(33.3% 0, 66.6% 0, 66.6% 33.3%, 100% 33.3%, 100% 66.6%, 66.6% 66.6%, 66.6% 100%, 33.3% 100%, 33.3% 66.6%, 0 66.6%, 0 33.3%, 33.3% 33.3%)'; 
+          break;
+        case 'long-cross': 
+          previewW = 200; previewH = 200; 
+          clipPath = 'polygon(40% 0, 60% 0, 60% 40%, 100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0 60%, 0 40%, 40% 40%)'; 
+          break;
+      }
+      return { previewW, previewH, clipPath };
+    }
+
+    function updateClawVisuals() {
+      const info = getPreviewBoxSize(currentShape);
+      
+      const grip = document.getElementById('clawGrip');
+      const preview = document.getElementById('previewShape');
+      const wrapper = document.getElementById('clawWrapper');
+
+      grip.style.width = `${Math.max(100, info.previewW + 20)}px`;
+      
+      preview.style.width = `${info.previewW}px`;
+      preview.style.height = `${info.previewH}px`;
+      preview.style.clipPath = info.clipPath;
+
+      if (currentImage) {
+        preview.style.backgroundColor = 'transparent';
+        preview.style.backgroundImage = `url(${currentImage.url})`;
+        preview.style.backgroundSize = 'cover';
+        preview.style.backgroundPosition = 'center';
+      } else {
+        preview.style.backgroundColor = currentColor;
+        preview.style.backgroundImage = 'none';
+      }
+
+      wrapper.style.transform = `translateX(calc(-50% + ${dropX}px)) scale(${camera.scale})`;
+    }
+
+    function moveClaw(dir) {
+      dropX += dir * 40;
+      // Clamp within window margins
+      const maxOffset = (window.innerWidth / 2) - 80;
+      dropX = Math.max(-maxOffset, Math.min(dropX, maxOffset));
+      updateClawVisuals();
+    }
+
+    // ─── IMAGE UPLOAD PREPARATION ───
+    function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        currentImage = {
+          url: url,
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+          domElement: img
+        };
+        document.getElementById('fileBtnLabel').innerText = file.name;
+        document.getElementById('clearImgBtn').style.display = 'block';
+        updateClawVisuals();
+      };
+      img.src = url;
+    }
+
+    // ─── SPAWNING MATTER SHAPES ───
+    function dropBlock() {
+      if (!canDrop || !engine) return;
+      
+      canDrop = false;
+      const dropBtn = document.getElementById('dropBtn');
+      dropBtn.style.opacity = '0.5';
+      dropBtn.style.cursor = 'not-allowed';
+      
+      setTimeout(() => {
+        canDrop = true;
+        dropBtn.style.opacity = '1';
+        dropBtn.style.cursor = 'pointer';
+      }, 400);
+
+      const info = getPreviewBoxSize(currentShape);
+      let w = info.previewW;
+      let h = info.previewH;
+      let parts = [];
+
+      switch(currentShape) {
+        case 'square': parts = [Matter.Bodies.rectangle(0, 0, 80, 80)]; break;
+        case 'h-bar': parts = [Matter.Bodies.rectangle(0, 0, 160, 80)]; break;
+        case 'v-bar': parts = [Matter.Bodies.rectangle(0, 0, 80, 160)]; break;
+        case 'long': parts = [Matter.Bodies.rectangle(0, 0, 240, 80)]; break;
+        case 'tall': parts = [Matter.Bodies.rectangle(0, 0, 80, 240)]; break;
+        case 'l-shape':
+          parts = [
+            Matter.Bodies.rectangle(-20, 0, 40, 120),
+            Matter.Bodies.rectangle(20, 40, 40, 40)
+          ]; break;
+        case 'j-shape':
+          parts = [
+            Matter.Bodies.rectangle(20, 0, 40, 120),
+            Matter.Bodies.rectangle(-20, 40, 40, 40)
+          ]; break;
+        case 't-shape':
+          parts = [
+            Matter.Bodies.rectangle(0, -20, 120, 40),
+            Matter.Bodies.rectangle(0, 20, 40, 40)
+          ]; break;
+        case 'z-shape':
+          parts = [
+            Matter.Bodies.rectangle(-20, -20, 80, 40),
+            Matter.Bodies.rectangle(20, 20, 80, 40)
+          ]; break;
+        case 'u-shape':
+          parts = [
+            Matter.Bodies.rectangle(0, -20, 120, 40),
+            Matter.Bodies.rectangle(-40, 20, 40, 40),
+            Matter.Bodies.rectangle(40, 20, 40, 40)
+          ]; break;
+        case 'cross-shape':
+          parts = [
+            Matter.Bodies.rectangle(0, 0, 120, 40),
+            Matter.Bodies.rectangle(0, 0, 40, 120)
+          ]; break;
+        case 'long-cross':
+          parts = [
+            Matter.Bodies.rectangle(0, 0, 200, 40),
+            Matter.Bodies.rectangle(0, 0, 40, 200)
+          ]; break;
+        default: parts = [Matter.Bodies.rectangle(0, 0, 80, 80)]; break;
+      }
+
+      // Convert Screen position to Matter World coordinates
+      const screenX = (window.innerWidth / 2) + dropX;
+      const screenY = 70 + (h / 2); // vertical drop height
+
+      const worldX = camera.x + (screenX / camera.scale);
+      const worldY = camera.y + (screenY / camera.scale);
+
+      const block = Matter.Body.create({
+        parts: parts,
+        friction: 1,
+        restitution: 0,
+        density: 0.1,
+        angularDamping: 0.6,
+        render: { visible: false },
+        sleepThreshold: 30
+      });
+
+      Matter.Body.setPosition(block, { x: worldX, y: worldY });
+
+      // Save custom render tokens for drawing step
+      block.customRender = {
+        color: currentColor,
+        image: currentImage,
+        w: w,
+        h: h
+      };
+
+      Matter.Composite.add(engine.world, [block]);
+    }
+
+    function resetGame() {
+      if (!window.confirm('정말 탑을 모두 지우고 새로 시작하시겠습니까?')) return;
+      if (!engine) return;
+      const bodies = Matter.Composite.allBodies(engine.world);
+      const blocks = bodies.filter(b => !b.isStatic);
+      Matter.Composite.remove(engine.world, blocks);
+    }
+
+    function copyLink() {
+      // Formats sharing url correctly for this game
+      const shareUrl = window.location.href.split('?')[0];
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        alert('이 게임의 공유 링크가 클립보드에 복사되었습니다! 친구들과 겨뤄보세요.');
+      }).catch(() => {
+        alert('링크 복사에 실패했습니다. 주소창의 링크를 복사하여 공유해 주세요.');
+      });
+    }
+
+    function toggleCustomizer() {
+      const panel = document.querySelector('.customizer-panel');
+      const btn = document.getElementById('settingsToggleBtn');
+      panel.classList.toggle('open');
+      if (panel.classList.contains('open')) {
+        btn.innerHTML = '✕ 닫기';
+      } else {
+        btn.innerHTML = '⚙️ 블록선택 / 사진업로드';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FLY SWAT!</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-wrapper">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="ui-layer">
+            <div id="hud" class="hidden">
+                <div class="hud-top">
+                    <div class="score-lives">
+                        <div id="score">000</div>
+                        <div id="lives" style="color: #d00;">FLIES: 0 / 100</div>
+                    </div>
+                    <div class="super-meter">
+                        <div id="super-text">SUPER-SWAT</div>
+                        <div class="meter-box">
+                            <div id="meter-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screens -->
+            <div id="start-screen" class="screen">
+                <h1 class="title">FLY<br>SWAT!</h1>
+                <div class="intro-art">
+                    <!-- We'll let canvas draw something cool here in the background, so UI can just have text -->
+                </div>
+                <button id="start-btn" class="pixel-btn">▶ START</button>
+            </div>
+
+            <div id="game-over-screen" class="screen hidden">
+                <div id="final-score" class="title">180</div>
+                <h1 class="title">GAME<br>OVER</h1>
+                <div class="high-score">HIGH SCORE: <span id="high-score-val">0</span></div>
+                <div class="game-over-art">
+                    <div class="crying-face">( T_T)</div>
+                </div>
+                <button id="restart-btn" class="pixel-btn">▶ PLAY AGAIN</button>
+            </div>
+            
+            <!-- Super Activation Overlay -->
+            <div id="super-overlay" class="hidden">
+                <h1 class="super-title">SUPER!</h1>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

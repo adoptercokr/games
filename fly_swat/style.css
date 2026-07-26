@@ -1,0 +1,42 @@
+* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+body { background-color: #222; font-family: 'Press Start 2P', cursive; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; touch-action: none; }
+
+#game-wrapper { position: relative; width: 100%; height: 100%; max-width: 450px; max-height: 850px; background-color: #fff; box-shadow: 0 0 20px #000; overflow: hidden; cursor: none; }
+
+canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+
+#ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+.screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); backdrop-filter: blur(2px); display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: auto; }
+.hidden { display: none !important; }
+
+/* Typography & Colors (1-bit style) */
+h1.title { font-size: 3.5rem; color: #000; text-align: center; line-height: 1.2; text-shadow: 4px 4px 0 #ccc; margin-bottom: 40px; }
+.pixel-btn { background: #fff; border: 4px solid #000; box-shadow: 4px 4px 0 #000; font-family: 'Press Start 2P'; font-size: 1.2rem; padding: 15px 30px; cursor: pointer; transition: all 0.1s; text-transform: uppercase; color: #000; }
+.pixel-btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 #000; }
+
+/* HUD */
+#hud { position: absolute; top: 0; left: 0; width: 100%; padding: 15px; pointer-events: none; z-index: 10; }
+.hud-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.score-lives { color: #000; }
+#score { font-size: 2.5rem; margin-bottom: 10px; }
+#lives { font-size: 1rem; }
+.super-meter { text-align: right; font-size: 0.8rem; font-weight: bold; }
+.meter-box { width: 120px; height: 20px; border: 4px solid #000; margin-top: 5px; padding: 2px; float: right; background: #fff;}
+#meter-fill { width: 0%; height: 100%; background: #000; transition: width 0.2s; }
+
+.meter-ready #meter-fill { animation: flashBg 0.2s infinite alternate; }
+.meter-ready #super-text { animation: flashText 0.2s infinite alternate; }
+
+@keyframes flashBg { from { background: #000; } to { background: #ccc; } }
+@keyframes flashText { from { color: #000; } to { color: #888; } }
+
+/* Game Over */
+#final-score { font-size: 3rem; margin-bottom: 20px; }
+.high-score { font-size: 1rem; margin-bottom: 30px; }
+.crying-face { font-size: 3rem; margin-bottom: 30px; font-family: sans-serif; font-weight: bold; letter-spacing: 5px;}
+
+/* Super Overlay */
+#super-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; animation: invertFlash 0.1s infinite alternate; pointer-events: none; z-index: 20; }
+.super-title { font-size: 4rem; text-shadow: 6px 6px 0 #fff; color: #000; }
+@keyframes invertFlash { from { background: rgba(0,0,0,0.8); } to { background: rgba(255,255,255,0.8); } }

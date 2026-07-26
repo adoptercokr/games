@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SNEAKY SNACKER</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-wrapper">
+        <!-- Main Game UI -->
+        <div id="game-ui" class="hidden">
+            <div class="hud-top">
+                <div class="stealth-container">
+                    <div class="meter-title">발각도 (위험도)</div>
+                    <div class="stealth-bar-wrapper">
+                        <div class="stealth-bg-gradient"></div>
+                        <div id="stealth-marker">▼</div>
+                    </div>
+                </div>
+                <div class="hunger-time-row">
+                    <div class="hunger-container">
+                        <div class="meter-title">포만감</div>
+                        <div id="cookie-container">🍪🍪🍪🍪🍪🍪</div>
+                    </div>
+                    <div class="clock-container">
+                        <div class="clock-icon">🕒</div>
+                        <div id="time-val">60</div>
+                    </div>
+                </div>
+            </div>
+
+            <canvas id="gameCanvas"></canvas>
+            
+            <div id="caution-banner" class="hidden">주의!</div>
+
+            <div class="controls-bottom">
+                <button id="munch-btn" class="control-btn munch-btn">과자 먹기</button>
+            </div>
+        </div>
+
+        <!-- Screens -->
+        <div id="start-screen" class="screen">
+            <div class="logo">몰래먹는<br>스낵커</div>
+            <div class="level-info"><span id="current-level-display">1</span> 교시<br>선생님 몰래 과자를 먹어라!</div>
+            <button id="start-btn" class="play-btn">시작하기</button>
+        </div>
+
+        <div id="game-over-screen" class="screen hidden">
+            <h1 id="game-over-title">CAUGHT!</h1>
+            <p id="game-over-desc">선생님께 들켰습니다!</p>
+            <button id="restart-btn" class="play-btn">다시 하기</button>
+        </div>
+        
+        <div id="clear-screen" class="screen hidden">
+            <h1 class="success-title">SUCCESS!</h1>
+            <p class="success-desc">무사히 배를 채웠습니다!</p>
+            <div class="snack-unlocked">
+                <p>새로운 간식 획득!</p>
+                <div id="unlocked-icon">🍪</div>
+            </div>
+            <button id="next-level-btn" class="play-btn">다음 교시</button>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
