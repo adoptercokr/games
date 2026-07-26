@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>퍼니존 - 무료 게임 놀이터!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #6ECDF5;
+    --sun: #FFD93D;
+    --grass: #6BCB77;
+    --coral: #FF6B6B;
+    --purple: #A78BFA;
+    --pink: #F472B6;
+    --orange: #FB923C;
+    --teal: #2DD4BF;
+    --navy: #1E1B4B;
+    --white: #FFFFFF;
+    --card-radius: 20px;
+    --soft-shadow: 0 8px 32px rgba(30,27,75,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nanum Gothic', sans-serif;
+    background: #F0F7FF;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── ANIMATED BG ─── */
+  .bg-bubbles {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+  .bubble {
+    position: absolute; border-radius: 50%; opacity: 0.13;
+    animation: floatUp linear infinite;
+  }
+  .bubble:nth-child(1){width:80px;height:80px;background:var(--coral);left:10%;animation-duration:14s;animation-delay:0s;}
+  .bubble:nth-child(2){width:50px;height:50px;background:var(--purple);left:30%;animation-duration:18s;animation-delay:3s;}
+  .bubble:nth-child(3){width:100px;height:100px;background:var(--sky);left:55%;animation-duration:12s;animation-delay:1s;}
+  .bubble:nth-child(4){width:60px;height:60px;background:var(--sun);left:75%;animation-duration:20s;animation-delay:5s;}
+  .bubble:nth-child(5){width:40px;height:40px;background:var(--grass);left:88%;animation-duration:16s;animation-delay:2s;}
+  @keyframes floatUp {
+    0%{transform:translateY(100vh) scale(0.5);} 100%{transform:translateY(-200px) scale(1);}
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    position: relative; z-index: 10;
+    background: linear-gradient(135deg, #667EEA 0%, #764BA2 50%, #F093FB 100%);
+    padding: 0 16px 32px;
+    border-radius: 0 0 40px 40px;
+    box-shadow: 0 8px 32px rgba(102,126,234,0.4);
+    overflow: hidden;
+  }
+  .header::before {
+    content:'';position:absolute;top:-60px;right:-40px;
+    width:200px;height:200px;border-radius:50%;
+    background:rgba(255,255,255,0.08);
+  }
+  .header::after {
+    content:'';position:absolute;bottom:-80px;left:-30px;
+    width:160px;height:160px;border-radius:50%;
+    background:rgba(255,255,255,0.06);
+  }
+
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 0 12px;
+  }
+  .logo {
+    font-family: 'Jua', sans-serif;
+    font-size: 26px; color: white;
+    display: flex; align-items: center; gap: 8px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+  }
+  .logo-star { font-size: 28px; animation: spin 4s linear infinite; display:inline-block;}
+  @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+
+  .menu-btn {
+    background: rgba(255,255,255,0.2);
+    border: none; border-radius: 12px;
+    width: 42px; height: 42px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  }
+  .menu-btn span { width: 20px; height: 2px; background: white; border-radius: 2px; display: block;}
+
+  .hero-section { text-align: center; padding: 8px 0 8px; position: relative; z-index: 1; }
+  .hero-title {
+    font-family: 'Jua', sans-serif;
+    font-size: clamp(28px, 7vw, 48px);
+    color: white;
+    line-height: 1.2;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+  }
+  .hero-subtitle {
+    font-size: 15px; color: rgba(255,255,255,0.85); margin-top: 6px; margin-bottom: 18px;
+  }
+  .search-bar {
+    display: flex; align-items: center;
+    background: white; border-radius: 50px;
+    padding: 10px 16px; gap: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    max-width: 400px; margin: 0 auto;
+  }
+  .search-bar input {
+    border: none; outline: none; font-size: 15px;
+    font-family: 'Nanum Gothic', sans-serif;
+    flex: 1; background: transparent; color: #333;
+  }
+  .search-bar input::placeholder { color: #aaa; }
+  .search-icon { font-size: 18px; color: #888; }
+
+  /* ─── CATEGORY TABS ─── */
+  .category-wrap {
+    position: relative; z-index: 10;
+    padding: 16px 16px 0;
+    margin-top: -4px;
+  }
+  .category-scroll {
+    display: flex; gap: 8px; overflow-x: auto;
+    scrollbar-width: none; padding-bottom: 4px;
+  }
+  .category-scroll::-webkit-scrollbar { display: none; }
+  .cat-chip {
+    flex-shrink: 0;
+    padding: 8px 18px; border-radius: 50px;
+    font-size: 13px; font-weight: 700;
+    font-family: 'Nanum Gothic', sans-serif;
+    cursor: pointer; border: none; transition: all 0.2s;
+    background: white; color: #555;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .cat-chip.active { background: var(--coral); color: white; box-shadow: 0 4px 12px rgba(255,107,107,0.4); }
+  .cat-chip:hover:not(.active) { transform: translateY(-2px); }
+
+  /* ─── STATS BANNER ─── */
+  .stats-banner {
+    display: flex; gap: 10px; padding: 14px 16px;
+    position: relative; z-index: 5;
+  }
+  .stat-card {
+    flex: 1; background: white; border-radius: 16px;
+    padding: 12px 10px; text-align: center;
+    box-shadow: var(--soft-shadow);
+  }
+  .stat-num { font-family: 'Jua', sans-serif; font-size: 22px; color: var(--navy); }
+  .stat-label { font-size: 11px; color: #888; margin-top: 2px; }
+
+  /* ─── SECTION ─── */
+  .section { padding: 0 16px 8px; position: relative; z-index: 5; }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: 'Jua', sans-serif; font-size: 20px; color: var(--navy);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-more {
+    font-size: 13px; color: var(--purple); font-weight: 700; cursor: pointer;
+    text-decoration: none; border: 1.5px solid var(--purple);
+    padding: 5px 14px; border-radius: 50px;
+    transition: all 0.2s;
+  }
+  .section-more:hover { background: var(--purple); color: white; }
+
+  /* ─── FEATURED GAME (BIG CARD) ─── */
+  .featured-card {
+    border-radius: 24px; overflow: hidden; position: relative;
+    height: 200px; margin-bottom: 16px; cursor: pointer;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    transition: transform 0.25s;
+  }
+  .featured-card:hover { transform: scale(1.02); }
+  .featured-bg {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .featured-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 20px;
+  }
+  .featured-badge {
+    background: var(--sun); color: var(--navy);
+    font-size: 11px; font-weight: 800;
+    padding: 4px 12px; border-radius: 50px;
+    width: fit-content; margin-bottom: 8px;
+  }
+  .featured-title { font-family: 'Jua', sans-serif; font-size: 22px; color: white; margin-bottom: 4px; }
+  .featured-desc { font-size: 13px; color: rgba(255,255,255,0.8); }
+  .play-btn-big {
+    position: absolute; top: 16px; right: 16px;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: white; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+  }
+  .play-btn-big:hover { transform: scale(1.1); }
+
+  /* ─── GAME GRID ─── */
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .game-card {
+    background: white; border-radius: var(--card-radius);
+    overflow: hidden; cursor: pointer;
+    box-shadow: var(--soft-shadow);
+    transition: transform 0.25s, box-shadow 0.25s;
+    position: relative;
+  }
+  .game-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.14); }
+  .game-card:active { transform: scale(0.97); }
+
+  .game-thumb {
+    width: 100%; aspect-ratio: 4/3;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px; position: relative; overflow: hidden;
+  }
+  .game-thumb .thumb-emoji { position: relative; z-index: 1; filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.15)); }
+  .game-thumb .sparkles {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sparkle {
+    position: absolute; font-size: 16px; opacity: 0.5;
+    animation: twinkle 2s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle { 0%{opacity:0.2;transform:scale(0.8);} 100%{opacity:0.7;transform:scale(1.2);} }
+
+  .game-info { padding: 12px 14px 14px; }
+  .game-name { font-family: 'Jua', sans-serif; font-size: 16px; color: var(--navy); margin-bottom: 4px; }
+  .game-meta { display: flex; align-items: center; justify-content: space-between; }
+  .game-tag {
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 50px;
+  }
+  .game-rating { font-size: 12px; color: #888; display: flex; align-items: center; gap: 3px; }
+  .star-filled { color: var(--sun); }
+
+  .new-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: var(--coral); color: white;
+    font-size: 10px; font-weight: 800;
+    padding: 3px 10px; border-radius: 50px;
+    z-index: 2;
+  }
+  .hot-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: var(--orange); color: white;
+    font-size: 10px; font-weight: 800;
+    padding: 3px 10px; border-radius: 50px;
+    z-index: 2;
+  }
+
+  /* ─── HORIZONTAL SCROLL CARDS ─── */
+  .h-scroll {
+    display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+  .h-scroll::-webkit-scrollbar { display: none; }
+  .mini-card {
+    flex-shrink: 0; width: 130px; background: white;
+    border-radius: 18px; overflow: hidden;
+    box-shadow: var(--soft-shadow); cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .mini-card:hover { transform: translateY(-4px); }
+  .mini-thumb {
+    height: 90px; display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+  }
+  .mini-info { padding: 8px 10px 12px; }
+  .mini-name { font-family: 'Jua', sans-serif; font-size: 13px; color: var(--navy); text-align: center; }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: white;
+    border-top: 1px solid #EEE;
+    display: flex;
+    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 3px; cursor: pointer; padding: 4px 0;
+    transition: transform 0.15s;
+  }
+  .nav-item:active { transform: scale(0.9); }
+  .nav-icon { font-size: 22px; line-height: 1; }
+  .nav-label { font-size: 10px; font-weight: 700; color: #999; }
+  .nav-item.active .nav-label { color: var(--purple); }
+  .nav-item.active .nav-icon { transform: scale(1.1); }
+
+  /* ─── AD BANNER ─── */
+  .ad-slot {
+    margin: 8px 16px; border-radius: 16px;
+    background: linear-gradient(90deg, #f8f8f8, #efefef);
+    border: 2px dashed #DDD;
+    height: 80px; display: flex; align-items: center; justify-content: center;
+    color: #bbb; font-size: 13px; letter-spacing: 0.5px;
+  }
+
+  /* ─── SPACING ─── */
+  .spacer { height: 90px; } /* above bottom nav */
+  .section + .section { margin-top: 8px; }
+
+  /* ─── PC LAYOUT ─── */
+  @media (min-width: 600px) {
+    body { background: #E8EEFF; }
+    .app-shell {
+      max-width: 480px; margin: 0 auto;
+      background: #F0F7FF;
+      min-height: 100vh;
+      box-shadow: 0 0 60px rgba(0,0,0,0.12);
+    }
+    .game-grid { grid-template-columns: repeat(2, 1fr); }
+    .bottom-nav { max-width: 480px; left: 50%; transform: translateX(-50%); }
+  }
+
+  /* ─── POPUP OVERLAY ─── */
+  .overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(30,27,75,0.55); backdrop-filter: blur(6px);
+    align-items: flex-end; justify-content: center;
+  }
+  .overlay.open { display: flex; }
+  .popup {
+    background: white; border-radius: 32px 32px 0 0;
+    width: 100%; max-width: 480px;
+    padding: 24px 24px 40px;
+    animation: slideUp 0.3s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
+  .popup-drag { width:48px;height:5px;background:#E0E0E0;border-radius:3px;margin:0 auto 20px; }
+  .popup-thumb-big { font-size: 80px; text-align: center; margin-bottom: 12px; }
+  .popup-title { font-family:'Jua',sans-serif;font-size:26px;color:var(--navy);text-align:center; }
+  .popup-desc { font-size:14px;color:#666;text-align:center;margin:8px 0 20px;line-height:1.6;}
+  .popup-tags { display:flex;gap:8px;justify-content:center;margin-bottom:20px; }
+  .popup-tag { padding:5px 14px;border-radius:50px;font-size:12px;font-weight:700; }
+  .play-now-btn {
+    width:100%;padding:16px;border-radius:16px;border:none;
+    background:linear-gradient(135deg,#667EEA,#764BA2);
+    color:white;font-family:'Jua',sans-serif;font-size:20px;
+    cursor:pointer;box-shadow:0 6px 20px rgba(102,126,234,0.4);
+    transition:transform 0.2s;
+  }
+  .play-now-btn:hover{transform:scale(1.02);}
+  .close-popup {
+    position:absolute;top:20px;right:20px;
+    background:#F0F0F0;border:none;border-radius:50%;
+    width:36px;height:36px;font-size:18px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .popup{position:relative;}
+</style>
+</head>
+<body>
+
+<!-- BG BUBBLES -->
+<div class="bg-bubbles">
+  <div class="bubble"></div><div class="bubble"></div>
+  <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+</div>
+
+<div class="app-shell">
+
+<!-- ─── HEADER ─── -->
+<header class="header">
+  <div class="topbar">
+    <div class="logo">
+      <span class="logo-star">⭐</span> 퍼니존
+    </div>
+    <button class="menu-btn" aria-label="메뉴">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="hero-section">
+    <div class="hero-title">🎮 무료 게임 놀이터!</div>
+    <div class="hero-subtitle">친구들이랑 같이 즐기는 신나는 게임 세상 ✨</div>
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="게임 검색하기..." aria-label="게임 검색">
+    </div>
+  </div>
+</header>
+
+<!-- ─── CATEGORY CHIPS ─── -->
+<div class="category-wrap">
+  <div class="category-scroll">
+    <button class="cat-chip active">🕹️ 전체</button>
+    <button class="cat-chip">🧩 퍼즐</button>
+    <button class="cat-chip">🏃 액션</button>
+    <button class="cat-chip">🧠 두뇌</button>
+    <button class="cat-chip">🎯 슈팅</button>
+    <button class="cat-chip">🏆 스포츠</button>
+    <button class="cat-chip">🎨 창작</button>
+    <button class="cat-chip">👾 아케이드</button>
+  </div>
+</div>
+
+<!-- ─── STATS ─── -->
+<div class="stats-banner">
+  <div class="stat-card">
+    <div class="stat-num">8+</div>
+    <div class="stat-label">재미있는 게임</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">무료</div>
+    <div class="stat-label">모든 게임 무료</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">안전한 사이트</div>
+  </div>
+</div>
+
+<!-- ─── AD SLOT TOP ─── -->
+<div class="ad-slot">📢 Google AdSense 광고 영역</div>
+
+<!-- ─── FEATURED GAME ─── -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">🔥 오늘의 인기 게임</div>
+  </div>
+  <div class="featured-card" onclick="openGame('star-runner')" style="background: linear-gradient(135deg,#667EEA 0%,#F093FB 100%);">
+    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:90px;">🚀</div>
+    <div class="featured-overlay">
+      <div class="featured-badge">⭐ 오늘의 TOP 1</div>
+      <div class="featured-title">별빛 로켓 달리기</div>
+      <div class="featured-desc">우주를 날아라! 별을 먹고 최고 점수를 狙아라!</div>
+    </div>
+    <button class="play-btn-big" aria-label="지금 플레이">▶️</button>
+  </div>
+</div>
+
+<!-- ─── ALL GAMES GRID ─── -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">🎮 모든 게임</div>
+    <a class="section-more" href="#">더보기</a>
+  </div>
+  <div class="game-grid">
+
+    <!-- Game 1 -->
+    <div class="game-card" onclick="openGame('jump-hero')">
+      <span class="hot-badge">🔥 HOT</span>
+      <div class="game-thumb" style="background:linear-gradient(135deg,#FFE066,#FF8C42);">
+        <div class="sparkles">
+          <span class="sparkle" style="top:10%;left:15%;animation-delay:0s;">✨</span>
+          <span class="sparkle" style="top:20%;right:10%;animation-delay:0.7s;">⭐</span>
+        </div>
+        <span class="thumb-emoji">🐸</span>
+      </div>
+      <div class="game-info">
+        <div class="game-name">점프 개구리</div>
+        <div class="game-meta">
+          <span class="game-tag" style="background:#FFF3CD;color:#B45309;">퍼즐</span>
+          <span class="game-rating"><span class="star-filled">★</span> 4.8</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 2 -->
+    <div class="game-card" onclick="openGame('color-match')">
+      <span class="new-badge">✨ NEW</span>
+      <div class="game-thumb" style="background:linear-gradient(135deg,#A78BFA,#60A5FA);">
+        <div class="sparkles">
+          <span class="sparkle" style="bottom:15%;left:20%;animation-delay:0.3s;">🌟</span>
+        </div>
+        <span class="thumb-emoji">🎨</span>
+      </div>
+      <div class="game-info">
+        <div class="game-name">색깔 맞추기</div>
+        <div class="game-meta">
+          <span class="game-tag" style="background:#EDE9FE;color:#7C3AED;">두뇌</span>
+          <span class="game-rating"><span class="star-filled">★</span> 4.6</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 3 -->
+    <div class="game-card" onclick="openGame('dino-run')">
+      <div class="game-thumb" style="background:linear-gradient(135deg,#6BCB77,#2DD4BF);">
+        <span class="thumb-emoji">🦕</span>
+      </div>
+      <div class="game-info">
+        <div class="game-name">공룡 달리기</div>
+        <div class="game-meta">
+          <span class="game-tag" style="background:#D1FAE5;color:#065F46;">액션</span>
+          <span class="game-rating"><span class="star-filled">★</span> 4.9</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 4 -->
+    <div class="game-card" onclick="openGame('bubble-pop')">
+      <div class="game-thumb" style="background:linear-gradient(135deg,#F472B6,#FB923C);">
+        <span class="thumb-emoji">🫧</span>
+      </div>
+      <div class="game-info">
+        <div class="game-name">버블 팡팡</div>
+        <div class="game-meta">
+          <span class="game-tag" style="background:#FCE7F3;color:#BE185D;">슈팅</span>
+          <span class="game-rating"><span class="star-filled">★</span> 4.7</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 5 -->
+    <div class="game-card" onclick="openGame('memory-flip')">
+      <div class="game-thumb" style="background:linear-gradient(135deg,#60A5FA,#34D399);">
+        <span class="thumb-emoji">🃏</span>
+      </div>
+      <div class="game-info">
+        <div class="game-name">기억력 카드</div>
+        <div class="game-meta">
+          <span class="game-tag" style="background:#DBEAFE;color:#1E40AF;">두뇌</span>
+          <span class="game-rating"><span class="star-filled">★</span> 4.5</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 6 -->
+    <div class="game-card" onclick="openGame('snake-deluxe')">
+      <div class="game-thumb" style="background:linear-gradient(135deg,#FDE68A,#F59E0B);">
+        <span class="thumb-emoji">🐍</span>
+      </div>
+      <div class="game-info">
+        <div class="game-name">뱀 키우기</div>
+        <div class="game-meta">
+          <span class="game-tag" style="background:#FEF3C7;color:#92400E;">아케이드</span>
+          <span class="game-rating"><span class="star-filled">★</span> 4.4</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 7 -->
+    <div class="game-card" onclick="openGame('math-blast')">
+      <span class="new-badge">✨ NEW</span>
+      <div class="game-thumb" style="background:linear-gradient(135deg,#818CF8,#C084FC);">
+        <span class="thumb-emoji">🔢</span>
+      </div>
+      <div class="game-info">
+        <div class="game-name">숫자 폭탄</div>
+        <div class="game-meta">
+          <span class="game-tag" style="background:#EDE9FE;color:#6D28D9;">두뇌</span>
+          <span class="game-rating"><span class="star-filled">★</span> 4.3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 8 -->
+    <div class="game-card" onclick="openGame('soccer-star')">
+      <div class="game-thumb" style="background:linear-gradient(135deg,#34D399,#059669);">
+        <span class="thumb-emoji">⚽</span>
+      </div>
+      <div class="game-info">
+        <div class="game-name">축구 스타</div>
+        <div class="game-meta">
+          <span class="game-tag" style="background:#D1FAE5;color:#065F46;">스포츠</span>
+          <span class="game-rating"><span class="star-filled">★</span> 4.8</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── AD SLOT MID ─── -->
+<div class="ad-slot" style="margin-top:16px;">📢 Google AdSense 광고 영역 (배너)</div>
+
+<!-- ─── RECENTLY PLAYED ─── -->
+<div class="section" style="margin-top:16px;">
+  <div class="section-header">
+    <div class="section-title">⏰ 최근 플레이</div>
+  </div>
+  <div class="h-scroll">
+    <div class="mini-card">
+      <div class="mini-thumb" style="background:linear-gradient(135deg,#FFE066,#FF8C42);">🐸</div>
+      <div class="mini-info"><div class="mini-name">점프 개구리</div></div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-thumb" style="background:linear-gradient(135deg,#6BCB77,#2DD4BF);">🦕</div>
+      <div class="mini-info"><div class="mini-name">공룡 달리기</div></div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-thumb" style="background:linear-gradient(135deg,#A78BFA,#60A5FA);">🎨</div>
+      <div class="mini-info"><div class="mini-name">색깔 맞추기</div></div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-thumb" style="background:linear-gradient(135deg,#F472B6,#FB923C);">🫧</div>
+      <div class="mini-info"><div class="mini-name">버블 팡팡</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="spacer"></div>
+</div><!-- /app-shell -->
+
+<!-- ─── BOTTOM NAV ─── -->
+<nav class="bottom-nav">
+  <div class="nav-item active">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label" style="color:#764BA2;">홈</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">🕹️</div>
+    <div class="nav-label">게임</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">🏆</div>
+    <div class="nav-label">순위</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">❤️</div>
+    <div class="nav-label">찜목록</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">⚙️</div>
+    <div class="nav-label">설정</div>
+  </div>
+</nav>
+
+<!-- ─── GAME POPUP ─── -->
+<div class="overlay" id="gameOverlay" onclick="closeGame(event)">
+  <div class="popup" id="gamePopup">
+    <div class="popup-drag"></div>
+    <button class="close-popup" onclick="closeGame()">✕</button>
+    <div class="popup-thumb-big" id="popupEmoji">🎮</div>
+    <div class="popup-title" id="popupTitle">게임 제목</div>
+    <div class="popup-desc" id="popupDesc">게임 설명</div>
+    <div class="popup-tags" id="popupTags"></div>
+    <button class="play-now-btn" onclick="alert('게임 페이지로 이동!')">▶ 지금 플레이!</button>
+  </div>
+</div>
+
+<script>
+const games = {
+  'jump-hero':   { emoji:'🐸', title:'점프 개구리', desc:'개구리를 조종해서 장애물을 뛰어넘어라! 얼마나 멀리 갈 수 있을까? 🌿', tags:[{t:'퍼즐',c:'#B45309',b:'#FFF3CD'},{t:'2~5분',c:'#555',b:'#EEE'}] },
+  'color-match': { emoji:'🎨', title:'색깔 맞추기', desc:'빠르게 나타나는 색깔을 맞춰봐! 두뇌를 빠르게 회전시켜야 해! 🌈', tags:[{t:'두뇌',c:'#7C3AED',b:'#EDE9FE'},{t:'1~3분',c:'#555',b:'#EEE'}] },
+  'dino-run':    { emoji:'🦕', title:'공룡 달리기', desc:'공룡이 되어서 장애물을 피하며 달려봐! 최고 기록에 도전! 🏃', tags:[{t:'액션',c:'#065F46',b:'#D1FAE5'},{t:'무한',c:'#555',b:'#EEE'}] },
+  'bubble-pop':  { emoji:'🫧', title:'버블 팡팡', desc:'같은 색 버블을 세 개 이상 맞추면 팡! 터져버려! 🎯', tags:[{t:'슈팅',c:'#BE185D',b:'#FCE7F3'},{t:'5~10분',c:'#555',b:'#EEE'}] },
+  'memory-flip': { emoji:'🃏', title:'기억력 카드', desc:'카드를 뒤집어서 짝을 찾아봐! 기억력 최강자는 누구? 🧠', tags:[{t:'두뇌',c:'#1E40AF',b:'#DBEAFE'},{t:'3~7분',c:'#555',b:'#EEE'}] },
+  'snake-deluxe':{ emoji:'🐍', title:'뱀 키우기', desc:'먹이를 먹을수록 길어지는 뱀! 자기 몸에 부딪히지 않게 조심해! 🍎', tags:[{t:'아케이드',c:'#92400E',b:'#FEF3C7'},{t:'무한',c:'#555',b:'#EEE'}] },
+  'math-blast':  { emoji:'🔢', title:'숫자 폭탄', desc:'떨어지는 숫자 문제를 빠르게 풀어봐! 수학 천재 인증! 💥', tags:[{t:'두뇌',c:'#6D28D9',b:'#EDE9FE'},{t:'2~5분',c:'#555',b:'#EEE'}] },
+  'soccer-star': { emoji:'⚽', title:'축구 스타', desc:'골키퍼를 피해 골을 넣어봐! 최강 축구 스타가 되어라! 🥅', tags:[{t:'스포츠',c:'#065F46',b:'#D1FAE5'},{t:'5분',c:'#555',b:'#EEE'}] },
+  'star-runner': { emoji:'🚀', title:'별빛 로켓 달리기', desc:'우주를 날아다니며 별을 수집해봐! 오늘의 TOP 게임! 🌟', tags:[{t:'액션',c:'#1E40AF',b:'#DBEAFE'},{t:'무한',c:'#555',b:'#EEE'}] },
+};
+
+function openGame(id) {
+  const g = games[id]; if (!g) return;
+  document.getElementById('popupEmoji').textContent = g.emoji;
+  document.getElementById('popupTitle').textContent = g.title;
+  document.getElementById('popupDesc').textContent = g.desc;
+  const tagsEl = document.getElementById('popupTags');
+  tagsEl.innerHTML = g.tags.map(t=>`<span class="popup-tag" style="background:${t.b};color:${t.c};">${t.t}</span>`).join('');
+  document.getElementById('gameOverlay').classList.add('open');
+}
+function closeGame(e) {
+  if (!e || e.target === document.getElementById('gameOverlay')) {
+    document.getElementById('gameOverlay').classList.remove('open');
+  }
+}
+
+// Category chip toggle
+document.querySelectorAll('.cat-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// Nav item toggle
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(n => {
+      n.classList.remove('active');
+      n.querySelector('.nav-label').style.color = '';
+    });
+    item.classList.add('active');
+    item.querySelector('.nav-label').style.color = '#764BA2';
+  });
+});
+</script>
+</body>
+</html>

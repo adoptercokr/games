@@ -1,0 +1,2432 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>스파크 게임즈 - 100% 평생 무료 웹게임 놀이터!</title>
+  
+  <!-- ==========================================
+       SEO & META TAGS (Google, Naver, AI Crawler Optimized)
+       ========================================== -->
+  <meta name="description" content="회원가입 없이 모바일과 PC에서 바로 즐기는 신나는 100% 평생 무료 레트로 웹게임 놀이터! 퍼즐, 액션, 슈팅, 아케이드 게임을 설치 없이 무제한으로 플레이하세요.">
+  <meta name="keywords" content="무료게임, 웹게임, 모바일게임, 무료웹게임, 플래시게임대체, HTML5게임, 스파크게임즈, 100%무료게임, 무설치게임, 심심할때할만한게임, 레트로게임">
+  <meta name="author" content="adopter.co.kr">
+  
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://adopter.co.kr/">
+  <meta name="naver-site-verification" content="YOUR_NAVER_VERIFICATION_KEY_HERE">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="스파크 게임즈 - 100% 평생 무료 웹게임 놀이터!">
+  <meta property="og:description" content="다운로드 없이 브라우저에서 바로 실행되는 10가지 초특급 무료 웹 게임! 모바일 최적화 완료!">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://adopter.co.kr/">
+  <meta property="og:site_name" content="스파크 게임즈">
+  <meta property="og:image" content="https://adopter.co.kr/assets/thumbnails/galaxy.gif">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="스파크 게임즈 - 100% 평생 무료 웹게임 놀이터!">
+  <meta name="twitter:description" content="회원가입과 다운로드 없이 즉시 실행하는 10종의 무료 인기 액션, 슈팅, 아케이드 게임!">
+  <meta name="twitter:image" content="https://adopter.co.kr/assets/thumbnails/galaxy.gif">
+
+  <!-- JSON-LD Structured Data for AI Crawler Optimization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "GameServer",
+    "name": "Spark Games (스파크 게임즈)",
+    "url": "https://adopter.co.kr/",
+    "description": "회원가입과 다운로드 없이 브라우저에서 바로 실행하는 100% 평생 무료 모바일 최적화 웹게임 놀이터!",
+    "genre": "Casual Games, Arcade, Puzzle, Shooting, 3D Racing",
+    "creator": {
+      "@type": "Organization",
+      "name": "adopter.co.kr",
+      "url": "http://adopter.co.kr"
+    },
+    "hasPart": [
+      { "@type": "SoftwareApplication", "name": "Neon Racer 3D (네온 레이서 3D)", "applicationCategory": "GameApplication", "operatingSystem": "All" },
+      { "@type": "SoftwareApplication", "name": "Capybara Evolution (카피바라 진화시키기)", "applicationCategory": "GameApplication", "operatingSystem": "All" },
+      { "@type": "SoftwareApplication", "name": "Cookie Escape (쿠키 대탈주)", "applicationCategory": "GameApplication", "operatingSystem": "All" },
+      { "@type": "SoftwareApplication", "name": "Fly Swat (파리 잡기 소동)", "applicationCategory": "GameApplication", "operatingSystem": "All" },
+      { "@type": "SoftwareApplication", "name": "Galaxy Shooter (갤럭시 슈터)", "applicationCategory": "GameApplication", "operatingSystem": "All" },
+      { "@type": "SoftwareApplication", "name": "Gun Zombie (좀비 건 슈터)", "applicationCategory": "GameApplication", "operatingSystem": "All" },
+      { "@type": "SoftwareApplication", "name": "Kids Runner (달려라! 키즈 러너)", "applicationCategory": "GameApplication", "operatingSystem": "All" },
+      { "@type": "SoftwareApplication", "name": "Neon Maze Escape (네온 미로 탈출)", "applicationCategory": "GameApplication", "operatingSystem": "All" },
+      { "@type": "SoftwareApplication", "name": "Sneaky Snacker (몰래 먹는 스내커)", "applicationCategory": "GameApplication", "operatingSystem": "All" },
+      { "@type": "SoftwareApplication", "name": "Space Survivor (스페이스 서바이버)", "applicationCategory": "GameApplication", "operatingSystem": "All" }
+    ]
+  }
+  </script>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Press+Start+2P&family=Nanum+Gothic:wght@400;700;800&family=VT323&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ─── RETRO GAMEBOY BACKLIT IPS SYSTEM TOKENS ─── */
+    :root {
+      /* Handheld Outer Casing */
+      --gb-case-bg: #d2d5d8;       /* Nostalgic DMG Classic grey case */
+      --gb-case-shadow: #9ea2a7;   /* Plastic bevel shadows */
+      --gb-case-highlight: #fbfbfc;/* Plastic bevel sheen */
+      
+      --gb-bezel-bg: #5a5d68;     /* Inner screen bezel grey */
+      
+      /* Backlit IPS Mod High-Contrast Screen */
+      --screen-black: #0c0d14;    /* Razor-sharp background */
+      --screen-card-bg: #151821;  /* Card base background */
+      --screen-text-white: #ffffff;
+      --screen-text-muted: #8c95a5;
+      
+      --neon-coral: #ff4a76;
+      --neon-cyan: #00f0ff;
+      --neon-gold: #ffd700;
+      --neon-purple: #b55fe6;
+      --neon-green: #39ff14;
+      
+      --gb-pixel-border: 4px solid #1a1a1c;
+      --soft-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+      --transition-standard: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    }
+
+    /* ─── RESET & DEEP ARCADE ROOM BACKGROUND ─── */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    body {
+      font-family: 'Nanum Gothic', 'Jua', sans-serif;
+      background: radial-gradient(circle at center, #1b162e 0%, #06040b 100%);
+      color: var(--screen-text-white);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* ─── VIRTUAL HANDHELD HOUSING ─── */
+    .app-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1100px;
+      margin: 32px auto;
+      background: var(--gb-case-bg);
+      border: var(--gb-pixel-border);
+      border-radius: 24px 24px 64px 24px; /* Classic bottom-right console sweep */
+      box-shadow: 0 30px 80px rgba(0,0,0,0.9), 
+                  inset 4px 4px 0 var(--gb-case-highlight), 
+                  inset -4px -4px 0 var(--gb-case-shadow);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (max-width: 600px) {
+      .app-container {
+        margin: 0;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        padding: 12px;
+      }
+    }
+
+    /* ─── RETRO CONSOLE BEZEL HEADER ─── */
+    .top-header {
+      background: var(--gb-bezel-bg);
+      border: var(--gb-pixel-border);
+      border-radius: 12px 12px 0 0;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2);
+    }
+    .top-header::before {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 8px;
+      height: 4px;
+      background: repeating-linear-gradient(90deg, #9b1c31 0px 40px, #203f7a 40px 80px);
+      opacity: 0.8;
+    }
+
+    /* BATTERY INDICATOR LIGHT */
+    .battery-led-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-family: 'Press Start 2P', sans-serif;
+      color: #dfdfdf;
+    }
+    .battery-light {
+      width: 10px;
+      height: 10px;
+      background-color: #ff1212;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ff1212, inset 1px 1px 1px #fff;
+      animation: ledPulse 1s infinite alternate;
+    }
+    @keyframes ledPulse {
+      from { opacity: 0.6; }
+      to { opacity: 1; }
+    }
+
+    .logo-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 2;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      font-size: 26px;
+    }
+    .logo-text {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 13px;
+      color: var(--neon-green);
+      text-shadow: 2px 2px 0px #043c08;
+      letter-spacing: -0.5px;
+    }
+
+    .free-badge-header {
+      background: #000;
+      border: 2px solid var(--neon-green);
+      color: var(--neon-green);
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 8px;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    /* LANGUAGE SWITCHER */
+    .lang-switcher {
+      background: #000;
+      border: var(--gb-pixel-border);
+      padding: 2px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      z-index: 2;
+    }
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: #6c7280;
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 9px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .lang-btn.active {
+      background: #252830;
+      color: #fff;
+      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.8);
+    }
+
+    /* ─── IPS HIGH-CONTRAST SCREEN EMBED ─── */
+    .screen-bezel-inner {
+      background: var(--screen-black);
+      border: var(--gb-pixel-border);
+      border-top: none;
+      padding: 24px;
+      color: var(--screen-text-white);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    @media (max-width: 600px) {
+      .screen-bezel-inner {
+        padding: 12px;
+      }
+    }
+
+    /* CRT Scanline styling is extremely subtle to avoid text blurriness */
+    .screen-bezel-inner::after {
+      content: " ";
+      display: block;
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+      z-index: 5;
+      background-size: 100% 3px;
+      pointer-events: none;
+      opacity: 0.2;
+    }
+
+    /* ─── HERO PROMOTION BOX ─── */
+    .hero-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    @media (min-width: 900px) {
+      .hero-section {
+        grid-template-columns: 1.6fr 1fr;
+      }
+    }
+
+    /* High Contrast Promo Banner */
+    .featured-banner {
+      background: var(--screen-card-bg);
+      border: 3px solid var(--screen-text-muted);
+      border-radius: var(--card-radius);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 230px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .featured-badge {
+      background: var(--neon-coral);
+      color: white;
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 8px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      width: fit-content;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px rgba(255, 74, 118, 0.4);
+    }
+    .featured-content {
+      margin: 15px 0;
+      z-index: 10;
+    }
+    .featured-title {
+      font-family: 'Jua', sans-serif;
+      font-size: 32px;
+      line-height: 1.1;
+      color: #fff;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .featured-desc {
+      font-size: 14px;
+      color: var(--screen-text-muted);
+      font-weight: 700;
+      max-width: 460px;
+    }
+    .featured-action-btn {
+      background: var(--neon-cyan);
+      border: none;
+      color: black;
+      font-family: 'Jua', sans-serif;
+      font-size: 18px;
+      padding: 10px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: fit-content;
+      transition: var(--transition-standard);
+      z-index: 10;
+      font-weight: 800;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    }
+    .featured-action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.7);
+    }
+
+    .featured-hero-preview-container {
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 45%;
+      opacity: 0.65;
+      pointer-events: none;
+      mask-image: linear-gradient(to left, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+    }
+
+    /* Smart Game Finder */
+    .dashboard-panel {
+      background: var(--screen-card-bg);
+      border: 3px solid var(--screen-text-muted);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .panel-title {
+      font-family: 'Jua', sans-serif;
+      font-size: 18px;
+      color: var(--neon-gold);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+    }
+    .search-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    .search-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid var(--screen-text-muted);
+      color: #fff;
+      padding: 10px 12px 10px 36px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 800;
+      transition: var(--transition-standard);
+    }
+    .search-input::placeholder {
+      color: #555c68;
+    }
+    .search-input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--screen-text-muted);
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    /* Counters Grid */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .stat-card {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 10px 4px;
+      text-align: center;
+    }
+    .stat-number {
+      font-family: 'VT323', monospace;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--neon-cyan);
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--screen-text-muted);
+      margin-top: 2px;
+      font-weight: 800;
+    }
+
+    /* ─── RECENTLY PLAYED SLIDER ─── */
+    .recent-section {
+      margin-bottom: 24px;
+      display: none;
+    }
+    .section-title {
+      font-family: 'Jua', sans-serif;
+      font-size: 20px;
+      color: #fff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+    }
+    .section-title span.badge {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 7px;
+      background: var(--neon-coral);
+      color: white;
+      padding: 3px 6px;
+      border-radius: 3px;
+    }
+    .recent-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .recent-mini-card {
+      flex-shrink: 0;
+      width: 105px;
+      background: var(--screen-card-bg);
+      border: 2px solid var(--screen-text-muted);
+      border-radius: 8px;
+      padding: 10px 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition-standard);
+    }
+    .recent-mini-card:hover {
+      transform: scale(1.05);
+      border-color: var(--neon-cyan);
+    }
+    .recent-emoji {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    .recent-name {
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ─── CATEGORY NAVIGATION TABS (CHUNKY PIXEL TILES) ─── */
+    .category-container {
+      padding: 8px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--screen-black);
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--screen-card-bg);
+    }
+    .category-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .category-chip {
+      background: var(--screen-card-bg);
+      border: 2px solid var(--screen-text-muted);
+      color: var(--screen-text-white);
+      font-size: 13px;
+      font-weight: 800;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition-standard);
+    }
+    .category-chip:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--neon-cyan);
+    }
+    .category-chip.active {
+      background: var(--neon-cyan);
+      color: black;
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+    }
+
+    /* ─── REALISTIC CARTRIDGES (최상의 시인성 라벨 탑재!) ─── */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media (min-width: 550px) {
+      .games-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+    }
+
+    /* CARTRIDGE PLASTIC BASE */
+    .game-card {
+      background: #adb1c2; /* Cartridge plastic matte grey */
+      border: 3px solid #1a1a1c;
+      border-radius: var(--card-radius);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      cursor: pointer;
+      transition: var(--transition-standard);
+      box-shadow: 4px 6px 0px rgba(0,0,0,0.6), 
+                  inset 2px 2px 0px rgba(255,255,255,0.3);
+    }
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 15%; right: 15%;
+      height: 8px;
+      background: rgba(0,0,0,0.18);
+      border-bottom: 2px solid rgba(255,255,255,0.1);
+      border-radius: 0 0 6px 6px;
+      z-index: 10;
+    }
+
+    .game-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      border-color: #000;
+      box-shadow: 6px 10px 0px rgba(0,0,0,0.8), 
+                  inset 2px 2px 0px rgba(255,255,255,0.4);
+    }
+
+    /* Sticker Label wrapper */
+    .thumbnail-wrapper {
+      position: relative;
+      width: calc(100% - 16px);
+      margin: 12px 8px 4px;
+      aspect-ratio: 16/11;
+      border: 2px solid #1a1a1c;
+      background: #000;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .captured-thumbnail {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 2;
+      position: absolute;
+      inset: 0;
+    }
+    .preview-box-fallback {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    /* Badges */
+    .card-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 5;
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 6px;
+      padding: 3px 6px;
+      border-radius: 2px;
+      color: white;
+      text-transform: uppercase;
+    }
+    .badge-hot { background: var(--neon-coral); border: 1px solid #000; }
+    .badge-new { background: var(--neon-green); border: 1px solid #000; color: #000; }
+    .badge-best { background: var(--neon-gold); border: 1px solid #000; color: #000; }
+
+    /* HIGH-CONTRAST CARD DETAILS LABEL (Stark Readable Black on White-Grey) */
+    .game-card-details {
+      padding: 12px;
+      background: #ffffff; /* Stark pure white sticker base for perfect contrast! */
+      border-top: 3px solid #1a1a1c;
+      color: #0c0d14; /* Pure dark obsidian text */
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .card-category {
+      font-size: 11px;
+      font-weight: 800;
+      color: #2b6cb0; /* Deep readable blue */
+    }
+    .card-clicks {
+      font-size: 10px;
+      font-weight: 800;
+      color: #4a5568; /* Readable dark grey */
+    }
+    .card-title {
+      font-family: 'Jua', sans-serif;
+      font-size: 19px;
+      color: #000;
+      line-height: 1.2;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 800;
+    }
+    .card-desc {
+      font-size: 12px;
+      color: #2d3748; /* High-contrast readable charcoal */
+      line-height: 1.4;
+      font-weight: 700;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      height: 34px;
+    }
+
+    /* Google AdSense Area with solid borders */
+    .adsense-unit {
+      margin: 16px 0 24px;
+      background: var(--screen-card-bg);
+      border: 3px dashed var(--screen-text-muted);
+      border-radius: var(--card-radius);
+      padding: 14px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      text-align: center;
+    }
+    .adsense-label {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 8px;
+      color: var(--neon-gold);
+      margin-bottom: 6px;
+    }
+    .adsense-content {
+      font-size: 13px;
+      color: white;
+      font-weight: 800;
+    }
+
+    .main-grid-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 1000px) {
+      .main-grid-layout {
+        grid-template-columns: 1fr 260px;
+      }
+    }
+
+    /* Sidebar Column */
+    .sidebar-area {
+      display: none;
+    }
+    @media (min-width: 1000px) {
+      .sidebar-area {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+    .sidebar-widget {
+      background: var(--screen-card-bg);
+      border: 3px solid var(--screen-text-muted);
+      border-radius: var(--card-radius);
+      padding: 20px;
+    }
+    .ad-skyscraper {
+      background: var(--screen-card-bg);
+      border: 3px dashed var(--screen-text-muted);
+      border-radius: var(--card-radius);
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 16px;
+    }
+
+    /* ─── FOOTER WITH SPEAKER ORNAMENT ─── */
+    .portal-footer {
+      border-top: 3px solid var(--screen-card-bg);
+      padding: 30px 0 10px;
+      margin-top: 40px;
+      text-align: center;
+      position: relative;
+    }
+    .speaker-grills-deco {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+      opacity: 0.2;
+    }
+    .speaker-slit {
+      width: 8px;
+      height: 48px;
+      background: #000;
+      transform: skewX(-28deg);
+      border-radius: 4px;
+      box-shadow: inset -2px -2px 0 rgba(255,255,255,0.1);
+    }
+
+    .footer-logo {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 11px;
+      color: var(--screen-text-muted);
+      margin-bottom: 8px;
+    }
+    .footer-copyright {
+      font-size: 13px;
+      color: var(--screen-text-muted);
+      font-weight: 800;
+    }
+    .footer-copyright a {
+      color: var(--neon-cyan);
+      text-decoration: underline;
+    }
+
+    /* ─── RETRO BOTTOM CONTROLLER BAR (MOBILE) ─── */
+    .bottom-nav-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 75px;
+      background: var(--gb-case-bg);
+      border-top: var(--gb-pixel-border);
+      z-index: 500;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -8px 30px rgba(0,0,0,0.6), inset 0 3px 0 var(--gb-case-highlight);
+    }
+    @media (min-width: 600px) {
+      .bottom-nav-bar {
+        display: none;
+      }
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #515463;
+      cursor: pointer;
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 8px;
+      transition: var(--transition-standard);
+      flex: 1;
+      height: 100%;
+    }
+    .nav-svg {
+      width: 20px;
+      height: 20px;
+      color: #515463;
+      margin-bottom: 4px;
+    }
+    .nav-item.active {
+      color: #000;
+    }
+    .nav-item.active .nav-svg {
+      color: #000;
+      transform: scale(1.15);
+    }
+
+    /* ─── GAME DETAILS OVERLAY DRAWER ─── */
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .popup-overlay.open {
+      display: flex;
+    }
+    .popup-drawer {
+      background: var(--gb-case-bg);
+      border: var(--gb-pixel-border);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8),
+                  inset 4px 4px 0 var(--gb-case-highlight),
+                  inset -4px -4px 0 var(--gb-case-shadow);
+    }
+    .close-popup-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: #1a1a1c;
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .close-popup-btn:hover {
+      background: var(--neon-coral);
+    }
+    .popup-preview-box {
+      width: 100%;
+      aspect-ratio: 16/10;
+      border-radius: 8px;
+      border: var(--gb-pixel-border);
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .popup-title {
+      font-family: 'Jua', sans-serif;
+      font-size: 26px;
+      text-align: center;
+      color: #000;
+      margin-bottom: 4px;
+      font-weight: 800;
+    }
+    .popup-meta {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .popup-tag {
+      font-family: 'Press Start 2P', sans-serif;
+      font-size: 6px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: rgba(0,0,0,0.06);
+      border: 1.5px solid #1a1a1c;
+    }
+    .popup-tag-plays {
+      color: #2b6cb0;
+    }
+    .popup-tag-cat {
+      color: #9b1c31;
+    }
+    .popup-desc {
+      font-size: 13.5px;
+      color: #0c0d14;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.5;
+      margin-bottom: 24px;
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .play-now-mega-btn {
+      width: 100%;
+      background: #1a1a1c;
+      border: none;
+      color: white;
+      font-family: 'Jua', sans-serif;
+      font-size: 20px;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--transition-standard);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+      box-shadow: 2px 4px 0px rgba(0,0,0,0.3);
+    }
+    .play-now-mega-btn:hover {
+      background: var(--neon-coral);
+    }
+
+    /* ─── FULLSCREEN PLAY OVERLAY ─── */
+    .game-play-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 2000;
+      flex-direction: column;
+    }
+    .game-play-overlay.active {
+      display: flex;
+    }
+    
+    .play-header-bar {
+      height: 48px;
+      background: var(--gb-case-bg);
+      border-bottom: var(--gb-pixel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+    .back-to-portal-btn {
+      background: #1a1a1c;
+      border: none;
+      color: var(--text-white);
+      padding: 5px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-to-portal-btn:hover {
+      background: var(--neon-coral);
+    }
+    .play-header-title {
+      font-family: 'Jua', sans-serif;
+      font-size: 16px;
+      color: #000;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .play-actions-right {
+      display: flex;
+      gap: 6px;
+    }
+    .header-action-btn {
+      background: #1a1a1c;
+      border: none;
+      color: var(--text-white);
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .header-action-btn:hover {
+      background: #444;
+    }
+
+    .game-iframe-wrapper {
+      flex: 1;
+      width: 100%;
+      height: calc(100% - 48px);
+      position: relative;
+    }
+    .game-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #000;
+    }
+
+    /* ─── HIGH CONTRAST LOADING SCREEN ─── */
+    .interstitial-screen {
+      position: absolute;
+      inset: 0;
+      background: #0a0b10;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 30px 16px;
+      color: white;
+    }
+    .interstitial-loading-info {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .interstitial-preview-container {
+      width: 220px;
+      aspect-ratio: 16/10;
+      border-radius: 8px;
+      border: 3px solid var(--screen-text-muted);
+      position: relative;
+      overflow: hidden;
+      margin: 12px auto;
+    }
+    .interstitial-title {
+      font-family: 'Jua', sans-serif;
+      font-size: 24px;
+      color: white;
+      font-weight: 800;
+    }
+    .interstitial-spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top-color: var(--neon-cyan);
+      border-radius: 50%;
+      margin: 8px auto;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* Ad card inside preloader */
+    .interstitial-ad-card {
+      width: 100%;
+      max-width: 360px;
+      background: var(--screen-card-bg);
+      border: 2px dashed var(--screen-text-muted);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .countdown-btn {
+      background: var(--neon-cyan);
+      border: none;
+      color: black;
+      font-family: 'Jua', sans-serif;
+      font-size: 16px;
+      padding: 10px 30px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .countdown-btn:disabled {
+      background: #151821;
+      color: var(--screen-text-muted);
+      cursor: default;
+    }
+
+    /* ─── INTERACTIVE DYNAMIC GAME CAPTURES (GREEN-SCALE SCREEN THEME FALLBACKS) ─── */
+    .preview-box {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      filter: sepia(0.5) saturate(1.5) hue-rotate(40deg);
+    }
+
+    /* 1. Neon Racer 3D */
+    .race-preview {
+      background: #8bac0f;
+    }
+    .race-preview .road-grid {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 60%;
+      background-image: linear-gradient(0deg, transparent 24%, var(--gb-screen-dark) 25%, var(--gb-screen-dark) 26%, transparent 27%, transparent 74%, var(--gb-screen-dark) 75%, var(--gb-screen-dark) 76%, transparent 77%),
+                        linear-gradient(90deg, transparent 24%, var(--gb-screen-dark) 25%, var(--gb-screen-dark) 26%, transparent 27%, transparent 74%, var(--gb-screen-dark) 75%, var(--gb-screen-dark) 76%, transparent 77%);
+      background-size: 20px 20px;
+      transform: perspective(60px) rotateX(40deg);
+      transform-origin: bottom center;
+      animation: roadScroll 1.5s linear infinite;
+    }
+    @keyframes roadScroll {
+      from { background-position: 0 0; }
+      to { background-position: 0 40px; }
+    }
+    .race-preview .hero-car {
+      font-size: 40px;
+      z-index: 3;
+      transform: translateY(15px);
+      animation: carVibrate 0.15s infinite alternate ease-in-out;
+    }
+    @keyframes carVibrate {
+      from { transform: translateY(14px) rotate(-1deg); }
+      to { transform: translateY(16px) rotate(1deg); }
+    }
+    .race-preview .speed-lines {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, transparent 40%, rgba(15, 56, 15, 0.2) 100%);
+    }
+
+    /* 2. Capybara Evolution */
+    .capy-preview {
+      background: #8bac0f;
+    }
+    .capy-preview .sunburst {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: repeating-conic-gradient(from 0deg, rgba(15, 56, 15, 0.08) 0deg 15deg, transparent 15deg 30deg);
+      animation: rotateSun 15s linear infinite;
+    }
+    @keyframes rotateSun {
+      to { transform: rotate(360deg); }
+    }
+    .capy-preview .hero-capy {
+      font-size: 48px;
+      z-index: 2;
+      animation: pulseCapy 1s infinite alternate ease-in-out;
+    }
+    @keyframes pulseCapy {
+      from { transform: scale(1); }
+      to { transform: scale(1.15); }
+    }
+    .capy-preview .floating-coins .coin {
+      position: absolute;
+      font-size: 16px;
+      animation: floatCoin 2s infinite ease-in-out;
+    }
+    .capy-preview .floating-coins .coin:nth-child(1) { left: 20%; animation-delay: 0s; }
+    .capy-preview .floating-coins .coin:nth-child(2) { right: 25%; animation-delay: 0.5s; }
+    .capy-preview .floating-coins .coin:nth-child(3) { left: 45%; top: 20%; animation-delay: 1.2s; }
+    @keyframes floatCoin {
+      0% { transform: translateY(80px) rotate(0deg); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-80px) rotate(360deg); opacity: 0; }
+    }
+
+    /* 3. Cookie Run */
+    .cookie-preview {
+      background: #8bac0f;
+    }
+    .cookie-preview .oven-glow {
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 80px; height: 80px;
+      background: radial-gradient(circle, var(--gb-screen-dark) 0%, transparent 70%);
+      opacity: 0.3;
+    }
+    .cookie-preview .hero-cookie {
+      font-size: 34px;
+      z-index: 2;
+      transform: translate(-10px, 10px);
+      animation: cookieRunJump 1.2s infinite ease-in-out;
+    }
+    @keyframes cookieRunJump {
+      0%, 100% { transform: translate(-15px, 12px) rotate(0deg); }
+      50% { transform: translate(15px, -18px) rotate(15deg); }
+    }
+    .cookie-preview .hurdle {
+      position: absolute;
+      bottom: 12px;
+      right: 20px;
+      font-size: 20px;
+      animation: hurdleMove 2s infinite linear;
+    }
+    @keyframes hurdleMove {
+      from { transform: translateX(120px); }
+      to { transform: translateX(-160px); }
+    }
+
+    /* 4. Fly Swat */
+    .fly-preview {
+      background: #8bac0f;
+    }
+    .fly-preview .fly-grid {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(var(--gb-screen-dark) 1px, transparent 1px);
+      background-size: 16px 16px;
+      opacity: 0.25;
+    }
+    .fly-preview .bzz-fly {
+      position: absolute;
+      font-size: 20px;
+      animation: flyBuzz 0.5s infinite alternate ease-in-out;
+    }
+    .fly-preview .fly1 { left: 15%; top: 20%; animation-duration: 0.3s; }
+    .fly-preview .fly2 { right: 20%; top: 40%; animation-duration: 0.4s; }
+    .fly-preview .fly3 { left: 40%; bottom: 25%; animation-duration: 0.5s; }
+    @keyframes flyBuzz {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(6px, -6px) scale(1.15); }
+    }
+    .fly-preview .swatter-hand {
+      font-size: 42px;
+      z-index: 3;
+      animation: swatSlam 1.8s infinite ease-in-out;
+    }
+    @keyframes swatSlam {
+      0%, 100% { transform: translate(40px, -40px) rotate(0deg); }
+      40% { transform: translate(10px, -10px) rotate(-10deg); }
+      50% { transform: translate(-10px, 10px) rotate(-35deg) scale(1.2); }
+    }
+
+    /* 5. Galaxy Shooter */
+    .galaxy-preview {
+      background: #8bac0f;
+    }
+    .galaxy-preview .starfield {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(var(--gb-screen-dark) 1px, transparent 0);
+      background-size: 24px 24px;
+      animation: starsFall 6s linear infinite;
+      opacity: 0.3;
+    }
+    @keyframes starsFall {
+      from { background-position: 0 0; }
+      to { background-position: 0 240px; }
+    }
+    .galaxy-preview .hero-ship {
+      position: absolute;
+      bottom: 12px;
+      font-size: 30px;
+      animation: shipSway 3s infinite ease-in-out;
+    }
+    @keyframes shipSway {
+      0%, 100% { transform: translateX(-40px); }
+      50% { transform: translateX(40px); }
+    }
+    .galaxy-preview .laser-beam {
+      position: absolute;
+      width: 3px;
+      height: 24px;
+      background: var(--gb-screen-dark);
+      animation: laserShoot 1.2s infinite linear;
+    }
+    .galaxy-preview .left-laser { left: calc(50% - 15px); }
+    .galaxy-preview .right-laser { left: calc(50% + 15px); }
+    @keyframes laserShoot {
+      0% { bottom: 10px; opacity: 1; }
+      100% { bottom: 100%; opacity: 0; }
+    }
+    .galaxy-preview .alien-bug {
+      position: absolute;
+      font-size: 22px;
+    }
+    .galaxy-preview .bug1 { top: 15%; left: 30%; animation: bugFloat 2s infinite ease-in-out alternate; }
+    .galaxy-preview .bug2 { top: 20%; right: 30%; animation: bugFloat 2s infinite ease-in-out alternate -1s; }
+    @keyframes bugFloat {
+      from { transform: translateY(0); }
+      to { transform: translateY(8px); }
+    }
+
+    /* 6. Gun Zombie */
+    .zombie-preview {
+      background: #8bac0f;
+    }
+    .zombie-preview .dark-moon {
+      position: absolute;
+      top: 10px; right: 20px;
+      font-size: 24px;
+    }
+    .zombie-preview .zombie {
+      position: absolute;
+      font-size: 32px;
+    }
+    .zombie-preview .zombie1 { left: 15%; bottom: 10px; animation: zombieWalk 2.5s infinite ease-in-out alternate; }
+    .zombie-preview .zombie2 { right: 20%; bottom: 12px; animation: zombieWalk 3s infinite ease-in-out alternate -1s; }
+    @keyframes zombieWalk {
+      from { transform: scale(0.8) translateY(5px); }
+      to { transform: scale(1.1) translateY(-5px); }
+    }
+    .zombie-preview .glowing-crosshair {
+      position: absolute;
+      width: 48px; height: 48px;
+      border: 2px dashed var(--gb-screen-dark);
+      border-radius: 50%;
+      animation: aimSweep 4s infinite ease-in-out;
+    }
+    @keyframes aimSweep {
+      0%, 100% { transform: translate(-50px, -10px); }
+      50% { transform: translate(50px, 15px); }
+    }
+
+    /* 7. Kids Runner */
+    .kids-preview {
+      background: #8bac0f;
+    }
+    .kids-preview .grassy-ground {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 24px;
+      background: var(--gb-screen-dark);
+      opacity: 0.15;
+      border-top: 3px solid var(--gb-screen-dark);
+    }
+    .kids-preview .hero-runner {
+      position: absolute;
+      bottom: 18px;
+      left: 20px;
+      font-size: 32px;
+      animation: runnerJump 1s infinite alternate ease-out;
+    }
+    @keyframes runnerJump {
+      from { transform: translateY(0); }
+      to { transform: translateY(-28px) rotate(10deg); }
+    }
+    .kids-preview .rock-obstacle {
+      position: absolute;
+      bottom: 18px;
+      right: -20px;
+      font-size: 20px;
+      animation: obstacleRun 2.2s infinite linear;
+    }
+    @keyframes obstacleRun {
+      from { right: -20px; }
+      to { right: 120%; }
+    }
+    .kids-preview .collect-star {
+      position: absolute;
+      font-size: 14px;
+      animation: starRotate 1.5s infinite linear;
+    }
+    .kids-preview .star1 { top: 30%; right: 40%; }
+    .kids-preview .star2 { top: 20%; right: 15%; }
+    @keyframes starRotate {
+      from { transform: rotate(0deg) scale(0.9); }
+      50% { transform: rotate(180deg) scale(1.25); }
+      to { transform: rotate(360deg) scale(0.9); }
+    }
+
+    /* 8. Neon Maze */
+    .maze-preview {
+      background: #8bac0f;
+    }
+    .maze-preview .maze-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(var(--gb-screen-dark) 1px, transparent 1px),
+                        linear-gradient(90deg, var(--gb-screen-dark) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.1;
+    }
+    .maze-preview .wall {
+      position: absolute;
+      background: var(--gb-screen-dark);
+    }
+    .maze-preview .wall1 { left: 20%; top: 20%; width: 60%; height: 6px; }
+    .maze-preview .wall2 { left: 20%; top: 20%; width: 6px; height: 50%; }
+    .maze-preview .wall3 { right: 20%; bottom: 20%; width: 40%; height: 6px; }
+    .maze-preview .maze-ball {
+      position: absolute;
+      font-size: 18px;
+      animation: ballSolve 5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes ballSolve {
+      0% { transform: translate(-60px, -20px); }
+      25% { transform: translate(30px, -20px); }
+      50% { transform: translate(30px, 30px); }
+      75% { transform: translate(-30px, 30px); }
+      100% { transform: translate(-60px, -20px); }
+    }
+
+    /* 9. Sneaky Snacker */
+    .snacker-preview {
+      background: #8bac0f;
+    }
+    .snacker-preview .fridge-glow {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 50%;
+      background: linear-gradient(90deg, transparent, rgba(15, 56, 15, 0.15));
+      animation: fridgePulse 1.5s infinite alternate ease-in-out;
+    }
+    @keyframes fridgePulse {
+      from { opacity: 0.5; }
+      to { opacity: 1; }
+    }
+    .snacker-preview .fridge-content {
+      position: absolute;
+      right: 15px;
+      top: 30%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 14px;
+    }
+    .snacker-preview .sneaky-thief {
+      position: absolute;
+      left: 20%;
+      font-size: 38px;
+      animation: thiefCreep 3s infinite alternate ease-in-out;
+    }
+    @keyframes thiefCreep {
+      from { transform: translateX(-15px) scale(0.9); }
+      to { transform: translateX(25px) scale(1.1); }
+    }
+
+    /* 10. Space Survivor */
+    .survivor-preview {
+      background: #8bac0f;
+    }
+    .survivor-preview .space-vortex {
+      position: absolute;
+      width: 150%; height: 150%;
+      background: radial-gradient(circle, transparent 30%, rgba(15, 56, 15, 0.1) 70%);
+      animation: rotateSun 25s linear infinite;
+    }
+    .survivor-preview .hero-astro {
+      font-size: 38px;
+      z-index: 2;
+      animation: astroFloat 4s infinite alternate ease-in-out;
+    }
+    @keyframes astroFloat {
+      0% { transform: translate(-10px, -10px) rotate(0deg); }
+      50% { transform: translate(15px, 15px) rotate(10deg); }
+      100% { transform: translate(-10px, -10px) rotate(-10deg); }
+    }
+    .survivor-preview .asteroid {
+      position: absolute;
+      font-size: 24px;
+      animation: meteorFly 2.5s infinite linear;
+    }
+    .survivor-preview .ast1 { left: -30px; top: -30px; animation-duration: 2.5s; }
+    .survivor-preview .ast2 { right: -30px; bottom: -30px; animation-duration: 3.2s; animation-delay: -1s; }
+    @keyframes meteorFly {
+      0% { transform: translate(-40px, -40px) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translate(180px, 180px) rotate(360deg); opacity: 0; }
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- ─── RETRO CONSOLE BEZEL HEADER ─── -->
+    <header class="top-header">
+      <div class="logo-wrapper">
+        <a href="./" class="logo-area">
+          <span class="logo-icon">🚀</span>
+          <span class="logo-text" id="langLogo">SPARK BOY</span>
+        </a>
+        <span class="free-badge-header" id="langHeaderBadge">🔥 100% 평생무료</span>
+      </div>
+      <div class="battery-led-wrapper">
+        <div class="battery-light"></div>
+        <span>BATTERY</span>
+      </div>
+      <div class="lang-switcher">
+        <button class="lang-btn active" onclick="switchLanguage('ko')" id="btnKo">KO</button>
+        <button class="lang-btn" onclick="switchLanguage('en')" id="btnEn">EN</button>
+      </div>
+    </header>
+
+    <!-- ─── HIGH CONTRAST IPS BACKLIT SCREEN AREA ─── -->
+    <div class="screen-bezel-inner">
+      
+      <!-- HERO & STATS SECTION -->
+      <section class="hero-section">
+        <div class="featured-banner" id="promoCard">
+          <div class="featured-badge" id="langPromoBadge">오늘의 추천 게임!</div>
+          <div class="featured-content">
+            <h1 class="featured-title" id="promoTitle">네온 레이서 3D</h1>
+            <p class="featured-desc" id="promoDesc">회원가입 없이 즉시 실행! 100% 평생 무료 게임!</p>
+          </div>
+          <button class="featured-action-btn" onclick="openPromoGame()" id="langPromoPlay">▶ 지금 플레이!</button>
+          
+          <div class="featured-hero-preview-container" id="promoPreviewBox">
+            <!-- Dynamic loaded preview -->
+          </div>
+        </div>
+
+        <!-- Dashboard Finder Panel -->
+        <div class="dashboard-panel">
+          <div>
+            <div class="panel-title">
+              <span>🎯</span> <span id="langDashTitle">스마트 게임 파인더</span>
+            </div>
+            <div class="search-container">
+              <span class="search-icon">🔍</span>
+              <input type="text" class="search-input" placeholder="게임 검색하기..." id="searchInput" oninput="filterGames()" aria-label="Search Game">
+            </div>
+          </div>
+          
+          <div class="stats-container">
+            <div class="stat-card">
+              <div class="stat-number" id="valGamesCount">10</div>
+              <div class="stat-label" id="langStatGames">등록 게임</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="valVisitorCount">24,103</div>
+              <div class="stat-label" id="langStatVisitors">누적 방문자</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="valTotalPlays">142,504</div>
+              <div class="stat-label" id="langStatPlays">총 플레이</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GOOGLE ADSENSE TOP -->
+      <div class="adsense-unit">
+        <div class="adsense-label" id="langAdLabel1">Google AdSense 광고</div>
+        <div class="adsense-content" id="langAdContent1">가장 잘 어울리는 맞춤 광고 영역 (상단 배너)</div>
+      </div>
+
+      <!-- RECENTLY PLAYED SLIDER -->
+      <section class="recent-section" id="recentSection">
+        <h2 class="section-title">
+          ⏰ <span id="langRecentTitle">최근 플레이한 게임</span> <span class="badge" id="langRecentBadge">MY</span>
+        </h2>
+        <div class="recent-scroll" id="recentContainer">
+          <!-- Dynamic load -->
+        </div>
+      </section>
+
+      <!-- CATEGORY NAVIGATION TABS -->
+      <nav class="category-container">
+        <div class="category-scroll" id="categoryTabs">
+          <!-- Dynamic categories -->
+        </div>
+      </nav>
+
+      <!-- MAIN WEB LAYOUT WITH SIDEBAR -->
+      <div class="main-grid-layout">
+        
+        <!-- Games Grid -->
+        <section>
+          <div class="games-grid" id="gamesGrid">
+            <!-- Dynamic game cards load here -->
+          </div>
+        </section>
+
+        <!-- Sidebar Area (PC Only) -->
+        <aside class="sidebar-area">
+          <div class="sidebar-widget">
+            <div class="panel-title" id="langSidebarTitle">🚀 스파크 추천 채널</div>
+            <div style="font-size: 14px; color: var(--screen-text-muted); line-height: 1.6; font-weight: 700;">
+              <p style="margin-bottom: 10px; color:#fff;">스파크 게임즈는 HTML5 기술을 바탕으로 설치 없는 완전 100% 무료 게임을 서비스합니다.</p>
+              <p>언제 어디서나 모바일 브라우저만 있으면 가볍고 짜릿한 도파민을 충전할 수 있어요! 즐겨찾기에 등록하고 매일 방문해 보세요! ✨</p>
+            </div>
+          </div>
+          
+          <!-- Skyscraper Ad -->
+          <div class="ad-skyscraper">
+            <div class="adsense-label" id="langAdLabel2">Google AdSense</div>
+            <div class="adsense-content" style="margin-top:20px;" id="langAdContent2">수익 극대화를 위한<br>사이드바 배너 광고 영역</div>
+          </div>
+        </aside>
+
+      </div>
+
+      <!-- GOOGLE ADSENSE BOTTOM -->
+      <div class="adsense-unit" style="margin-top: 40px;">
+        <div class="adsense-label" id="langAdLabel3">Google AdSense 광고</div>
+        <div class="adsense-content" id="langAdContent3">가장 효율적인 하단 기사형/배너 광고 영역</div>
+      </div>
+
+      <!-- PORTAL FOOTER WITH DECORATION -->
+      <footer class="portal-footer">
+        <div class="speaker-grills-deco">
+          <div class="speaker-slit"></div>
+          <div class="speaker-slit"></div>
+          <div class="speaker-slit"></div>
+          <div class="speaker-slit"></div>
+          <div class="speaker-slit"></div>
+          <div class="speaker-slit"></div>
+        </div>
+        <div class="footer-logo">🚀 SPARK GAME BOY</div>
+        <p class="footer-copyright" id="langFooterCreator">제작: <a href="http://adopter.co.kr" target="_blank">adopter.co.kr</a></p>
+      </footer>
+
+    </div>
+
+  </div>
+
+  <!-- ─── RETRO BOTTOM NAV BAR (MOBILE ONLY) ─── -->
+  <nav class="bottom-nav-bar">
+    <div class="nav-item active" onclick="navTo('home')" id="navHome">
+      <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <span id="langNavHome">홈</span>
+    </div>
+    <div class="nav-item" onclick="navTo('all')" id="navAll">
+      <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="6" y1="12" x2="10" y2="12"></line>
+        <line x1="8" y1="10" x2="8" y2="14"></line>
+        <line x1="15" y1="13" x2="15.01" y2="13"></line>
+        <line x1="18" y1="11" x2="18.01" y2="11"></line>
+        <rect x="2" y="6" width="20" height="12" rx="3" ry="3"></rect>
+      </svg>
+      <span id="langNavAll">전체게임</span>
+    </div>
+    <div class="nav-item" onclick="navTo('recent')" id="navRecentBtn">
+      <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      <span id="langNavRecent">최근기록</span>
+    </div>
+  </nav>
+
+  <!-- ─── GAME DETAILS OVERLAY DRAWER ─── -->
+  <div class="popup-overlay" id="gameDetailsPopup" onclick="handlePopupClick(event)">
+    <div class="popup-drawer">
+      <button class="close-popup-btn" onclick="closePopup()">✕</button>
+      
+      <div class="popup-preview-box" id="popupPreviewBox">
+        <!-- Loaded preview inside popup -->
+      </div>
+      
+      <h3 class="popup-title" id="popupTitle">게임 제목</h3>
+      <div class="popup-meta">
+        <span class="popup-tag popup-tag-cat" id="popupCategory">액션</span>
+        <span class="popup-tag popup-tag-plays" id="popupPlaysCount">👥 1,230 plays</span>
+      </div>
+      <p class="popup-desc" id="popupDesc">게임에 대한 자세한 설명이 여기에 출력됩니다. 게임을 시작하려면 아래 버튼을 클릭하세요.</p>
+      <button class="play-now-mega-btn" onclick="launchGameFromPopup()" id="langPopupPlayBtn">
+        <span>▶</span> <span id="langPopupPlayLabel">지금 플레이하기!</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── FULLSCREEN GAME PLAY OVERLAY ─── -->
+  <div class="game-play-overlay" id="gamePlayOverlay">
+    <div class="play-header-bar">
+      <button class="back-to-portal-btn" onclick="closeGameFrame()">
+        <span>←</span> <span id="langBackToPortal">메인으로 돌아가기</span>
+      </button>
+      <div class="play-header-title">
+        <span id="headerGameEmoji">🎮</span> <span id="headerGameTitle">게임 중</span>
+      </div>
+      <div class="play-actions-right">
+        <button class="header-action-btn" onclick="reloadGameFrame()" title="Reload Game">🔄</button>
+        <button class="header-action-btn" onclick="openGameInNewTab()" title="Open in New Tab" id="headerNewTabBtn">↗</button>
+      </div>
+    </div>
+    
+    <div class="game-iframe-wrapper">
+      <!-- Loading & Ad Screen -->
+      <div class="interstitial-screen" id="interstitialScreen">
+        <div class="interstitial-loading-info">
+          <div class="interstitial-title" id="interstitialTitle">게임 로딩 중...</div>
+          
+          <div class="interstitial-preview-container" id="interstitialPreviewBox">
+            <!-- Dynamic preview -->
+          </div>
+          
+          <div class="interstitial-spinner"></div>
+        </div>
+        
+        <!-- Mock Ad Banner in Preloader (High CTR!) -->
+        <div class="interstitial-ad-card">
+          <div class="adsense-label" id="langAdLabel4">Google AdSense</div>
+          <div class="adsense-content" style="margin: 10px 0 15px; color:white;" id="langAdContent4">스파크 안전 링크로 게임 연결 중...</div>
+          <div style="font-size:11px; color:var(--screen-text-muted); margin-bottom: 10px;" id="langAdSub4">광고를 시청하시면 무료 서비스 유지에 큰 도움이 됩니다.</div>
+          <button class="countdown-btn" id="countdownBtn" onclick="skipAd()" disabled>3...</button>
+        </div>
+        
+        <div style="font-size:12px; color:rgba(255,255,255,0.2)">Spark Game Boy IPS Safe Engine.</div>
+      </div>
+      
+      <!-- Actual Game Frame -->
+      <iframe class="game-iframe" id="gameIframe" src="" allow="autoplay; gamepad; keyboard;" sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"></iframe>
+    </div>
+  </div>
+
+  <!-- ─── SCRIPTS ─── -->
+  <script>
+    // ─── 1. CORE DATA DICTIONARY ───
+    const GAMES_DATA = {
+      '3drace': {
+        id: '3drace',
+        emoji: '🏎️',
+        path: '3drace/index.html',
+        cat: 'action',
+        badge: 'best',
+        clicksSeed: 4890,
+        ko: { title: '네온 레이서 3D', desc: '눈부신 네온 속을 질주하는 3D 레이싱! 부스트를 쓰고 장애물을 피해 한계를 돌파하세요! 100% 무료 플레이!' },
+        en: { title: 'Neon Racer 3D', desc: 'A thrilling 3D neon racing game! Use boosts and dodge obstacles to break limits! 100% Free Play!' }
+      },
+      'capybara-evolution': {
+        id: 'capybara-evolution',
+        emoji: '🦫',
+        path: 'capybara-evolution/index.html',
+        cat: 'arcade',
+        badge: 'new',
+        clicksSeed: 3120,
+        ko: { title: '카피바라 진화시키기', desc: '귀여운 카피바라를 탭하여 성장시키고 다양하고 독특한 모습으로 진화시키세요! 평생 무료 플레이!' },
+        en: { title: 'Capybara Evolution', desc: 'Tap and grow your cute capybara! Evolve them into various unique and funny forms! Free to Play!' }
+      },
+      'cookie_run_game': {
+        id: 'cookie_run_game',
+        emoji: '🍪',
+        path: 'cookie_run_game/index.html',
+        cat: 'action',
+        badge: 'hot',
+        clicksSeed: 5410,
+        ko: { title: '쿠키 대탈주', desc: '달콤하고 위험한 모험! 마녀의 오븐을 탈출하여 장애물을 피하며 최고 기록을 세우세요! 가입 없는 무료게임!' },
+        en: { title: 'Cookie Escape', desc: 'A sweet but dangerous adventure! Escape the oven and jump/slide for the high score! Free Web Game!' }
+      },
+      'fly_swat': {
+        id: 'fly_swat',
+        emoji: '🪰',
+        path: 'fly_swat/index.html',
+        cat: 'arcade',
+        badge: '',
+        clicksSeed: 1980,
+        ko: { title: '파리 잡기 소동', desc: '사방에서 윙윙대는 귀찮은 파리들을 날카로운 반사신경으로 완벽하게 제압해 보세요! 100% 무료 게임!' },
+        en: { title: 'Fly Swat', desc: 'Test your reflexes! Swat the annoying buzzing flies with quick taps and precision! 100% Free!' }
+      },
+      'galaxy': {
+        id: 'galaxy',
+        emoji: '🚀',
+        path: 'galaxy/index.html',
+        cat: 'shooting',
+        badge: 'best',
+        clicksSeed: 4120,
+        ko: { title: '갤럭시 슈터', desc: '추억의 고전 감성 스페이스 슈팅! 몰려오는 외계 함대와 거대 보스를 소탕하세요! 완전 무제한 무료!' },
+        en: { title: 'Galaxy Shooter', desc: 'Classic arcade space shooter! Defeat waves of alien starships and giant cosmic bosses! Free and Fun!' }
+      },
+      'gun_zombie': {
+        id: 'gun_zombie',
+        emoji: '🧟',
+        path: 'gun_zombie/index.html',
+        cat: 'shooting',
+        badge: 'hot',
+        clicksSeed: 3670,
+        ko: { title: '좀비 건 슈터', desc: '긴박감 넘치는 서바이벌 슈팅! 무기를 들고 사방에서 습격하는 좀비 무리를 소탕하세요! 설치 없는 무료게임!' },
+        en: { title: 'Gun Zombie', desc: 'Intense survival shooter! Grab your weapons and eliminate hordes of invading zombies! Free Arcade Game!' }
+      },
+      'kids-runner': {
+        id: 'kids-runner',
+        emoji: '🏃',
+        path: 'kids-runner/index.html',
+        cat: 'action',
+        badge: '',
+        clicksSeed: 2840,
+        ko: { title: '달려라! 키즈 러너', desc: '장애물을 요리조리 피하며 달리는 신나는 캐주얼 러닝 게임! 얼마나 멀리 갈 수 있을까요? 평생 무료!' },
+        en: { title: 'Kids Runner', desc: 'A delightful, endless running adventure! Jump over obstacles and run as far as you can! 100% Free!' }
+      },
+      'neon-maze': {
+        id: 'neon-maze',
+        emoji: '🌀',
+        path: 'neon-maze/index.html',
+        cat: 'puzzle',
+        badge: 'new',
+        clicksSeed: 2450,
+        ko: { title: '네온 미로 탈출', desc: '아름다운 네온 불빛 미로 속에서 최고의 길을 찾아 신속히 탈출하는 두뇌 회전 퍼즐! 무료 두뇌 게임!' },
+        en: { title: 'Neon Maze Escape', desc: 'A beautiful neon-lit maze game! Train your brain and find the escape path quickly! Free Puzzle!' }
+      },
+      'sneaky_snacker': {
+        id: 'sneaky_snacker',
+        emoji: '🍕',
+        path: 'sneaky_snacker/index.html',
+        cat: 'arcade',
+        badge: 'hot',
+        clicksSeed: 3230,
+        ko: { title: '몰래 먹는 스내커', desc: '모두가 자는 밤, 들키지 않고 냉장고 속 맛있는 음식을 훔쳐 먹는 짜릿한 잠입 게임! 100% 무료!' },
+        en: { title: 'Sneaky Snacker', desc: 'A suspenseful stealth game! Sneak around and steal yummy snacks without getting caught! Free Stealth Game!' }
+      },
+      'space-Survivor': {
+        id: 'space-Survivor',
+        emoji: '👨‍🚀',
+        path: 'space-Survivor/index.html',
+        cat: 'shooting',
+        badge: '',
+        clicksSeed: 2790,
+        ko: { title: '스페이스 서바이버', desc: '혼돈의 무한 은하수에서 날아오는 행성과 먼지를 피하며 우주 끝까지 살아남으세요! 완전 무료!' },
+        en: { title: 'Space Survivor', desc: 'Survive the hazardous deep space! Dodge incoming meteors and space debris! 100% Free!' }
+      }
+    };
+
+    const TRANSLATIONS = {
+      ko: {
+        logo: 'SPARK BOY',
+        headerBadge: '🔥 100% 평생무료',
+        promoBadge: '오늘의 추천 무료 게임!',
+        promoPlay: '▶ 지금 플레이!',
+        dashTitle: '스마트 게임 파인더',
+        searchPlaceholder: '무료 게임 검색하기...',
+        statGames: '등록 게임',
+        statVisitors: '누적 방문자',
+        statPlays: '총 플레이',
+        recentTitle: '최근 플레이한 게임',
+        recentBadge: '최근',
+        sidebarTitle: '🚀 스파크 추천 채널',
+        adLabel: 'Google AdSense 광고',
+        adContentTop: '가장 잘 어울리는 맞춤 광고 영역 (상단 배너)',
+        adContentSide: '수익 극대화를 위한<br>사이드바 배너 광고 영역',
+        adContentBottom: '가장 효율적인 하단 기사형/배너 광고 영역',
+        footerCreator: '제작: <a href="http://adopter.co.kr" target="_blank">adopter.co.kr</a>',
+        navHome: '홈',
+        navAll: '전체게임',
+        navRecent: '최근기록',
+        popupPlayBtn: '▶ 지금 플레이하기!',
+        backToPortal: '메인으로 돌아가기',
+        interstitialTitle: '게임 준비 중...',
+        interstitialAdTitle: '스파크 안전 링크로 게임 연결 중...',
+        interstitialAdSub: '광고를 시청하시면 100% 무료 서비스 유지에 큰 도움이 됩니다.',
+        interstitialReady: '게임 시작!',
+        categoryAll: '🕹️ 전체',
+        categoryAction: '🏃 액션',
+        categoryArcade: '👾 아케이드',
+        categoryShooting: '🚀 슈팅',
+        categoryPuzzle: '🧠 퍼즐/두뇌'
+      },
+      en: {
+        logo: 'SPARK BOY',
+        headerBadge: '🔥 100% FREE',
+        promoBadge: 'Today\'s Free Pick!',
+        promoPlay: '▶ Play Now!',
+        dashTitle: 'Smart Game Finder',
+        searchPlaceholder: 'Search free games...',
+        statGames: 'Total Games',
+        statVisitors: 'Total Visitors',
+        statPlays: 'Total Plays',
+        recentTitle: 'Recently Played Games',
+        recentBadge: 'MY',
+        sidebarTitle: '🚀 Spark Channels',
+        adLabel: 'Google AdSense',
+        adContentTop: 'Best Custom Matching Ad Space (Top Banner)',
+        adContentSide: 'Sidebar Skyscraper Ad Unit<br>for Maximizing Revenue',
+        adContentBottom: 'Highly Effective Footer Banner/Content Ad Unit',
+        footerCreator: 'Created by: <a href="http://adopter.co.kr" target="_blank">adopter.co.kr</a>',
+        navHome: 'Home',
+        navAll: 'All Games',
+        navRecent: 'Recent',
+        popupPlayBtn: '▶ PLAY NOW!',
+        backToPortal: 'Back to Main',
+        interstitialTitle: 'Game Loading...',
+        interstitialAdTitle: 'Connecting to Game via Secure Link...',
+        interstitialAdSub: 'Watching ads supports our 100% free web services. Thank you!',
+        interstitialReady: 'START GAME!',
+        categoryAll: '🕹️ All',
+        categoryAction: '🏃 Action',
+        categoryArcade: '👾 Arcade',
+        categoryShooting: '🚀 Shooting',
+        categoryPuzzle: '🧠 Puzzle/Brain'
+      }
+    };
+
+    // ─── 2. GLOBAL STATE ───
+    let currentLang = 'ko';
+    let currentCategory = 'all';
+    let currentPopupGameId = null;
+    let countdownInterval = null;
+    let countdownValue = 3;
+
+    // ─── 3. SYSTEM LAUNCH & COUNTERS ───
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('spark_lang');
+      if (savedLang === 'ko' || savedLang === 'en') {
+        currentLang = savedLang;
+      }
+      
+      initCounters();
+      switchLanguage(currentLang);
+      buildCategoryTabs();
+      renderGames();
+      updateRecentPlayedList();
+      setupPromoBanner();
+    });
+
+    function initCounters() {
+      let visits = localStorage.getItem('spark_visitors');
+      if (!visits) {
+        visits = Math.floor(Math.random() * 4000) + 20120;
+      }
+      visits = parseInt(visits) + Math.floor(Math.random() * 3) + 1;
+      localStorage.setItem('spark_visitors', visits);
+      document.getElementById('valVisitorCount').textContent = formatNum(visits);
+
+      let totalPlaysSum = 0;
+      Object.keys(GAMES_DATA).forEach(gameId => {
+        let plays = localStorage.getItem(`spark_plays_${gameId}`);
+        if (!plays) {
+          plays = GAMES_DATA[gameId].clicksSeed + Math.floor(Math.random() * 200);
+          localStorage.setItem(`spark_plays_${gameId}`, plays);
+        }
+        totalPlaysSum += parseInt(plays);
+      });
+      
+      localStorage.setItem('spark_total_plays', totalPlaysSum);
+      document.getElementById('valTotalPlays').textContent = formatNum(totalPlaysSum);
+      document.getElementById('valGamesCount').textContent = Object.keys(GAMES_DATA).length;
+    }
+
+    function formatNum(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // ─── 4. LANGUAGE SWAP LOGIC ───
+    function switchLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('spark_lang', lang);
+
+      document.getElementById('btnKo').classList.toggle('active', lang === 'ko');
+      document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+      document.documentElement.lang = lang;
+
+      const dict = TRANSLATIONS[lang];
+      document.getElementById('langLogo').textContent = dict.logo;
+      document.getElementById('langHeaderBadge').textContent = dict.headerBadge;
+      document.getElementById('langPromoBadge').textContent = dict.promoBadge;
+      document.getElementById('langPromoPlay').textContent = dict.promoPlay;
+      document.getElementById('langDashTitle').textContent = dict.dashTitle;
+      document.getElementById('searchInput').placeholder = dict.searchPlaceholder;
+      document.getElementById('langStatGames').textContent = dict.statGames;
+      document.getElementById('langStatVisitors').textContent = dict.statVisitors;
+      document.getElementById('langStatPlays').textContent = dict.statPlays;
+      document.getElementById('langRecentTitle').textContent = dict.recentTitle;
+      document.getElementById('langRecentBadge').textContent = dict.recentBadge;
+      document.getElementById('langSidebarTitle').textContent = dict.sidebarTitle;
+      
+      document.querySelectorAll('#langAdLabel1, #langAdLabel3').forEach(el => el.textContent = dict.adLabel);
+      document.getElementById('langAdLabel2').textContent = dict.adLabel;
+      document.getElementById('langAdLabel4').textContent = dict.adLabel;
+      document.getElementById('langAdContent1').textContent = dict.adContentTop;
+      document.getElementById('langAdContent2').innerHTML = dict.adContentSide;
+      document.getElementById('langAdContent3').textContent = dict.adContentBottom;
+      document.getElementById('langAdContent4').textContent = dict.interstitialAdTitle;
+      document.getElementById('langAdSub4').textContent = dict.interstitialAdSub;
+
+      document.getElementById('langPopupPlayLabel').textContent = lang === 'ko' ? '지금 플레이하기!' : 'PLAY NOW!';
+      document.getElementById('langBackToPortal').textContent = dict.backToPortal;
+      document.getElementById('interstitialTitle').textContent = dict.interstitialTitle;
+      
+      document.getElementById('langFooterCreator').innerHTML = dict.footerCreator;
+      document.getElementById('langNavHome').textContent = dict.navHome;
+      document.getElementById('langNavAll').textContent = dict.navAll;
+      document.getElementById('langNavRecent').textContent = dict.navRecent;
+
+      buildCategoryTabs();
+      renderGames();
+      updateRecentPlayedList();
+      
+      const currentPromoId = document.getElementById('promoCard').dataset.gameId;
+      if (currentPromoId && GAMES_DATA[currentPromoId]) {
+        document.getElementById('promoTitle').textContent = GAMES_DATA[currentPromoId][lang].title;
+        document.getElementById('promoDesc').textContent = GAMES_DATA[currentPromoId][lang].desc;
+      }
+    }
+
+    // ─── 5. CATEGORIES FILTER SYSTEM ───
+    function buildCategoryTabs() {
+      const tabsEl = document.getElementById('categoryTabs');
+      const cats = [
+        { id: 'all', key: 'categoryAll' },
+        { id: 'action', key: 'categoryAction' },
+        { id: 'arcade', key: 'categoryArcade' },
+        { id: 'shooting', key: 'categoryShooting' },
+        { id: 'puzzle', key: 'categoryPuzzle' }
+      ];
+      
+      tabsEl.innerHTML = cats.map(c => `
+        <button class="category-chip ${currentCategory === c.id ? 'active' : ''}" onclick="selectCategory('${c.id}')">
+          ${TRANSLATIONS[currentLang][c.key]}
+        </button>
+      `).join('');
+    }
+
+    // Dynamic Live Preview HTML Builder
+    function getGamePreviewHTML(id) {
+      switch(id) {
+        case '3drace':
+          return `
+            <div class="preview-box race-preview">
+              <div class="road-grid"></div>
+              <div class="speed-lines"></div>
+              <div class="hero-car">🏎️💨</div>
+            </div>
+          `;
+        case 'capybara-evolution':
+          return `
+            <div class="preview-box capy-preview">
+              <div class="sunburst"></div>
+              <div class="floating-coins">
+                <span class="coin">🪙</span><span class="coin">🪙</span><span class="coin">🪙</span>
+              </div>
+              <div class="hero-capy">🦫👑</div>
+            </div>
+          `;
+        case 'cookie_run_game':
+          return `
+            <div class="preview-box cookie-preview">
+              <div class="oven-glow"></div>
+              <div class="hurdle">🚧</div>
+              <div class="hero-cookie">🍪🏃💨</div>
+            </div>
+          `;
+        case 'fly_swat':
+          return `
+            <div class="preview-box fly-preview">
+              <div class="fly-grid"></div>
+              <div class="bzz-fly fly1">🪰</div>
+              <div class="bzz-fly fly2">🪰</div>
+              <div class="bzz-fly fly3">🪰</div>
+              <div class="swatter-hand">🧹💥</div>
+            </div>
+          `;
+        case 'galaxy':
+          return `
+            <div class="preview-box galaxy-preview">
+              <div class="starfield"></div>
+              <div class="laser-beam left-laser"></div>
+              <div class="laser-beam right-laser"></div>
+              <div class="hero-ship">🚀</div>
+              <div class="alien-bug bug1">👾</div>
+              <div class="alien-bug bug2">👾</div>
+            </div>
+          `;
+        case 'gun_zombie':
+          return `
+            <div class="preview-box zombie-preview">
+              <div class="dark-moon">🌕</div>
+              <div class="zombie zombie1">🧟</div>
+              <div class="zombie zombie2">🧟</div>
+              <div class="glowing-crosshair"></div>
+            </div>
+          `;
+        case 'kids-runner':
+          return `
+            <div class="preview-box kids-preview">
+              <div class="grassy-ground"></div>
+              <div class="rock-obstacle">🪨</div>
+              <div class="collect-star star1">⭐</div>
+              <div class="collect-star star2">⭐</div>
+              <div class="hero-runner">🏃💨</div>
+            </div>
+          `;
+        case 'neon-maze':
+          return `
+            <div class="preview-box maze-preview">
+              <div class="maze-grid-lines"></div>
+              <div class="wall wall1"></div>
+              <div class="wall wall2"></div>
+              <div class="wall wall3"></div>
+              <div class="maze-ball">🟢</div>
+            </div>
+          `;
+        case 'sneaky_snacker':
+          return `
+            <div class="preview-box snacker-preview">
+              <div class="fridge-glow"></div>
+              <div class="fridge-content">🧀🥛🎂</div>
+              <div class="sneaky-thief">🐈‍⬛🎭</div>
+            </div>
+          `;
+        case 'space-Survivor':
+          return `
+            <div class="preview-box survivor-preview">
+              <div class="space-vortex"></div>
+              <div class="asteroid ast1">☄️</div>
+              <div class="asteroid ast2">🪨</div>
+              <div class="hero-astro">👨‍🚀💫</div>
+            </div>
+          `;
+        default:
+          return `<div class="preview-box default-preview">🎮</div>`;
+      }
+    }
+
+    function selectCategory(catId) {
+      currentCategory = catId;
+      buildCategoryTabs();
+      renderGames();
+      
+      if (window.innerWidth < 600) {
+        document.getElementById('gamesGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function setupPromoBanner() {
+      const candidates = ['3drace', 'cookie_run_game', 'galaxy', 'sneaky_snacker'];
+      const randomId = candidates[Math.floor(Math.random() * candidates.length)];
+      const g = GAMES_DATA[randomId];
+      
+      const banner = document.getElementById('promoCard');
+      banner.dataset.gameId = randomId;
+      
+      document.getElementById('promoTitle').textContent = g[currentLang].title;
+      document.getElementById('promoDesc').textContent = g[currentLang].desc;
+      
+      document.getElementById('promoPreviewBox').innerHTML = `
+        <div class="thumbnail-wrapper" style="width:100%; height:100%; border:none; margin:0; border-radius:0;">
+          <img src="assets/thumbnails/${randomId}.gif" class="captured-thumbnail" onerror="this.style.display='none';" alt="${g[currentLang].title}">
+          <div class="preview-box-fallback">
+            ${getGamePreviewHTML(randomId)}
+          </div>
+        </div>
+      `;
+    }
+
+    function openPromoGame() {
+      const promoId = document.getElementById('promoCard').dataset.gameId;
+      if (promoId) {
+        openPopup(promoId);
+      }
+    }
+
+    // ─── 6. DYNAMIC GAMES RENDERING (팩 형태로 조립!) ───
+    function renderGames() {
+      const grid = document.getElementById('gamesGrid');
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      
+      let html = '';
+      let matchCount = 0;
+      
+      Object.keys(GAMES_DATA).forEach(id => {
+        const game = GAMES_DATA[id];
+        const title = game[currentLang].title;
+        const desc = game[currentLang].desc;
+        const catName = TRANSLATIONS[currentLang]['category' + game.cat.charAt(0).toUpperCase() + game.cat.slice(1)];
+        
+        if (currentCategory !== 'all' && game.cat !== currentCategory) return;
+        if (query && !title.toLowerCase().includes(query) && !desc.toLowerCase().includes(query)) return;
+        
+        matchCount++;
+        const playsCount = localStorage.getItem(`spark_plays_${id}`) || game.clicksSeed;
+        const formattedPlays = formatNum(playsCount);
+        
+        let badgeHtml = '';
+        if (game.badge) {
+          const badgeText = currentLang === 'ko' ? 
+            (game.badge === 'best' ? '⭐ 베스트' : (game.badge === 'hot' ? '🔥 인기' : '✨ 신규')) : 
+            game.badge.toUpperCase();
+          badgeHtml = `<span class="card-badge badge-${game.badge}">${badgeText}</span>`;
+        }
+
+        const visualScreenshotHTML = getGamePreviewHTML(id);
+
+        html += `
+          <div class="game-card" onclick="openPopup('${id}')" style="animation: fadeInUp 0.3s ease-out forwards;">
+            ${badgeHtml}
+            <div class="thumbnail-wrapper">
+              <img src="assets/thumbnails/${id}.gif" class="captured-thumbnail" onerror="this.style.display='none';" alt="${title}">
+              <div class="preview-box-fallback">
+                ${visualScreenshotHTML}
+              </div>
+            </div>
+            <div class="game-card-details">
+              <div>
+                <div class="card-meta">
+                  <span class="card-category">${catName}</span>
+                  <span class="card-clicks">👥 ${formattedPlays}</span>
+                </div>
+                <h3 class="card-title">${title}</h3>
+                <p class="card-desc">${desc}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      grid.innerHTML = html || `<div style="grid-column: span 3; text-align:center; padding: 60px 0; color: var(--screen-text-muted); font-size:14px; font-weight:800;">검색 결과가 없습니다. / No results found.</div>`;
+    }
+
+    function filterGames() {
+      renderGames();
+    }
+
+    // ─── 7. POPUP OVERLAY DRAWER ───
+    function openPopup(gameId) {
+      const game = GAMES_DATA[gameId];
+      if (!game) return;
+      
+      currentPopupGameId = gameId;
+      
+      document.getElementById('popupPreviewBox').innerHTML = `
+        <div class="thumbnail-wrapper" style="width:100%; height:100%; border:none; margin:0; border-radius:0;">
+          <img src="assets/thumbnails/${gameId}.gif" class="captured-thumbnail" onerror="this.style.display='none';" alt="${game[currentLang].title}">
+          <div class="preview-box-fallback">
+            ${getGamePreviewHTML(gameId)}
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('popupTitle').textContent = game[currentLang].title;
+      document.getElementById('popupDesc').textContent = game[currentLang].desc;
+      
+      const catKey = 'category' + game.cat.charAt(0).toUpperCase() + game.cat.slice(1);
+      document.getElementById('popupCategory').textContent = TRANSLATIONS[currentLang][catKey];
+      
+      const plays = localStorage.getItem(`spark_plays_${gameId}`) || game.clicksSeed;
+      const playsText = currentLang === 'ko' ? `👥 ${formatNum(plays)}회 실행됨` : `👥 ${formatNum(plays)} plays`;
+      document.getElementById('popupPlaysCount').textContent = playsText;
+      
+      document.getElementById('gameDetailsPopup').classList.add('open');
+    }
+
+    function closePopup() {
+      document.getElementById('gameDetailsPopup').classList.remove('open');
+      currentPopupGameId = null;
+    }
+
+    function handlePopupClick(e) {
+      if (e.target === document.getElementById('gameDetailsPopup')) {
+        closePopup();
+      }
+    }
+
+    // ─── 8. INTERSTITIAL AD & GAME LAUNCHER ───
+    function launchGameFromPopup() {
+      if (!currentPopupGameId) return;
+      const gameId = currentPopupGameId;
+      closePopup();
+      
+      incrementPlayCounter(gameId);
+      addToRecentPlayed(gameId);
+      
+      const game = GAMES_DATA[gameId];
+      document.getElementById('headerGameEmoji').textContent = game.emoji;
+      document.getElementById('headerGameTitle').textContent = game[currentLang].title;
+      
+      document.getElementById('interstitialPreviewBox').innerHTML = `
+        <div class="thumbnail-wrapper" style="width:100%; height:100%; border:none; margin:0; border-radius:0;">
+          <img src="assets/thumbnails/${gameId}.gif" class="captured-thumbnail" onerror="this.style.display='none';" alt="${game[currentLang].title}">
+          <div class="preview-box-fallback">
+            ${getGamePreviewHTML(gameId)}
+          </div>
+        </div>
+      `;
+      
+      const frameLabel = currentLang === 'ko' ? `${game[currentLang].title} 준비 중...` : `Loading ${game[currentLang].title}...`;
+      document.getElementById('interstitialTitle').textContent = frameLabel;
+      
+      document.getElementById('gamePlayOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      startInterstitialCountdown(game.path);
+    }
+
+    function startInterstitialCountdown(gamePath) {
+      const btn = document.getElementById('countdownBtn');
+      const screen = document.getElementById('interstitialScreen');
+      const iframe = document.getElementById('gameIframe');
+      
+      clearInterval(countdownInterval);
+      iframe.src = gamePath;
+      
+      countdownValue = 3;
+      btn.disabled = true;
+      btn.textContent = `3...`;
+      screen.style.display = 'flex';
+      
+      countdownInterval = setInterval(() => {
+        countdownValue--;
+        if (countdownValue > 0) {
+          btn.textContent = `${countdownValue}...`;
+        } else {
+          clearInterval(countdownInterval);
+          btn.disabled = false;
+          btn.textContent = currentLang === 'ko' ? '게임 시작! ▶' : 'START GAME! ▶';
+          
+          setTimeout(() => {
+            skipAd();
+          }, 800);
+        }
+      }, 1000);
+    }
+
+    function skipAd() {
+      clearInterval(countdownInterval);
+      const screen = document.getElementById('interstitialScreen');
+      screen.style.display = 'none';
+    }
+
+    function closeGameFrame() {
+      const overlay = document.getElementById('gamePlayOverlay');
+      const iframe = document.getElementById('gameIframe');
+      
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      iframe.src = '';
+      
+      initCounters();
+      renderGames();
+    }
+
+    function reloadGameFrame() {
+      const iframe = document.getElementById('gameIframe');
+      const currentSrc = iframe.src;
+      iframe.src = '';
+      setTimeout(() => { iframe.src = currentSrc; }, 50);
+    }
+
+    function openGameInNewTab() {
+      const iframe = document.getElementById('gameIframe');
+      if (iframe.src) {
+        window.open(iframe.src, '_blank');
+      }
+    }
+
+    function incrementPlayCounter(gameId) {
+      let plays = localStorage.getItem(`spark_plays_${gameId}`) || GAMES_DATA[gameId].clicksSeed;
+      plays = parseInt(plays) + 1;
+      localStorage.setItem(`spark_plays_${gameId}`, plays);
+    }
+
+    // ─── 9. RECENTLY PLAYED LOCALSTORAGE SYSTEM ───
+    function addToRecentPlayed(gameId) {
+      let recent = [];
+      try {
+        recent = JSON.parse(localStorage.getItem('spark_recent') || '[]');
+      } catch(e) {}
+      
+      recent = recent.filter(id => id !== gameId);
+      recent.unshift(gameId);
+      recent = recent.slice(0, 4);
+      localStorage.setItem('spark_recent', JSON.stringify(recent));
+      
+      updateRecentPlayedList();
+    }
+
+    function updateRecentPlayedList() {
+      const section = document.getElementById('recentSection');
+      const container = document.getElementById('recentContainer');
+      
+      let recent = [];
+      try {
+        recent = JSON.parse(localStorage.getItem('spark_recent') || '[]');
+      } catch(e) {}
+      
+      if (recent.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      
+      section.style.display = 'block';
+      
+      let html = '';
+      recent.forEach(id => {
+        const game = GAMES_DATA[id];
+        if (!game) return;
+        
+        html += `
+          <div class="recent-mini-card" onclick="openPopup('${id}')">
+            <div class="recent-emoji">${game.emoji}</div>
+            <div class="recent-name">${game[currentLang].title}</div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    // ─── 10. MOBILE BOTTOM NAVIGATION ROUTER ───
+    function navTo(target) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      
+      if (target === 'home') {
+        document.getElementById('navHome').classList.add('active');
+        document.getElementById('promoCard').scrollIntoView({ behavior: 'smooth' });
+      } else if (target === 'all') {
+        document.getElementById('navAll').classList.add('active');
+        selectCategory('all');
+        document.getElementById('gamesGrid').scrollIntoView({ behavior: 'smooth' });
+      } else if (target === 'recent') {
+        document.getElementById('navRecentBtn').classList.add('active');
+        const recentSec = document.getElementById('recentSection');
+        if (recentSec.style.display !== 'none') {
+          recentSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          alert(currentLang === 'ko' ? '최근 플레이한 기록이 없습니다! 다양한 게임을 먼저 시작해 보세요.' : 'No recently played history yet! Start playing first.');
+          document.getElementById('navHome').classList.add('active');
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+</body>
+</html>

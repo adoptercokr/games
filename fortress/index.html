@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Angry Fortress - Ultimate Update</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
+        body { width: 100vw; height: 100vh; overflow: hidden; background: #0a192f; font-family: 'Poppins', 'Noto Sans KR', sans-serif; display: flex; align-items: center; justify-content: center; }
+        
+        #gameCanvas { display: block; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        
+        #ui-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            display: flex; flex-direction: column; justify-content: space-between;
+            z-index: 10;
+        }
+        
+        .hud-top {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 12px 35px;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            color: white; font-size: 18px; font-weight: 800;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            white-space: nowrap;
+        }
+        .stat span { color: #f1c40f; font-size: 22px; margin-left: 5px; }
+
+        .hud-controls {
+            position: absolute; top: 20px; left: 20px;
+            pointer-events: auto;
+        }
+        
+        .btn {
+            background: #ff4757; color: white;
+            border: none; padding: 12px 25px;
+            font-size: 15px; font-weight: 800;
+            border-radius: 12px; cursor: pointer;
+            box-shadow: 0 6px 15px rgba(255, 71, 87, 0.4), inset 0 -3px 0 rgba(0,0,0,0.15);
+            transition: all 0.15s; text-transform: uppercase;
+        }
+        .btn:active { transform: translateY(3px); box-shadow: 0 2px 5px rgba(255, 71, 87, 0.4); }
+        .btn-blue { background: #1e90ff; box-shadow: 0 6px 15px rgba(30, 144, 255, 0.4), inset 0 -3px 0 rgba(0,0,0,0.15); }
+        .btn-blue:active { box-shadow: 0 2px 5px rgba(30, 144, 255, 0.4); }
+
+        .instructions {
+            margin-bottom: 50px; text-align: center; color: white;
+            font-size: 24px; font-weight: 800; letter-spacing: 1px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+            transition: opacity 0.5s;
+        }
+
+        .overlay {
+            position: absolute; top:0; left:0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; pointer-events: auto;
+            opacity: 1; transition: opacity 0.3s;
+        }
+        .overlay.hidden { opacity: 0; pointer-events: none; }
+        .modal {
+            background: linear-gradient(135deg, #ffffff, #f1f2f6);
+            padding: 40px 50px; border-radius: 25px;
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: scale(1); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(255,255,255,0.8);
+        }
+        .overlay.hidden .modal { transform: scale(0.8); }
+        .modal h1 { color: #2d3436; font-size: 42px; margin-bottom: 5px; text-transform: uppercase; }
+        .modal p { color: #636e72; font-size: 18px; margin-bottom: 20px; font-weight: 600; }
+        .stars { font-size: 55px; margin-bottom: 15px; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        
+        .loading {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 24px; font-weight: 800; color: white;
+            background: rgba(0,0,0,0.6); padding: 20px 40px; border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .char-btn {
+            width: 100px; height: 100px; border-radius: 15px; border: 4px solid transparent; cursor: pointer;
+            background-color: rgba(0,0,0,0.1); background-size: cover; background-position: center;
+            transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .char-btn.active { border-color: #1e90ff; transform: scale(1.15); box-shadow: 0 8px 20px rgba(30,144,255,0.5); }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="ui-layer">
+        <div class="hud-controls">
+            <button class="btn" onclick="buildLevel(currentLevel)">🔄 스테이지 재시작</button>
+        </div>
+        <div class="hud-top">
+            <div class="stat">STAGE <span id="val-level">1</span></div>
+            <div class="stat" id="destruction-container">파괴율 <span id="val-destruction">0</span>% <span style="font-size:14px; color:#dfe6e9;">(목표 80%)</span></div>
+            <div class="stat">포탄 <span id="val-bombs">3</span> <span style="font-size:14px; color:#dfe6e9; margin-left:5px;">(파괴력: Lv.<span id="val-power" style="font-size:16px;">1</span>)</span></div>
+        </div>
+        <div id="instructions" class="instructions">캐릭터를 뒤로 당겨서 조준하세요!</div>
+    </div>
+    
+    <div id="overlay-start" class="overlay hidden">
+        <div class="modal" style="width: 650px;">
+            <h1 style="color: #0984e3; margin-bottom: 10px;">ANGRY FORTRESS</h1>
+            <p style="color: #d63031; font-weight: 800;">원하는 캐릭터를 선택하세요!</p>
+            <div id="char-select-container" style="display: flex; gap: 20px; justify-content: center; margin-bottom: 40px; padding: 10px;">
+            </div>
+            <button class="btn btn-blue" onclick="startGame()" style="font-size: 26px; padding: 18px 60px;">게임 시작 🚀</button>
+        </div>
+    </div>
+
+    <div id="overlay-victory" class="overlay hidden">
+        <div class="modal">
+            <h1 style="color: #00b894;">STAGE CLEAR!</h1>
+            <div class="stars" id="victory-stars">⭐⭐⭐</div>
+            <p>완벽합니다! 다음 단계의 강력한 성에 도전하세요.</p>
+            <button class="btn btn-blue" onclick="nextLevel()" style="font-size: 20px; padding: 15px 40px;">다음 스테이지 ➡️</button>
+        </div>
+    </div>
+
+    <div id="overlay-gameover" class="overlay hidden">
+        <div class="modal">
+            <h1 style="color: #d63031;">STAGE FAILED</h1>
+            <div class="stars" style="filter: grayscale(100%);">⭐⭐⭐</div>
+            <p>포탄을 모두 소진했습니다...</p>
+            <button class="btn" onclick="buildLevel(currentLevel)" style="font-size: 20px; padding: 15px 40px;">다시 도전하기 🔄</button>
+        </div>
+    </div>
+
+    <div id="loading-msg" class="loading">에셋 로딩 중...</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script>
+        const Engine = Matter.Engine,
+              Runner = Matter.Runner,
+              Bodies = Matter.Bodies,
+              Composite = Matter.Composite,
+              Events = Matter.Events,
+              Body = Matter.Body;
+
+        const engine = Engine.create({ positionIterations: 16, velocityIterations: 12, enableSleeping: true });
+        const world = engine.world;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const LOGICAL_W = 1280;
+        const LOGICAL_H = 720;
+        canvas.width = LOGICAL_W;
+        canvas.height = LOGICAL_H;
+
+        let scale = 1;
+        let anchor = { x: 220, y: LOGICAL_H - 180 }; 
+        let cameraX = 0;
+        
+        let currentLevel = 0;
+        let bombsLeft = 0;
+        let gameState = 'init'; 
+        let bomb = null;
+        let bombDragPos = { x: 0, y: 0 };
+        let bombIdleFrames = 0;
+        
+        let castleBodies = [];
+        let enemies = [];
+        let particles = [];
+        let groundBody = null;
+        let currentCharIndex = 1;
+        let initialBlocks = 0;
+        let destroyedBlocks = 0;
+
+        const totalLevels = 10; const totalCharacters = 4; const totalBgs = 4; const totalBobs = 4;
+        const images = {};
+
+        let imagesLoaded = 0; 
+        const targetLoaded = 1 + totalBgs + totalCharacters + totalBobs + totalLevels;
+        
+        let loadFallback = setTimeout(() => {
+            if(imagesLoaded < targetLoaded) {
+                imagesLoaded = targetLoaded;
+                checkLoadComplete();
+            }
+        }, 3000);
+
+        function checkLoadComplete() {
+            imagesLoaded++;
+            if(imagesLoaded >= targetLoaded) {
+                clearTimeout(loadFallback);
+                document.getElementById('loading-msg').style.display = 'none';
+                initCharSelect();
+            }
+        }
+
+        function loadImg(key, path) {
+            images[key] = new Image();
+            images[key].onload = checkLoadComplete;
+            images[key].onerror = checkLoadComplete; 
+            images[key].src = path;
+        }
+
+        loadImg('enemy', './assets/enemy-01.png');
+        for(let i=1; i<=totalBgs; i++) loadImg('bg'+i, `./assets/bg-0${i}.jpg`);
+        for(let i=1; i<=totalCharacters; i++) loadImg('character'+i, `./assets/character${i}.png`);
+        for(let i=1; i<=totalBobs; i++) loadImg('bob'+i, `./assets/bob-0${i}.png`);
+        for(let i=1; i<=totalLevels; i++) loadImg('castle'+i, `./assets/castle-${i < 10 ? '0'+i : i}.png`);
+
+        function initCharSelect() {
+            let container = document.getElementById('char-select-container');
+            container.innerHTML = '';
+            for(let i=1; i<=totalCharacters; i++) {
+                let btn = document.createElement('div');
+                btn.className = 'char-btn' + (i === currentCharIndex ? ' active' : '');
+                if(images['character'+i].complete && images['character'+i].width > 0) {
+                    btn.style.backgroundImage = `url('./assets/character${i}.png')`;
+                } else {
+                    btn.innerText = `Char ${i}`; 
+                    btn.style.display = 'flex'; 
+                    btn.style.alignItems = 'center'; 
+                    btn.style.justifyContent = 'center'; 
+                    btn.style.color = '#fff'; 
+                    btn.style.fontWeight = 'bold';
+                }
+                btn.onclick = () => {
+                    currentCharIndex = i;
+                    Array.from(container.children).forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+                container.appendChild(btn);
+            }
+            document.getElementById('overlay-start').classList.remove('hidden');
+        }
+
+        function resize() {
+            let scaleX = window.innerWidth / LOGICAL_W;
+            let scaleY = window.innerHeight / LOGICAL_H;
+            scale = Math.min(scaleX, scaleY);
+            canvas.style.width = (LOGICAL_W * scale) + 'px';
+            canvas.style.height = (LOGICAL_H * scale) + 'px';
+        }
+        window.addEventListener('resize', resize);
+
+        function startGame() {
+            document.getElementById('overlay-start').classList.add('hidden');
+            resize();
+            
+            // 맵을 무한에 가깝게 길게 설정
+            groundBody = Bodies.rectangle(3000, LOGICAL_H + 50, 8000, 100, { isStatic: true, friction: 1 });
+            Composite.add(world, groundBody);
+            
+            buildLevel(0);
+            Runner.run(Runner.create(), engine);
+            requestAnimationFrame(render);
+        }
+
+        function buildLevel(lvlIndex) {
+            currentLevel = lvlIndex;
+            
+            // 스테이지 무한 생성 알고리즘 (레벨에 따라 성의 개수와 티어가 상승)
+            let maxTier = Math.min(10, 1 + Math.floor(currentLevel / 4)); 
+            let numCastles = 1 + (currentLevel % 4); // 1~4개 반복하며 서서히 스케일업
+            
+            let tiers = [];
+            for(let i=0; i<numCastles; i++) {
+                let t = maxTier - i;
+                if (t < 1) t = 1 + Math.floor(Math.random() * maxTier);
+                tiers.push(Math.min(10, t));
+            }
+
+            // 난이도 상승: 폭탄 개수 억제
+            bombsLeft = 3 + numCastles * 1 + Math.floor(currentLevel / 3);
+            
+            gameState = 'ready'; cameraX = 0; bombIdleFrames = 0;
+            initialBlocks = 0; destroyedBlocks = 0;
+            if (bomb) { Composite.remove(world, bomb); bomb = null; }
+            if (castleBodies.length > 0) { Composite.remove(world, castleBodies); castleBodies = []; }
+            if (enemies.length > 0) { Composite.remove(world, enemies); enemies = []; }
+            particles = [];
+            
+            let currentXOffset = LOGICAL_W * 0.45; // 첫 성벽 시작 위치 (화면에 가깝게)
+            // 난이도 상승: 성벽 밀도(무게)를 높여서 무너뜨리기 훨씬 힘들게 함
+            let baseDensity = 0.04 + (currentLevel * 0.006);
+
+            for (let i = 0; i < numCastles; i++) {
+                let castleTier = tiers[i];
+                let currentCastleImg = images['castle' + castleTier];
+                if (!currentCastleImg || !currentCastleImg.complete || currentCastleImg.width === 0) currentCastleImg = images.castle1;
+
+                let targetW = currentCastleImg.width || 300;
+                let targetH = currentCastleImg.height || 400;
+
+                let maxW = LOGICAL_W * 0.35; 
+                let maxH = LOGICAL_H * 0.7;
+                
+                if (targetW > maxW || targetH > maxH) {
+                    let scaleToFit = Math.min(maxW / targetW, maxH / targetH);
+                    targetW *= scaleToFit; targetH *= scaleToFit;
+                }
+                if (targetH < 200) {
+                    let scaleUp = 200 / targetH;
+                    targetW *= scaleUp; targetH *= scaleUp;
+                }
+
+                // 각 성의 위치를 이전 성의 끝에 바짝 붙여서 배치
+                const startX = currentXOffset;
+                const startY = LOGICAL_H - targetH - 10;
+                currentXOffset += targetW + 40; // 다음 성은 40px 간격으로 생성
+                
+                const cols = Math.max(3, Math.floor(targetW / 60)); 
+                const rows = Math.max(3, Math.floor(targetH / 60));
+                const blockW = targetW / cols; 
+                const blockH = targetH / rows;
+                let imgBlockW = currentCastleImg.width ? currentCastleImg.width / cols : blockW;
+                let imgBlockH = currentCastleImg.height ? currentCastleImg.height / rows : blockH;
+
+                for(let r = 0; r < rows; r++) {
+                    for(let c = 0; c < cols; c++) {
+                        let bx = startX + c * blockW + blockW/2; let by = startY + r * blockH + blockH/2;
+                        let block = Bodies.rectangle(bx, by, blockW, blockH, {
+                            label: 'castleBlock', density: baseDensity, friction: 0.8, frictionStatic: 10.0, restitution: 0.05, sleepThreshold: 15
+                        });
+                        Matter.Sleeping.set(block, true); 
+                        block.width = blockW; block.height = blockH;
+                        block.imgSx = c * imgBlockW; block.imgSy = r * imgBlockH;
+                        block.imgBlockW = imgBlockW; block.imgBlockH = imgBlockH; block.castleImg = currentCastleImg;
+                        // 난이도 상승: 성벽 체력이 엄청 높아짐 (레벨에 비례하여 기하급수적 상승)
+                        block.health = 50 + currentLevel * 20;
+                        castleBodies.push(block);
+                    }
+                }
+                
+                // 다이너마이트(돼지) 성마다 할당
+                const er = Math.max(25, LOGICAL_W * 0.025);
+                let numEnemiesPerCastle = 1 + Math.floor(Math.random() * 3); 
+                for(let j=0; j<numEnemiesPerCastle; j++) {
+                    let ex, ey;
+                    if (j < cols) {
+                        let colIndex = Math.floor(cols * ((j + 0.5) / Math.min(numEnemiesPerCastle, cols)));
+                        ex = startX + colIndex * blockW + blockW/2;
+                        ey = startY - er - 2; 
+                    } else {
+                        ex = startX + (Math.random() > 0.5 ? targetW + 30 : -30);
+                        ey = LOGICAL_H - 10 - er;
+                    }
+                    let enemy = Bodies.circle(ex, ey, er, { label: 'enemy', density: 0.001, friction: 0.5, restitution: 0.3 });
+                    Matter.Sleeping.set(enemy, true);
+                    enemy.radius = er; enemy.health = 100; enemies.push(enemy);
+                }
+            }
+            
+            Composite.add(world, castleBodies); Composite.add(world, enemies);
+            initialBlocks = castleBodies.length;
+            bombDragPos = { x: anchor.x, y: anchor.y };
+            updateHUD();
+            document.getElementById('overlay-victory').classList.add('hidden');
+            document.getElementById('overlay-gameover').classList.add('hidden');
+            document.getElementById('instructions').style.opacity = '1';
+        }
+
+        function nextLevel() { buildLevel(currentLevel + 1); }
+
+        function checkWinCondition() {
+            if (gameState === 'over') return;
+            let ratio = initialBlocks > 0 ? Math.floor((destroyedBlocks / initialBlocks) * 100) : 100;
+            // 레벨이 오를수록 목표 파괴율 상향 (최대 95%까지 올라감)
+            let targetRatio = Math.min(95, 80 + Math.floor(currentLevel / 2));
+            if (ratio >= targetRatio) {
+                gameState = 'over';
+                let stars = bombsLeft >= 2 ? '⭐⭐⭐' : (bombsLeft === 1 ? '⭐⭐' : '⭐');
+                document.getElementById('victory-stars').innerText = stars;
+                setTimeout(() => document.getElementById('overlay-victory').classList.remove('hidden'), 1500);
+            }
+        }
+
+        function updateHUD() {
+            document.getElementById('val-level').innerText = currentLevel + 1;
+            document.getElementById('val-bombs').innerText = bombsLeft;
+            let ratio = initialBlocks > 0 ? Math.floor((destroyedBlocks / initialBlocks) * 100) : 0;
+            let targetRatio = Math.min(95, 80 + Math.floor(currentLevel / 2));
+            
+            // 목표 파괴율 텍스트 동적 업데이트
+            let destructionEl = document.getElementById('destruction-container');
+            if (destructionEl) {
+                destructionEl.innerHTML = `파괴율 <span id="val-destruction">${Math.min(ratio, 100)}</span>% <span style="font-size:14px; color:#dfe6e9;">(목표 ${targetRatio}%)</span>`;
+            }
+            document.getElementById('val-power').innerText = (currentLevel % totalBobs) + 1;
+        }
+
+        Events.on(engine, 'collisionStart', event => {
+            let bombHit = false;
+            event.pairs.forEach(pair => {
+                if (pair.bodyA.label === 'bomb' || pair.bodyB.label === 'bomb') bombHit = true;
+            });
+            if (bombHit) {
+                Composite.allBodies(world).forEach(b => Matter.Sleeping.set(b, false));
+            }
+
+            event.pairs.forEach(pair => {
+                let a = pair.bodyA; let b = pair.bodyB;
+
+                if (a.label === 'bomb' || b.label === 'bomb') {
+                    let target = a.label === 'bomb' ? b : a;
+                    let bombBody = a.label === 'bomb' ? a : b;
+                    
+                    // 고각 폭격 데미지 증폭 기믹: 포탄이 위로 솟구쳤다가 아래로 빠르게 떨어질수록 데미지가 폭증!
+                    let fallMultiplier = 1;
+                    if (bombBody.velocity.y > 8) {
+                        fallMultiplier = 1 + (bombBody.velocity.y - 8) * 0.8; // 속도에 따라 데미지가 기하급수적으로 배가됨!
+                    }
+
+                    if (target.label === 'enemy') damageEnemy(target, 1000); 
+                    
+                    if (target.label === 'castleBlock') {
+                        damageBlock(target, 100 * fallMultiplier); 
+                        
+                        // 매우 높은 곳에서 떨어져 충격(Multiplier > 4)이 가해지면, 운석 충돌 급의 지진(광역 폭발) 발생!
+                        if (fallMultiplier > 4) {
+                            createParticles(bombBody.position.x, bombBody.position.y, '#e15f41', 40);
+                            let bodies = Composite.allBodies(world);
+                            bodies.forEach(bd => {
+                                if (bd === bombBody || bd.isStatic || bd.label !== 'castleBlock') return;
+                                let dx = bd.position.x - bombBody.position.x;
+                                let dy = bd.position.y - bombBody.position.y;
+                                let dist = Math.hypot(dx, dy);
+                                if (dist < 180) { // 반경 180 픽셀 안의 모든 성벽을 박살냄
+                                    damageBlock(bd, 60 * fallMultiplier * ((180-dist)/180));
+                                }
+                            });
+                        }
+                    } 
+                }
+
+                let speedA = Math.hypot(a.velocity.x, a.velocity.y); let speedB = Math.hypot(b.velocity.x, b.velocity.y);
+                let impact = speedA + speedB;
+                
+                if (impact > 5) {
+                    let damage = impact * 8;
+                    // 성벽끼리 부딪힐 때는 데미지를 대폭 감소시켜, 무너질 때 연쇄 자폭하는 것을 방지
+                    if (a.label === 'castleBlock' && b.label === 'castleBlock') {
+                        damage *= 0.1;
+                    }
+
+                    if (a.label === 'enemy') damageEnemy(a, damage); 
+                    if (b.label === 'enemy') damageEnemy(b, damage);
+                    if (a.label === 'castleBlock') damageBlock(a, damage); 
+                    if (b.label === 'castleBlock') damageBlock(b, damage);
+                }
+            });
+        });
+
+        // 깔렸을 때 데미지 처리 (지속 충돌)
+        Events.on(engine, 'collisionActive', event => {
+            event.pairs.forEach(pair => {
+                let a = pair.bodyA; let b = pair.bodyB;
+                if ((a.label === 'castleBlock' && b.label === 'enemy') || (a.label === 'enemy' && b.label === 'castleBlock')) {
+                    let enemy = a.label === 'enemy' ? a : b;
+                    let block = a.label === 'castleBlock' ? a : b;
+                    
+                    // 성벽 블록의 중심 Y좌표가 돼지의 중심보다 위에 있을 때만(블록이 돼지를 누르고 있을 때만) 깔린 것으로 간주!
+                    // 단순히 돼지가 성벽 위에 얹혀있는 경우에는 데미지 무시 (스스로 자폭하는 버그 해결)
+                    if (block.position.y < enemy.position.y - 10) {
+                        damageEnemy(enemy, 2); 
+                    }
+                }
+            });
+        });
+
+        Events.on(engine, 'beforeUpdate', () => {
+            enemies.forEach(en => { if (en.position.y > LOGICAL_H + 100 || en.position.x > 8000 || en.position.x < -1000) damageEnemy(en, 1000); });
+            castleBodies.forEach(cb => { if (cb.position.y > LOGICAL_H + 50 || cb.position.x > 8000 || cb.position.x < -1000) damageBlock(cb, 1000); });
+        });
+
+        function damageBlock(block, damage) {
+            if (block.isDestroyed) return;
+            block.health -= damage;
+            if (block.health <= 0) {
+                block.isDestroyed = true;
+                destroyedBlocks++;
+                createParticles(block.position.x, block.position.y, '#f1c40f', 15);
+                Composite.remove(world, block);
+                castleBodies = castleBodies.filter(b => b !== block);
+                updateHUD();
+                checkWinCondition();
+            }
+        }
+
+        function damageEnemy(en, damage) {
+            if (en.isDead) return;
+            en.health -= damage;
+            if (en.health <= 0) {
+                en.isDead = true;
+                // 폭발 이펙트 및 파티클
+                createParticles(en.position.x, en.position.y, '#ff4757', 60);
+                
+                // 돼지가 죽으면 다이너마이트처럼 폭발하여 주변 성벽을 부숨!
+                let bodies = Composite.allBodies(world);
+                bodies.forEach(b => {
+                    if (b === en || b.isStatic) return;
+                    let dx = b.position.x - en.position.x;
+                    let dy = b.position.y - en.position.y;
+                    let dist = Math.hypot(dx, dy);
+                    if (dist < 200) {
+                        let force = (200 - dist) / 200 * 0.1 * b.mass; 
+                        Body.applyForce(b, b.position, { x: (dx/dist)*force, y: (dy/dist)*force - force*0.3 });
+                        Matter.Sleeping.set(b, false);
+                        if (b.label === 'castleBlock') damageBlock(b, force * 500);
+                    }
+                });
+
+                Composite.remove(world, en);
+                enemies = enemies.filter(e => e !== en);
+            }
+        }
+
+        function createParticles(x, y, color, count) {
+            for(let i=0; i<count; i++) { particles.push({ x: x, y: y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15 - 5, life: 1.0, color: color }); }
+        }
+
+        function nextBomb() {
+            if (gameState === 'over') return;
+            Composite.remove(world, bomb); bomb = null; bombsLeft--; updateHUD();
+            
+            let ratio = initialBlocks > 0 ? Math.floor((destroyedBlocks / initialBlocks) * 100) : 100;
+            let targetRatio = Math.min(95, 80 + Math.floor(currentLevel / 2));
+            if (ratio < targetRatio) {
+                if (bombsLeft <= 0) {
+                    gameState = 'over'; setTimeout(() => document.getElementById('overlay-gameover').classList.remove('hidden'), 1000);
+                } else { gameState = 'ready'; bombDragPos = { x: anchor.x, y: anchor.y }; }
+            }
+        }
+
+        function getPointerPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            let displayScale = LOGICAL_W / rect.width;
+            let cx = e.clientX; let cy = e.clientY;
+            if (e.touches && e.touches.length > 0) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
+            return { x: (cx - rect.left) * displayScale + cameraX, y: (cy - rect.top) * displayScale };
+        }
+
+        // 화면 밖으로 나가도 발사가 되도록 window 객체에 이벤트 바인딩
+        canvas.addEventListener('pointerdown', e => {
+            if (gameState !== 'ready') return;
+            const pos = getPointerPos(e);
+            if (Math.hypot(pos.x - anchor.x, pos.y - anchor.y) < 120) {
+                gameState = 'dragging';
+                document.getElementById('instructions').style.opacity = '0';
+            }
+        });
+
+        window.addEventListener('pointermove', e => {
+            if (gameState !== 'dragging') return;
+            const pos = getPointerPos(e);
+            let dx = pos.x - anchor.x; let dy = pos.y - anchor.y; let dist = Math.hypot(dx, dy);
+            const maxDrag = LOGICAL_W * 0.15;
+            if (dist > maxDrag) { dx = (dx / dist) * maxDrag; dy = (dy / dist) * maxDrag; }
+            bombDragPos = { x: anchor.x + dx, y: anchor.y + dy };
+        });
+
+        window.addEventListener('pointerup', e => {
+            if (gameState === 'dragging') {
+                gameState = 'flying'; bombIdleFrames = 0;
+                
+                const br = LOGICAL_W * 0.012; 
+                let bombDensity = 0.5 + (currentLevel * 0.1);
+
+                bomb = Bodies.circle(bombDragPos.x, bombDragPos.y, br, { label: 'bomb', density: bombDensity, friction: 0.5, restitution: 0.2 });
+                bomb.radius = br; Composite.add(world, bomb);
+                
+                let dx = anchor.x - bombDragPos.x; let dy = anchor.y - bombDragPos.y;
+                Body.setVelocity(bomb, { x: dx * 0.25, y: dy * 0.25 });
+                Body.setAngularVelocity(bomb, (Math.random()-0.5) * 0.5);
+            }
+        });
+
+        function drawEnemy(ctx, radius) {
+            ctx.beginPath(); ctx.arc(0, 0, radius, 0, Math.PI*2);
+            ctx.fillStyle = '#2ecc71'; ctx.fill();
+            ctx.lineWidth = 3; ctx.strokeStyle = '#27ae60'; ctx.stroke();
+            ctx.beginPath(); ctx.ellipse(0, radius*0.2, radius*0.4, radius*0.25, 0, 0, Math.PI*2);
+            ctx.fillStyle = '#a8e6cf'; ctx.fill();
+            ctx.fillStyle = '#1e8449';
+            ctx.beginPath(); ctx.arc(-radius*0.15, radius*0.2, radius*0.08, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(radius*0.15, radius*0.2, radius*0.08, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.beginPath(); ctx.arc(-radius*0.35, -radius*0.25, radius*0.2, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(radius*0.35, -radius*0.25, radius*0.2, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'black';
+            ctx.beginPath(); ctx.arc(-radius*0.35, -radius*0.25, radius*0.08, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(radius*0.35, -radius*0.25, radius*0.08, 0, Math.PI*2); ctx.fill();
+        }
+
+        function render() {
+            if (gameState === 'init') return; 
+
+            let targetCameraX = 0;
+            if (gameState === 'flying' && bomb) {
+                let speed = Math.hypot(bomb.velocity.x, bomb.velocity.y);
+                let angularSpeed = Math.abs(bomb.angularVelocity);
+                
+                if (bomb.isSleeping || (speed < 1.5 && angularSpeed < 0.2)) bombIdleFrames++; 
+                else bombIdleFrames = 0;
+                
+                // 포탄이 아주 멀리 날아갈 수 있게 제한 해제
+                if (bomb.position.x > 7000 || bomb.position.y > LOGICAL_H + 100 || bombIdleFrames > 90) { nextBomb(); } 
+                else { targetCameraX = Math.max(0, bomb.position.x - LOGICAL_W * 0.35); }
+            }
+            cameraX += (targetCameraX - cameraX) * 0.1;
+
+            ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
+            ctx.save();
+            ctx.translate(-cameraX, 0);
+            
+            let bgIndex = (currentLevel % totalBgs) + 1;
+            let currentBg = images['bg' + bgIndex];
+            if (currentBg && currentBg.complete && currentBg.width > 0) {
+                // 패럴랙스 무한 스크롤
+                let parallaxOffset = (cameraX * 0.3) % (LOGICAL_W * 1.5);
+                ctx.drawImage(currentBg, cameraX - parallaxOffset, 0, LOGICAL_W * 1.5, LOGICAL_H);
+                ctx.drawImage(currentBg, cameraX - parallaxOffset + LOGICAL_W * 1.5, 0, LOGICAL_W * 1.5, LOGICAL_H);
+                ctx.drawImage(currentBg, cameraX - parallaxOffset + LOGICAL_W * 3.0, 0, LOGICAL_W * 1.5, LOGICAL_H);
+            } else { ctx.fillStyle = '#74b9ff'; ctx.fillRect(cameraX, 0, LOGICAL_W*3, LOGICAL_H); }
+            
+            // 바닥을 넓게 그림
+            ctx.fillStyle = '#2d3436'; ctx.fillRect(0, LOGICAL_H - 10, 8000, 100);
+            
+            const charW = LOGICAL_W * 0.08; const charH = charW * 1.2;
+            ctx.fillStyle = '#636e72';
+            ctx.fillRect(anchor.x - charW - 30, anchor.y + charH/2, charW + 80, LOGICAL_H - (anchor.y + charH/2));
+            ctx.fillStyle = '#b2bec3';
+            ctx.fillRect(anchor.x - charW - 30, anchor.y + charH/2, charW + 80, 10);
+
+            if (gameState === 'dragging') {
+                let vx = (anchor.x - bombDragPos.x) * 0.25; let vy = (anchor.y - bombDragPos.y) * 0.25;
+                let px = anchor.x; let py = anchor.y;
+                ctx.beginPath(); ctx.moveTo(px, py);
+                for(let i=0; i<10; i++) { 
+                    px += vx; py += vy; vy += engine.gravity.y * engine.gravity.scale;
+                    if (i % 2 === 0) { ctx.arc(px, py, 4, 0, Math.PI*2); ctx.moveTo(px, py); }
+                }
+                ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fill();
+            }
+
+            let charImg = images['character' + currentCharIndex];
+            if (charImg && charImg.complete && charImg.width > 0) {
+                ctx.drawImage(charImg, anchor.x - charW - 10, anchor.y - charH/2, charW, charH);
+            } else {
+                ctx.fillStyle = '#0984e3'; ctx.fillRect(anchor.x - charW - 10, anchor.y - charH/2, charW, charH);
+            }
+            
+            const readyBr = LOGICAL_W * 0.012;
+            if (gameState === 'dragging' || gameState === 'ready') {
+                let bobIndex = (currentLevel % totalBobs) + 1;
+                let currentBobImg = images['bob' + bobIndex];
+                if (currentBobImg && currentBobImg.complete && currentBobImg.width > 0) {
+                    ctx.drawImage(currentBobImg, bombDragPos.x - readyBr*1.5, bombDragPos.y - readyBr*1.5, readyBr*3, readyBr*3);
+                } else {
+                    ctx.beginPath(); ctx.arc(bombDragPos.x, bombDragPos.y, readyBr, 0, Math.PI*2); ctx.fillStyle = '#d63031'; ctx.fill();
+                }
+            }
+            
+            const bodies = Composite.allBodies(world);
+            for (let b of bodies) {
+                if (b.isStatic) continue;
+                ctx.save(); ctx.translate(b.position.x, b.position.y); ctx.rotate(b.angle);
+                
+                if (b.label === 'castleBlock') {
+                    if (b.castleImg && b.castleImg.complete && b.castleImg.width > 0) {
+                        ctx.drawImage(b.castleImg, b.imgSx, b.imgSy, b.imgBlockW, b.imgBlockH, -b.width/2 - 0.5, -b.height/2 - 0.5, b.width + 1.5, b.height + 1.5);
+                    } else {
+                        ctx.fillStyle = '#f1c40f'; ctx.fillRect(-b.width/2, -b.height/2, b.width, b.height); ctx.strokeStyle = '#e67e22'; ctx.strokeRect(-b.width/2, -b.height/2, b.width, b.height);
+                    }
+                } else if (b.label === 'bomb') {
+                    let bobIndex = (currentLevel % totalBobs) + 1;
+                    let currentBobImg = images['bob' + bobIndex];
+                    if (currentBobImg && currentBobImg.complete && currentBobImg.width > 0) {
+                        ctx.drawImage(currentBobImg, -b.radius*1.5, -b.radius*1.5, b.radius*3, b.radius*3);
+                    } else {
+                        ctx.beginPath(); ctx.arc(0, 0, b.radius, 0, Math.PI*2); ctx.fillStyle = '#d63031'; ctx.fill();
+                    }
+                } else if (b.label === 'enemy') {
+                    if (images.enemy && images.enemy.complete && images.enemy.width > 0) {
+                        ctx.drawImage(images.enemy, -b.radius*1.5, -b.radius*1.5, b.radius*3, b.radius*3);
+                    } else {
+                        drawEnemy(ctx, b.radius);
+                    }
+                }
+                ctx.restore();
+            }
+
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy; p.life -= 0.03;
+                ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.color;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI*2); ctx.fill();
+                if (p.life <= 0) particles.splice(i, 1);
+            });
+            ctx.globalAlpha = 1.0;
+            
+            ctx.restore();
+            requestAnimationFrame(render);
+        }
+    </script>
+</body>
+</html>
