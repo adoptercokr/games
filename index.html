@@ -8,8 +8,8 @@
   <!-- ==========================================
        SEO & META TAGS (Google, Naver, AI Search Optimized)
        ========================================== -->
-  <meta name="description" content="회원가입 없이 모바일과 PC에서 바로 즐기는 100% 평생 무료 웹게임 놀이터! 레이싱, 액션, 슈팅, 퍼즐 등 14종의 엄선된 아케이드를 설치 없이 즉시 플레이하세요.">
-  <meta name="keywords" content="무료게임, 웹게임, 모바일게임, 무료웹게임, 플래시게임대체, HTML5게임, 어답터게임즈, 100%무료게임, 무설치게임, 심심할때할만한게임, 카피바라게임, 폭탄돌리기게임">
+  <meta name="description" content="회원가입 없이 모바일과 PC에서 바로 즐기는 100% 평생 무료 웹게임 놀이터! 런닝맨, 몰래 먹는 쿠키, 파리잡기, 좀비, 포트리스, 카피바라, 픽셀타워, 테트리스 등 14종의 엄선된 아케이드를 설치 없이 즉시 플레이하세요.">
+  <meta name="keywords" content="무료게임, 웹게임, 모바일게임, 무료웹게임, 플래시게임대체, HTML5게임, 어답터게임즈, 100%무료게임, 무설치게임, 심심할때할만한게임, 런닝맨, 몰래먹는쿠키, 카피바라게임, 폭탄돌리기게임">
   <meta name="author" content="game.adopter.co.kr">
   
   <!-- Robot Crawlers Directive -->
@@ -194,7 +194,7 @@
           </div>
           
           <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" id="promoTitle">
-            네온 레이서 3D
+            런닝맨
           </h1>
           
           <p class="text-slate-600 text-xs sm:text-sm leading-relaxed" id="promoDesc">
@@ -318,25 +318,98 @@
        JAVASCRIPT LOGIC
        ========================================== -->
   <script>
-    // ─── 1. GAMES DATABASE (14 Complete Games) ───
+    // ─── 1. GAMES DATABASE & EXACT REQUESTED ORDER ───
+    // 순서: 1.런닝맨 -> 2.몰래 먹는 쿠키 -> 3.파리잡기 -> 4.좀비 -> 5.포트리스 -> 6.카피바라 -> 7.폭탄게임 -> 8.픽셀타워 -> 9.테트리스 -> 기타(레이서, 고양이, 스페이스, 갤럭시) -> 14.응가 댕댕이(맨 뒤)
     const GAMES_DATA = {
-      'gian-game': {
-        id: 'gian-game',
-        path: '11-gian-game/index.html',
+      'kids-runner': {
+        id: 'kids-runner',
+        path: '06-kids-runner/index.html',
+        cat: 'action',
+        badge: 'best',
+        clicksSeed: 6840,
+        ko: { title: '런닝맨', desc: '장애물을 요리조리 피하며 코인을 모으는 경쾌하고 신나는 캐주얼 횡스크롤 러닝 액션 게임!' },
+        en: { title: 'Running Man', desc: 'A delightful endless running adventure! Jump over obstacles and run as far as you can.' }
+      },
+      'sneaky-snacker': {
+        id: 'sneaky-snacker',
+        path: '08-sneaky-snacker/index.html',
         cat: 'arcade',
         badge: 'hot',
-        clicksSeed: 5420,
-        ko: { title: '초2가 만든 폭탄 게임', desc: '라인을 타고 날아오는 5가지 변칙 폭탄을 완벽한 타이밍에 튕겨내는 극상의 긴장감! 3개 라인 멀티태스킹 액션.' },
-        en: { title: 'Bomb Passing Action', desc: 'Dodge, deflect, and smash 5 erratic bombs on 3 separate tracks! High-intensity reflexes challenge!' }
+        clicksSeed: 5920,
+        ko: { title: '몰래 먹는 쿠키', desc: '모두가 잠든 밤, 들키지 않고 냉장고 속 달콤하고 맛있는 쿠키를 훔쳐 먹는 스릴 만점 타이밍 잠입 게임!' },
+        en: { title: 'Sneaky Cookie', desc: 'A suspenseful stealth game! Sneak around and steal yummy cookies without getting caught.' }
+      },
+      'fly-swat': {
+        id: 'fly-swat',
+        path: '09-fly-swat/index.html',
+        cat: 'arcade',
+        badge: '',
+        clicksSeed: 4150,
+        ko: { title: '파리잡기', desc: '사방에서 윙윙대는 귀찮은 파리들을 날카로운 반사신경과 완벽한 타이밍으로 단번에 제압해 보세요.' },
+        en: { title: 'Fly Swat', desc: 'Test your reflexes! Swat the annoying buzzing flies with quick taps and precision.' }
+      },
+      'gun-zombie': {
+        id: 'gun-zombie',
+        path: '07-gun-zombie/index.html',
+        cat: 'shooting',
+        badge: 'hot',
+        clicksSeed: 5290,
+        ko: { title: '좀비 건 슈터', desc: '긴박감 넘치는 서바이벌 슈팅! 무기를 업그레이드하고 사방에서 몰려오는 좀비 무리를 제압하세요.' },
+        en: { title: 'Gun Zombie', desc: 'Intense survival shooter! Grab your weapons and eliminate hordes of invading zombies.' }
       },
       'fortress': {
         id: 'fortress',
         path: '14-fortress/index.html',
         cat: 'arcade',
         badge: 'best',
-        clicksSeed: 4890,
+        clicksSeed: 5890,
         ko: { title: '앵그리 포트리스', desc: '캐릭터를 당겨 날려서 요새를 폭파시키는 박력 넘치는 물리 슈팅 게임! 최적의 각도로 성벽을 무너뜨리세요.' },
         en: { title: 'Angry Fortress', desc: 'Launch characters to destroy castles in this physics-based action game! Aim for critical hit spots.' }
+      },
+      'capybara-evolution': {
+        id: 'capybara-evolution',
+        path: '04-capybara-evolution/index.html',
+        cat: 'arcade',
+        badge: 'new',
+        clicksSeed: 4980,
+        ko: { title: '카피바라 진화시키기', desc: '귀여운 카피바라를 탭하여 성장시키고 다양하고 독특한 모습으로 진화시키는 방치형 클리커 게임!' },
+        en: { title: 'Capybara Evolution', desc: 'Tap and grow your cute capybara! Evolve them into various unique and funny forms.' }
+      },
+      'gian-game': {
+        id: 'gian-game',
+        path: '11-gian-game/index.html',
+        cat: 'arcade',
+        badge: 'hot',
+        clicksSeed: 6420,
+        ko: { title: '초2가 만든 폭탄 게임', desc: '라인을 타고 날아오는 5가지 변칙 폭탄을 완벽한 타이밍에 튕겨내는 극상의 긴장감! 3개 라인 멀티태스킹 액션.' },
+        en: { title: 'Bomb Passing Action', desc: 'Dodge, deflect, and smash 5 erratic bombs on 3 separate tracks! High-intensity reflexes challenge!' }
+      },
+      'pixel-tower': {
+        id: 'pixel-tower',
+        path: '15-pixel-tower/index.html',
+        cat: 'puzzle',
+        badge: 'new',
+        clicksSeed: 4100,
+        ko: { title: '픽셀 타워 쌓기', desc: '다양한 모양의 물리 블록을 떨어뜨려 균형을 잡으며 최대한 높이 타워를 쌓는 스릴 만점 스태킹 게임입니다.' },
+        en: { title: 'Pixel Tower', desc: 'Drop various shapes of physics blocks and build the highest tower possible.' }
+      },
+      'tetris': {
+        id: 'tetris',
+        path: '12-tetris/index.html',
+        cat: 'puzzle',
+        badge: 'best',
+        clicksSeed: 5780,
+        ko: { title: '크레이지 특이 블록 테트리스', desc: '오리지널 테트리스에 22가지 슈퍼 특이 블록과 레트로 사운드가 더해진 중독성 만점 퍼즐!' },
+        en: { title: 'Crazy Tetris+', desc: 'Tetris with 22 crazy unique blocks and retro sound! Challenge yourself with endless puzzle fun.' }
+      },
+      '3drace': {
+        id: '3drace',
+        path: '05-3drace/index.html',
+        cat: 'action',
+        badge: 'best',
+        clicksSeed: 6240,
+        ko: { title: '네온 레이서 3D', desc: '시원한 도심 트랙을 질주하는 3D 레이싱! 부스트를 쓰고 장애물을 피해 최고 기록의 한계를 돌파하세요.' },
+        en: { title: 'Neon Racer 3D', desc: 'A thrilling 3D racing game! Use speed boosts and dodge obstacles to break limits.' }
       },
       'cat-maze': {
         id: 'cat-maze',
@@ -356,33 +429,6 @@
         ko: { title: '스페이스 서바이버', desc: '끝없이 펼쳐지는 무한 은하수에서 날아오는 행성과 먼지를 피하며 끝까지 살아남는 우주 서바이벌!' },
         en: { title: 'Space Survivor', desc: 'Survive the hazardous deep space! Dodge incoming meteors and cosmic debris.' }
       },
-      '3drace': {
-        id: '3drace',
-        path: '05-3drace/index.html',
-        cat: 'action',
-        badge: 'best',
-        clicksSeed: 6240,
-        ko: { title: '네온 레이서 3D', desc: '시원한 도심 트랙을 질주하는 3D 레이싱! 부스트를 쓰고 장애물을 피해 최고 기록의 한계를 돌파하세요.' },
-        en: { title: 'Neon Racer 3D', desc: 'A thrilling 3D racing game! Use speed boosts and dodge obstacles to break limits.' }
-      },
-      'pixel-tower': {
-        id: 'pixel-tower',
-        path: '15-pixel-tower/index.html',
-        cat: 'puzzle',
-        badge: 'new',
-        clicksSeed: 3100,
-        ko: { title: '픽셀 타워 쌓기', desc: '다양한 모양의 물리 블록을 떨어뜨려 균형을 잡으며 최대한 높이 타워를 쌓는 스릴 만점 스태킹 게임입니다.' },
-        en: { title: 'Pixel Tower', desc: 'Drop various shapes of physics blocks and build the highest tower possible.' }
-      },
-      'capybara-evolution': {
-        id: 'capybara-evolution',
-        path: '04-capybara-evolution/index.html',
-        cat: 'arcade',
-        badge: 'new',
-        clicksSeed: 3980,
-        ko: { title: '카피바라 진화시키기', desc: '귀여운 카피바라를 탭하여 성장시키고 다양하고 독특한 모습으로 진화시키는 방치형 클리커 게임!' },
-        en: { title: 'Capybara Evolution', desc: 'Tap and grow your cute capybara! Evolve them into various unique and funny forms.' }
-      },
       'galaxy': {
         id: 'galaxy',
         path: '01-galaxy/index.html',
@@ -392,42 +438,6 @@
         ko: { title: '갤럭시 슈터', desc: '추억의 고전 감성 스페이스 슈팅! 몰려오는 외계 편대와 거대 보스를 시원하게 소탕하세요.' },
         en: { title: 'Galaxy Shooter', desc: 'Classic arcade space shooter! Defeat waves of alien starships and giant cosmic bosses.' }
       },
-      'gun-zombie': {
-        id: 'gun-zombie',
-        path: '07-gun-zombie/index.html',
-        cat: 'shooting',
-        badge: 'hot',
-        clicksSeed: 4190,
-        ko: { title: '좀비 건 슈터', desc: '긴박감 넘치는 서바이벌 슈팅! 무기를 업그레이드하고 사방에서 몰려오는 좀비 무리를 제압하세요.' },
-        en: { title: 'Gun Zombie', desc: 'Intense survival shooter! Grab your weapons and eliminate hordes of invading zombies.' }
-      },
-      'kids-runner': {
-        id: 'kids-runner',
-        path: '06-kids-runner/index.html',
-        cat: 'action',
-        badge: '',
-        clicksSeed: 3240,
-        ko: { title: '달려라! 키즈 러너', desc: '장애물을 요리조리 피하며 코인을 모으는 경쾌하고 신나는 캐주얼 횡스크롤 러닝 액션 게임!' },
-        en: { title: 'Kids Runner', desc: 'A delightful endless running adventure! Jump over obstacles and run as far as you can.' }
-      },
-      'sneaky-snacker': {
-        id: 'sneaky-snacker',
-        path: '08-sneaky-snacker/index.html',
-        cat: 'arcade',
-        badge: 'hot',
-        clicksSeed: 3820,
-        ko: { title: '몰래 먹는 스내커', desc: '모두가 잠든 밤, 들키지 않고 냉장고 속 맛있는 음식을 훔쳐 먹는 스릴 만점 타이밍 잠입 게임!' },
-        en: { title: 'Sneaky Snacker', desc: 'A suspenseful stealth game! Sneak around and steal yummy snacks without getting caught.' }
-      },
-      'fly-swat': {
-        id: 'fly-swat',
-        path: '09-fly-swat/index.html',
-        cat: 'arcade',
-        badge: '',
-        clicksSeed: 2650,
-        ko: { title: '파리 잡기 소동', desc: '사방에서 윙윙대는 귀찮은 파리들을 날카로운 반사신경과 타이밍으로 완벽하게 제압해 보세요.' },
-        en: { title: 'Fly Swat', desc: 'Test your reflexes! Swat the annoying buzzing flies with quick taps and precision.' }
-      },
       'poo': {
         id: 'poo',
         path: '10-poo/index.html',
@@ -436,34 +446,25 @@
         clicksSeed: 3120,
         ko: { title: '응가 댕댕이의 산책', desc: '주인이 한눈팔 때 타이밍을 맞춰 점수를 획득하는 재치 있고 유쾌한 눈치코치 캐주얼 게임입니다.' },
         en: { title: 'Pooing Dog Adventure', desc: 'Poop and score points while the owner is distracted! Avoid hurdles by jumping.' }
-      },
-      'tetris': {
-        id: 'tetris',
-        path: '12-tetris/index.html',
-        cat: 'puzzle',
-        badge: 'new',
-        clicksSeed: 4780,
-        ko: { title: '크레이지 특이 블록 테트리스', desc: '오리지널 테트리스에 22가지 슈퍼 특이 블록과 레트로 사운드가 더해진 중독성 만점 퍼즐!' },
-        en: { title: 'Crazy Tetris+', desc: 'Tetris with 22 crazy unique blocks and retro sound! Challenge yourself with endless puzzle fun.' }
       }
     };
 
     // ─── 2. THUMBNAIL MAPPING (Custom High-Res Banners Priority) ───
     const THUMB_MAP = {
-      'gian-game': '폭탄-640-440.gif',
-      'fortress': '포트리스-게임베너-640-440.gif',
-      'cat-maze': 'cat-게임베너-640-440.gif',
-      'space-survivor': 'space게임베너-640-440.gif',
-      'pixel-tower': 'pixel-tower-게임베너-640-440.gif',
-      '3drace': '3drace.gif',
-      'capybara-evolution': 'capybara-evolution.gif',
-      'galaxy': 'galaxy.gif',
-      'gun-zombie': 'gun-zombie.gif',
       'kids-runner': 'kids-runner.gif',
       'sneaky-snacker': 'sneaky-snacker.gif',
       'fly-swat': 'fly-swat.gif',
-      'poo': 'poo.gif',
-      'tetris': 'tetris.gif'
+      'gun-zombie': 'gun-zombie.gif',
+      'fortress': '포트리스-게임베너-640-440.gif',
+      'capybara-evolution': 'capybara-evolution.gif',
+      'gian-game': '폭탄-640-440.gif',
+      'pixel-tower': 'pixel-tower-게임베너-640-440.gif',
+      'tetris': 'tetris.gif',
+      '3drace': '3drace.gif',
+      'cat-maze': 'cat-게임베너-640-440.gif',
+      'space-survivor': 'space게임베너-640-440.gif',
+      'galaxy': 'galaxy.gif',
+      'poo': 'poo.gif'
     };
 
     function getThumbSrc(id) {
@@ -475,7 +476,6 @@
         img.dataset.fallbackTried = '1';
         img.src = 'assets/thumbnails/' + id + '.gif';
       } else {
-        // Fallback to neutral placeholder if image missing
         img.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22640%22%20height%3D%22440%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20640%20440%22%3E%3Crect%20fill%3D%22%23f1f5f9%22%20width%3D%22640%22%20height%3D%22440%22%2F%3E%3Ctext%20fill%3D%22%2394a3b8%22%20font-family%3D%22sans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22bold%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3EPLAY%20GAME%3C%2Ftext%3E%3C%2Fsvg%3E';
       }
     }
@@ -579,7 +579,8 @@
 
     // ─── 6. PROMO FEATURED BANNER ───
     function setupPromoBanner() {
-      const featuredList = ['gian-game', '3drace', 'fortress', 'space-survivor', 'cat-maze'];
+      // 1번 런닝맨을 기본 추천 피처드로 우선 노출
+      const featuredList = ['kids-runner', 'sneaky-snacker', 'fortress', 'gian-game', '3drace'];
       const randomId = featuredList[Math.floor(Math.random() * featuredList.length)];
       const g = GAMES_DATA[randomId];
       const banner = document.getElementById('promoCard');
@@ -596,7 +597,7 @@
 
     function launchFeaturedGame() {
       const banner = document.getElementById('promoCard');
-      const id = banner.dataset.featuredGameId || 'gian-game';
+      const id = banner.dataset.featuredGameId || 'kids-runner';
       launchGameDirect(id);
     }
 
@@ -702,7 +703,7 @@
       overlay.classList.add('flex');
       document.body.style.overflow = 'hidden';
 
-      // Load Iframe immediately (no fake countdown screen)
+      // Load Iframe immediately
       const iframe = document.getElementById('gameIframe');
       iframe.src = game.path;
 
